@@ -1,53 +1,114 @@
-# DataSave - Professional Web Application
+# DataSave - سیستم مدیریت جامع داده‌ها
 
-[![Status](https://img.shields.io/badge/Status-Phase%202%20Complete-brightgreen)](https://github.com)
-[![Logging](https://img.shields.io/badge/Logging-Fully%20Integrated-blue)](assets/js/modules/logging.js)
-[![Version](https://img.shields.io/badge/Version-1.0.0-orange)](package.json)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![وضعیت](https://img.shields.io/badge/%D9%88%D8%B6%D8%B9%DB%8C%D8%AA-%D9%81%D8%A7%D8%B2%203%20%DA%A9%D8%A7%D9%85%D9%84-brightgreen)](https://github.com/123hassani-ai/datasave)
+[![نسخه](https://img.shields.io/badge/%D9%86%D8%B3%D8%AE%D9%87-2.0-orange)](README.md)
+[![لایسنس](https://img.shields.io/badge/%D9%84%D8%A7%DB%8C%D8%B3%D9%86%D8%B3-MIT-green)](LICENSE)
+[![PHP](https://img.shields.io/badge/PHP-8.0+-777BB4)](backend/)
 
-A comprehensive professional web application for processing Excel files with AI integration, designed with modern web standards and comprehensive logging capabilities.
+یک اپلیکیشن وب حرفه‌ای و جامع برای مدیریت داده‌ها با قابلیت‌های پردازش Excel، یکپارچگی AI، سیستم SMS و پنل مدیریت مدرن.
 
-## 🚀 Project Overview
+## 🎯 نمای کلی پروژه
 
-This project is being developed in phases, with each module carefully designed and implemented according to professional standards. Currently, we have completed the foundation and logging infrastructure.
+این پروژه در چندین فاز توسعه یافته و هم‌اکنون به یک سیستم کامل و حرفه‌ای تبدیل شده است که شامل تمامی امکانات مورد نیاز یک سیستم مدیریت داده‌های مدرن می‌باشد.
 
-### ✅ Completed Phases
+### ✅ فازهای تکمیل شده
 
-#### Phase 1: Project Foundation ✅
-- **Project Structure**: Professional directory organization
-- **Base HTML**: Responsive layout with Bootstrap RTL support
-- **Core CSS**: Modern styling with CSS variables and animations
-- **Main Application**: JavaScript architecture with ES6+ features
-- **Documentation**: Comprehensive project guidelines and rules
+#### فاز 1: زیرساخت پروژه ✅
+- **ساختار حرفه‌ای**: سازماندهی مدرن فایل‌ها و دایرکتوری‌ها
+- **UI/UX مدرن**: طراحی ریسپانسیو با پشتیبانی کامل RTL
+- **Architecture**: معماری مبتنی بر ES6+ و ماژولار
+- **مستندات کامل**: راهنماهای جامع توسعه و استفاده
 
-#### Phase 2: Logging Module ✅
-- **Complete Logging System**: Professional-grade logging with IndexedDB storage
-- **Performance Optimized**: Batched writes, async operations, minimal overhead
-- **Admin Interface**: Web-based configuration panel with real-time statistics
-- **Full Integration**: Embedded throughout the application with global error handling
-- **Testing Suite**: Comprehensive test interface for validation
+#### فاز 2: سیستم لاگ و مانیتورینگ ✅  
+- **سیستم لاگ حرفه‌ای**: ذخیره‌سازی در IndexedDB با عملکرد بهینه
+- **رابط مدیریت**: پنل وب‌بیسد با آمار real-time
+- **یکپارچگی کامل**: پوشش کل اپلیکیشن با error handling
+- **مجموعه تست**: رابط تست جامع برای اعتبارسنجی
 
-## 📁 Project Structure
+#### فاز 3: پنل مدیریت و Backend ✅
+- **Admin Dashboard**: پنل مدیریت کامل با قابلیت‌های پیشرفته
+- **Backend API**: RESTful API با PHP و MySQL
+- **احراز هویت**: سیستم JWT-based authentication  
+- **مدیریت کاربران**: سیستم نقش‌بندی و مجوزها
+
+#### فاز 4: مدیریت داده‌ها و Excel ✅
+- **Excel Import**: آپلود و پردازش فایل‌های Excel
+- **Timeline Interface**: نمایش مراحل پردازش به صورت تعاملی
+- **Data Validation**: اعتبارسنجی و تصحیح داده‌ها
+- **Project Management**: مدیریت پروژه‌ها در IndexedDB
+
+#### فاز 5: یکپارچگی AI و SMS ✅
+- **AI Integration**: تنظیمات OpenAI و Google AI
+- **SMS System**: ارسال و مدیریت پیامک با API های متنوع
+- **Configuration**: پنل تنظیمات پیشرفته
+- **Monitoring**: نظارت بر استفاده و آمارگیری
+
+## 📁 ساختار کامل پروژه
 
 ```
-DataSave/
-├── index.html                     # Main application page
-├── test-logging.html              # Logging system test interface
-├── README.md                      # Project documentation
-├── assets/
-│   ├── css/
-│   │   ├── main.css               # Main stylesheet
-│   │   └── components/            # Component-specific styles
-│   ├── js/
-│   │   ├── main.js                # Main application logic
-│   │   └── modules/
-│   │       ├── logging.js                 # ✅ Professional logging system
-│   │       ├── logger-config.js           # ✅ Logging configuration & admin UI
-│   │       ├── scrolling-jalali-picker.js # ✅ Modern Persian date picker
-│   │       ├── numberUtils.js             # 🔄 Number utilities (placeholder)
-│   │       └── excel-processor.js         # 🔄 Excel processing (placeholder)
-│   └── images/                    # Project images
-├── pages/
+datasave/
+├── 📄 index.html                          # صفحه اصلی اپلیکیشن
+├── 📄 README.md                           # مستندات اصلی پروژه
+├── 📁 assets/                             # منابع استاتیک
+│   ├── 📁 css/                            # استایل‌ها
+│   │   ├── 📄 main.css                    # استایل اصلی
+│   │   ├── 📁 admin/                      # استایل‌های پنل مدیریت
+│   │   │   ├── 📄 dashboard.css           # داشبورد
+│   │   │   ├── 📄 sidebar.css             # نوار کناری
+│   │   │   ├── 📄 header.css              # هدر
+│   │   │   └── 📁 modules/                # ماژول‌های تخصصی
+│   │   └── 📁 components/                 # کامپوننت‌های UI
+│   ├── 📁 js/                             # اسکریپت‌ها
+│   │   ├── 📄 main.js                     # اسکریپت اصلی
+│   │   ├── 📁 admin/                      # اسکریپت‌های ادمین
+│   │   │   ├── 📄 dashboard.js            # مدیریت داشبورد
+│   │   │   ├── 📄 router.js               # مسیریابی SPA
+│   │   │   ├── 📄 sidebar.js              # مدیریت منو
+│   │   │   └── 📁 modules/                # ماژول‌های عملکردی
+│   │   │       ├── 📄 ai-settings.js      # ✅ تنظیمات AI
+│   │   │       ├── 📄 data-management.js  # ✅ مدیریت داده‌ها
+│   │   │       ├── 📄 excel-to-sql-timeline.js # ✅ Timeline Excel
+│   │   │       ├── 📄 sms-settings.js     # ✅ تنظیمات SMS
+│   │   │       └── 📄 users.js            # ✅ مدیریت کاربران
+│   │   └── 📁 modules/                    # ماژول‌های مشترک
+│   │       ├── 📄 simple-logger.js        # ✅ سیستم لاگ
+│   │       ├── 📄 numberUtils.js          # ✅ ابزار عددی فارسی
+│   │       ├── 📄 persian-calendar.js     # ✅ تقویم فارسی
+│   │       └── 📄 excel-processor.js      # ✅ پردازشگر Excel
+│   ├── 📁 fonts/                          # فونت‌ها
+│   │   └── 📁 vazirmatn/                  # ✅ فونت فارسی کامل
+│   └── 📁 templates/                      # قالب‌های HTML
+├── 📁 backend/                            # Backend و API
+│   ├── 📁 api/v1/                         # API نسخه 1
+│   │   ├── 📄 auth.php                    # ✅ احراز هویت
+│   │   ├── 📄 users.php                   # ✅ مدیریت کاربران
+│   │   ├── � data-management.php         # ✅ مدیریت داده‌ها
+│   │   ├── 📄 ai-settings.php             # ✅ تنظیمات AI
+│   │   └── 📄 sms.php                     # ✅ سرویس SMS
+│   ├── 📁 config/                         # تنظیمات
+│   │   └── 📄 database.php                # ✅ تنظیمات دیتابیس
+│   ├── 📁 models/                         # مدل‌های داده
+│   │   ├── 📄 User.php                    # ✅ مدل کاربر
+│   │   └── 📄 DataProject.php             # ✅ مدل پروژه
+│   └── 📁 database/                       # اسکریپت‌های دیتابیس
+│       ├── 📄 schema.sql                  # ✅ ساختار اصلی
+│       ├── 📄 ai-settings-schema.sql      # ✅ جداول AI
+│       └── 📄 sms-schema.sql              # ✅ جداول SMS
+├── 📁 Docs/                               # مستندات
+│   ├── � fa/                             # مستندات فارسی
+│   │   ├── 📄 complete-guide.md           # ✅ راهنمای کامل
+│   │   ├── 📄 Backend-Documentation.md    # ✅ مستندات Backend
+│   │   ├── 📄 AI_SETTINGS_GUIDE.md        # ✅ راهنمای AI
+│   │   └── 📄 EXCEL_ROADMAP.md            # ✅ نقشه راه Excel
+│   └── 📁 Prompts/                        # راهنماهای توسعه
+├── 📁 tests/                              # فایل‌های تست
+│   ├── 📄 test-admin-modules.html         # ✅ تست ماژول‌های ادمین
+│   ├── 📄 test-api-connection.html        # ✅ تست اتصال API
+│   ├── 📄 test-database.php               # ✅ تست دیتابیس
+│   └── 📄 test-logging.html               # ✅ تست سیستم لاگ
+└── 📁 pages/                              # صفحات اضافی
+    └── 📄 sms-reports.html                # ✅ گزارشات SMS
+```
 │   └── admin/                     # Admin panel pages (future)
 └── Docs/
     └── Prompts/                   # Development documentation
