@@ -1,0 +1,343 @@
+{
+  "name": "ایجنت چت فروش یک دو سه copy",
+  "nodes": [
+    {
+      "parameters": {
+        "public": "={{ false }}",
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        352
+      ],
+      "id": "2a601107-12bb-40c9-b9e9-1b2b0f9afd00",
+      "name": "When chat message received",
+      "webhookId": "cc79ebcc-acb0-46a0-b64f-83905ae8eb5d"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=تو یک «تولیدکنندهٔ SQL برای PostgreSQL» هستی.\nفقط و فقط یک کوئری SQL بده و آن را داخل فنس سه‌تایی Markdown با برچسب زبان sql بنویس:\n```sql\nSELECT ...\nپایگاه داده: جدول «public.sales_fact» با نام مستعار دقیقاً sf.\n\nفقط از همین جدول بخوان (JOIN ممنوع).\n\nستون‌ها:\nsf.year_jalali INT,\nsf.month_jalali INT,\nsf.section_name TEXT,\nsf.seller_name TEXT,\nsf.total_sale BIGINT,\nsf.total_profit BIGINT,\nsf.profit_percent NUMERIC,\nsf.count_items INT,\nsf.ending_inventory BIGINT,\nsf.month_purchases BIGINT,\nsf.crm_unique_id INT\n\nنگاشت عبارت‌های فارسی کاربر به ستون‌ها:\n«سال»→sf.year_jalali ، «ماه»→sf.month_jalali ، «دسته/بخش»→sf.section_name ، «فروشنده»→sf.seller_name.\n\nبرای جمع‌ها از SUM() و برای تعداد از COUNT(*) یا SUM(count_items) استفاده کن.\n\nمقدارهای متنی (مثل نام بخش) را در تک‌کوتیشن '...' بگذار.\n\nاگر کوئری Aggregate نیست، LIMIT 200 را اضافه کن.\n\nهیچ توضیحی خارج از فنس نده؛ فقط همان یک کوئری درون sql ... .\n\nنمونه:\nSELECT SUM(sf.total_sale) AS total_laptop_sales_1403\nFROM public.sales_fact sf\nWHERE sf.section_name = 'لپ تاپ' AND sf.year_jalali = 1403;\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1008,
+        352
+      ],
+      "id": "57298454-9176-44e5-9632-262188adaf48",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "chatgpt-4o-latest",
+          "mode": "list",
+          "cachedResultName": "chatgpt-4o-latest"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        560
+      ],
+      "id": "40a8f7ee-ce11-446d-86a1-54e908121d76",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "08Gg0AUAXPSgVsgj",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1104,
+        560
+      ],
+      "id": "88bd1548-a943-424e-8f79-ba2814fd9c21",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{$json.sql}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1600,
+        544
+      ],
+      "id": "1ad1d942-d1c5-4b1c-a88b-8ba1da982cf7",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "9TFSf7sk7yu0fmxU",
+          "name": "Postgres one_two_three-reader_user"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let sql = String($json.sql || '').trim();\nif (!sql) throw new Error('SQL خالی است.');\n\n// اجازه فقط SELECT/WITH\nif (!/\\b(SELECT|WITH)\\b/i.test(sql)) {\n  throw new Error('فقط کوئری‌های SELECT/CTE مجاز است.');\n}\n\n// جلوگیری از DDL/DML خطرناک\nif (/\\b(INSERT|UPDATE|DELETE|DROP|ALTER|TRUNCATE|CREATE|GRANT|REVOKE)\\b/i.test(sql)) {\n  throw new Error('کوئری خطرناک شناسایی شد.');\n}\n\n// نرمال‌سازی فاصله‌ها و \\n\nsql = sql\n  .replace(/\\\\r?\\\\n/g, ' ')\n  .replace(/\\r?\\n/g, ' ')\n  .replace(/\\s+/g, ' ')\n  .trim();\n\n// اجباری: استفاده از جدول درست با نام‌مستعار sf\n// اگر مدل اشتباهاً «FROM sales» نوشت، اصلاحش می‌کنیم\nsql = sql.replace(/\\bfrom\\s+sales\\b/i, 'FROM public.sales_fact sf');\n\n// اگر public.sales_fact هست ولی نام‌مستعار ندارد، اضافه کن\nsql = sql.replace(/\\bpublic\\.sales_fact\\b(?!\\s+sf\\b)/i, 'public.sales_fact sf');\n\n// اگر هیچ اثری از جدول ما نبود، خطا بده\nif (!/\\bfrom\\s+public\\.sales_fact\\b/i.test(sql)) {\n  throw new Error('فقط خواندن از public.sales_fact مجاز است.');\n}\n\n// افزودن LIMIT در صورت نبودن Aggregate/Group\nconst hasAggregate = /\\b(SUM|AVG|COUNT|MIN|MAX)\\s*\\(/i.test(sql) || /\\bGROUP\\s+BY\\b/i.test(sql);\nif (!/\\blimit\\b/i.test(sql) && !hasAggregate) {\n  sql += ' LIMIT 200';\n}\n\nreturn [{ json: { sql } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        544
+      ],
+      "id": "e831c955-3b6d-4fd9-9b59-2669c46c3ca8",
+      "name": "Code (Guard)"
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $json.output ?? $json.content ?? $json.chatoutput ?? '';\nraw = (typeof raw === 'string') ? raw : JSON.stringify(raw);\n\n// اگر اشتباهی JSON است و فیلد sql داشت\ntry {\n  const maybe = JSON.parse(raw);\n  if (maybe && typeof maybe.sql === 'string') raw = maybe.sql;\n} catch (_) { /* ignore */ }\n\n// الگوهای ممکن برای بیرون کشیدن SQL\nlet m = null;\nm = m || raw.match(/```sql
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        544
+      ],
+      "id": "ffc8919a-c6ad-4a80-a320-eb8cd60f324c",
+      "name": "Code(Extract)"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ========= تنظیمات قابل ویرایش =========\nconst UNIT = 'تومان';         // واحد نمایش مبالغ\nconst SHOW_TOTAL_ROW = true;   // نمایش ردیف جمع کل برای ستون‌های عددی\nconst MAX_ROWS = 200;          // اگر لازم بود محدود کنید (یا null برای بدون محدودیت)\n// ======================================\n\n// گرفتن همه ردیف‌های ورودی به شکل ساده\nconst rows = $input.all().map(i => i.json);\nif (!rows || rows.length === 0) {\n  return [{ json: { message: '❕ هیچ دیتایی برای نمایش وجود ندارد.' } }];\n}\n\n// کمک‌تابع‌ها\nconst faNum = (n) => {\n  if (n === null || n === undefined || n === '') return '—';\n  const num = Number(n);\n  if (!Number.isFinite(num)) return String(n);\n  return num.toLocaleString('fa-IR');\n};\n\nconst toFaDigitsInString = (s) => String(s).replace(/\\d+/g, d => Number(d).toLocaleString('fa-IR'));\nconst monthNameFa = (m) => ({\n  1:'فروردین',2:'اردیبهشت',3:'خرداد',4:'تیر',5:'مرداد',6:'شهریور',\n  7:'مهر',8:'آبان',9:'آذر',10:'دی',11:'بهمن',12:'اسفند'\n})[Number(m)] || m;\n\n// حدس نام ستون ماه اگر موجود است\nconst isMonthKey = (k) => /month(_?jalali|_?no)?$/i.test(k) || /^month$/i.test(k);\n\n// تعیین ستون‌ها از روی اولین ردیف\nconst allKeys = Object.keys(rows[0] || {});\n// ستون‌های متنی را در ابتدا بیاوریم (مثل ماه)، سپس عددی‌ها\nconst sample = rows[0] || {};\nconst numericKeys = allKeys.filter(k => Number.isFinite(Number(sample[k])));\nconst nonNumericKeys = allKeys.filter(k => !numericKeys.includes(k));\n\n// ستون ماه (اگر هست) را اول لیست بگذار\nconst monthKeys = allKeys.filter(isMonthKey);\nlet columns = [\n  ...monthKeys,\n  ...nonNumericKeys.filter(k => !monthKeys.includes(k)),\n  ...numericKeys.filter(k => !monthKeys.includes(k)),\n];\n\n// محدودسازی ردیف‌ها (درصورت نیاز)\nconst data = (MAX_ROWS && rows.length > MAX_ROWS) ? rows.slice(0, MAX_ROWS) : rows;\n\n// ساخت جدول Markdown\nconst header = `| ${columns.map(c => '`' + c + '`').join(' | ')} |`;\nconst sep    = `| ${columns.map(() => '---').join(' | ')} |`;\n\nconst bodyLines = data.map(r => {\n  const cells = columns.map(c => {\n    let v = r[c];\n\n    // اگر ستون ماه است، اسم ماه فارسی نشان بده\n    if (isMonthKey(c)) v = monthNameFa(v);\n\n    // اعداد را فارسی و سه‌رقمی؛ برای ستون‌های عددی واحد را هم اضافه کن\n    if (Number.isFinite(Number(r[c]))) {\n      return `${faNum(v)} ${UNIT}`;\n    }\n    return toFaDigitsInString(v ?? '—');\n  });\n  return `| ${cells.join(' | ')} |`;\n});\n\n// جمع ستون‌های عددی\nlet totalLine = '';\nif (SHOW_TOTAL_ROW) {\n  const totals = {};\n  for (const col of columns) {\n    let sum = 0, anyNumeric = false;\n    for (const r of data) {\n      const val = Number(r[col]);\n      if (Number.isFinite(val)) { sum += val; anyNumeric = true; }\n    }\n    totals[col] = anyNumeric ? sum : null;\n  }\n  const totalCells = columns.map(c =>\n    totals[c] == null ? '**جمع**' : `**${faNum(totals[c])} ${UNIT}**`\n  );\n  // اگر اولین ستون عددی نیست، در اولین ستون برچسب «جمع» را بگذار\n  if (totals[columns[0]] == null) totalCells[0] = '**جمع**';\n  totalLine = `\\n| ${totalCells.join(' | ')} |`;\n}\n\n// پیغام بالا و پایین جدول\nconst title = `## 📊 گزارش خلاصه`;\nconst info  = (rows.length > (MAX_ROWS || Infinity))\n  ? `> ⚠️ تنها ${faNum(MAX_ROWS)} ردیف از ${faNum(rows.length)} نمایش داده شد.`\n  : '';\nconst table = [header, sep, ...bodyLines].join('\\n') + totalLine;\n\n// خروجی نهایی\nconst message = `${title}\n\n${table}\n\n${info}`.trim();\n\nreturn [{ json: { message } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        544
+      ],
+      "id": "4998aa37-c44f-45e3-914d-a2e04a7178ad",
+      "name": "Code (Formatter)"
+    },
+    {
+      "parameters": {
+        "message": "={{$json.message}}",
+        "waitUserReply": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        480
+      ],
+      "id": "feff1328-6a36-4af8-ad1f-7b5fc776ad17",
+      "name": "Respond to Chat",
+      "executeOnce": true,
+      "retryOnFail": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        544
+      ],
+      "id": "125c917a-fdff-43a3-8c20-afb5314d30f6",
+      "name": "Telegram Trigger",
+      "webhookId": "56c2b341-1d87-4937-9b9c-440fa6a23ee5",
+      "credentials": {
+        "telegramApi": {
+          "id": "lnAPOQZkapCnxIJo",
+          "name": "Telegram mojtabahasani_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let chatId = $json.chat?.id || $json.message?.chat?.id;\nif (!chatId) {\n  throw new Error('chat_id پیدا نشد. لطفاً مطمئن شوید که پیام از تلگرام آمده است.');\n}\nreturn [{\n  json: {\n    message: $json.message,\n    chat_id: chatId\n  }\n}];",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 1,
+        "position": [
+          2000,
+          544
+        ],
+        "name": "Set Chat ID"
+      },
+    {
+      "parameters": {
+        "text": "={{ $json.message }}",
+        "chatId": "={{ $json.chat_id }}",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2224,
+        640
+      ],
+      "id": "9c1f2093-fd0d-4893-a171-d200b2db7007",
+      "name": "Send a text message",
+      "webhookId": "45cbea27-46f2-4bb1-af31-ae87548dbce4",
+      "credentials": {
+        "telegramApi": {
+          "id": "lnAPOQZkapCnxIJo",
+          "name": "Telegram mojtabahasani_bot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code(Extract)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Code (Formatter)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code (Guard)": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code(Extract)": {
+      "main": [
+        [
+          {
+            "node": "Code (Guard)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code (Formatter)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set Chat ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Chat ID": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "20e47031-1d4c-42c1-8bd0-bc27d31b2f4c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d5c75f88fa14f5577781219e262e0d3a845921b4aaab379579f99e10d5ce7ce9"
+  },
+  "id": "lnJa9UBkeTRG0alx",
+  "tags": []
+}

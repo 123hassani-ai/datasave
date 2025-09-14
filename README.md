@@ -603,6 +603,14 @@ Logger.info('فایل آپلود شد', {
 - **راهنمای API**: `backend/api/v1/`
 - **تست‌های سیستم**: `tests/`
 
+### 📚 راهنماهای جامع
+- **[راهنمای کامل UI/UX و RTL](Docs/fa/UI_UX_RTL_COMPLETE_GUIDE.md)** - طراحی RTL، فونت وزیرمتن و responsive design
+- **[راهنمای کامل Admin Dashboard](Docs/fa/ADMIN_DASHBOARD_COMPLETE_GUIDE.md)** - معماری، migration و استانداردسازی داشبورد
+- **[راهنمای کامل AI Settings](Docs/fa/AI_SETTINGS_COMPLETE_GUIDE.md)** - پیاده‌سازی کامل ماژول تنظیمات هوش مصنوعی
+- **[راهنمای توسعه](Docs/fa/DEVELOPMENT_GUIDE.md)** - نصب، پیکربندی و workflow توسعه
+- **[راهنمای امنیت](Docs/fa/SECURITY_GUIDE.md)** - best practices امنیتی و OWASP
+- **[مستندات API](Docs/fa/API_DOCUMENTATION.md)** - مرجع کامل APIهای سیستم
+
 ### ارتباط
 - **گزارش مشکلات**: از طریق صفحه تست‌ها
 
