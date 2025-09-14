@@ -1,0 +1,13 @@
+# API Keys Configuration Template
+# Copy this file to api-openai-local.txt and add your actual API keys
+
+# OpenAI API Key
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Google AI API Key  
+GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+
+# Instructions:
+# 1. Never commit actual API keys to version control
+# 2. Use environment variables or local config files
+# 3. Add api-openai-local.txt to .gitignore

@@ -36,6 +36,12 @@ composer.lock
 .env.local
 .env.production
 
+# API Keys and sensitive data
+api-openai.txt
+api-openai-local.txt
+**/api-keys.txt
+**/*-secret.txt
+
 # Cache directories
 cache/
 tmp/
