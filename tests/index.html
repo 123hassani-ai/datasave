@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرکز تست‌های DataSave</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .test-card:hover {
+            transform: translateY(-5px);
+        }
+        .test-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .btn-test {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        .header-box {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status-active { background: #d4edda; color: #155724; }
+        .status-debug { background: #fff3cd; color: #856404; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        
+        .quick-links {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header-box">
+            <h1 class="text-primary mb-3">
+                <i class="fas fa-vial me-3"></i>
+                مرکز تست‌های DataSave
+            </h1>
+            <p class="lead mb-0">مجموعه کاملی از ابزارهای تست و عیب‌یابی سیستم</p>
+            <div class="status-badge status-active">
+                ✅ سیستم فعال
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- تست کامل عیب‌یابی -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-warning">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <h4 class="text-center">عیب‌یابی کامل</h4>
+                    <p class="text-muted text-center">
+                        تست جامع تمام اجزای سیستم لاگ‌گیری و شناسایی مشکلات
+                    </p>
+                    <div class="status-badge status-debug">اولویت بالا</div>
+                    <a href="debug.html" class="btn btn-warning btn-test">
+                        <i class="fas fa-search-plus me-2"></i>
+                        شروع عیب‌یابی
+                    </a>
+                </div>
+            </div>
+
+            <!-- تست سریع -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-success">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4 class="text-center">تست سریع</h4>
+                    <p class="text-muted text-center">
+                        بررسی سریع عملکرد کلی سیستم و خطاهای اصلی
+                    </p>
+                    <div class="status-badge status-active">آماده</div>
+                    <a href="quick-test.html" class="btn btn-success btn-test">
+                        <i class="fas fa-play me-2"></i>
+                        تست سریع
+                    </a>
+                </div>
+            </div>
+
+            <!-- تست لاگ‌گیری -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-info">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4 class="text-center">تست لاگ‌گیری</h4>
+                    <p class="text-muted text-center">
+                        آزمایش کامل سیستم لاگ‌گیری و ذخیره‌سازی
+                    </p>
+                    <div class="status-badge status-active">فعال</div>
+                    <a href="test-logging.html" class="btn btn-info btn-test">
+                        <i class="fas fa-clipboard-list me-2"></i>
+                        تست لاگ‌ها
+                    </a>
+                </div>
+            </div>
+
+            <!-- تست خطاها -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 class="text-center">تست خطاها</h4>
+                    <p class="text-muted text-center">
+                        ایجاد و بررسی خطاهای مختلف JavaScript
+                    </p>
+                    <div class="status-badge status-error">حساس</div>
+                    <a href="test-errors.html" class="btn btn-danger btn-test">
+                        <i class="fas fa-times-circle me-2"></i>
+                        تست خطاها
+                    </a>
+                </div>
+            </div>
+
+            <!-- تست بک‌اند -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-primary">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h4 class="text-center">تست بک‌اند</h4>
+                    <p class="text-muted text-center">
+                        بررسی API ها و اتصال پایگاه داده
+                    </p>
+                    <div class="status-badge status-active">API v1</div>
+                    <a href="test-backend.html" class="btn btn-primary btn-test">
+                        <i class="fas fa-database me-2"></i>
+                        تست سرور
+                    </a>
+                </div>
+            </div>
+
+            <!-- تست ماژول‌ها -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-secondary">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h4 class="text-center">تست ماژول‌ها</h4>
+                    <p class="text-muted text-center">
+                        آزمایش عملکرد ماژول‌های مختلف سیستم
+                    </p>
+                    <div class="status-badge status-active">ماژولار</div>
+                    <a href="test-modules.html" class="btn btn-secondary btn-test">
+                        <i class="fas fa-cogs me-2"></i>
+                        تست ماژول‌ها
+                    </a>
+                </div>
+            </div>
+
+            <!-- تست پایگاه داده -->
+            <div class="col-lg-4 col-md-6">
+                <div class="test-card">
+                    <div class="test-icon text-dark">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h4 class="text-center">تست پایگاه داده</h4>
+                    <p class="text-muted text-center">
+                        بررسی اتصال و عملکرد MySQL
+                    </p>
+                    <div class="status-badge status-active">MySQL</div>
+                    <a href="test-database.php" class="btn btn-dark btn-test">
+                        <i class="fas fa-table me-2"></i>
+                        تست DB
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- لینک‌های سریع -->
+        <div class="quick-links">
+            <h5 class="mb-3">
+                <i class="fas fa-link me-2"></i>
+                لینک‌های سریع
+            </h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="../" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="fas fa-home me-2"></i>
+                        صفحه اصلی
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="../docs/fa/" class="btn btn-outline-info w-100 mb-2">
+                        <i class="fas fa-book me-2"></i>
+                        مستندات
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="../logs/" class="btn btn-outline-warning w-100 mb-2">
+                        <i class="fas fa-folder-open me-2"></i>
+                        فایل‌های لاگ
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="../backend/api/v1/logging.php?action=stats" class="btn btn-outline-secondary w-100 mb-2" target="_blank">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        آمار API
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- اطلاعات سیستم -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="test-card">
+                    <h5 class="text-primary">
+                        <i class="fas fa-info-circle me-2"></i>
+                        اطلاعات سیستم
+                    </h5>
+                    <ul class="list-unstyled">
+                        <li><strong>نسخه:</strong> 2.0.0</li>
+                        <li><strong>تاریخ:</strong> ۹ سپتامبر ۲۰۲۵</li>
+                        <li><strong>سرور:</strong> <span id="serverInfo">در حال بررسی...</span></li>
+                        <li><strong>مرورگر:</strong> <span id="browserInfo"></span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="test-card">
+                    <h5 class="text-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        راهنمای سریع
+                    </h5>
+                    <ol>
+                        <li>برای تشخیص مشکل: <strong>عیب‌یابی کامل</strong></li>
+                        <li>برای تست سریع: <strong>تست سریع</strong></li>
+                        <li>برای بررسی خطاها: <strong>تست خطاها</strong></li>
+                        <li>مشاهده نتایج در: <strong>فایل‌های لاگ</strong></li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // نمایش اطلاعات مرورگر
+        document.getElementById('browserInfo').textContent = navigator.userAgent.split(' ')[0];
+        
+        // تست اتصال سرور
+        fetch('../backend/api/v1/logging.php?action=stats')
+            .then(response => response.ok ? 'فعال ✅' : 'خطا ❌')
+            .catch(() => 'قطع ❌')
+            .then(status => {
+                document.getElementById('serverInfo').textContent = status;
+            });
+            
+        // پیام خوش‌آمدگویی
+        console.log('%c🎯 DataSave Test Center', 'color: #007bff; font-size: 20px; font-weight: bold;');
+        console.log('🔧 برای شروع عیب‌یابی، از لینک "عیب‌یابی کامل" استفاده کنید');
+    </script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+# Log files
+*.log
+backend/logs/*
+!backend/logs/.gitkeep
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PHP specific
+vendor/
+composer.lock
+
+# Database files (if any)
+*.sqlite
+*.db
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Cache directories
+cache/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+
+# Configuration files with sensitive data
+config/local.php
+config/production.php
+
+# Upload directories (if any)
+uploads/
+files/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+
+# Build directories
+build/
+dist/

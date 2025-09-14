@@ -1,0 +1,40 @@
+/* آیکون‌های رنگی DataSave - نسخه ساده و تمیز */
+
+/* تنظیمات آیکون‌ها */
+.fas, .far, .fab {
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji' !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    display: inline-block !important;
+    opacity: 0.9;
+    transition: all 0.2s ease;
+}
+
+.fas:hover, .far:hover, .fab:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* آیکون‌های رنگی و زیبا */
+.fa-database::before { content: "📋" !important; }
+.fa-bars::before { content: "☰" !important; }
+.fa-search::before { content: "🔍" !important; }
+.fa-bell::before { content: "🔔" !important; }
+.fa-envelope::before { content: "✉️" !important; }
+.fa-cog::before { content: "⚙️" !important; }
+.fa-moon::before { content: "🌙" !important; }
+.fa-sun::before { content: "☀️" !important; }
+.fa-home::before { content: "🏠" !important; }
+.fa-users::before { content: "👥" !important; }
+.fa-wpforms::before { content: "📋" !important; }
+.fa-user::before { content: "👤" !important; }
+.fa-chart-line::before { content: "📈" !important; }
+.fa-eye::before { content: "👁️" !important; }
+.fa-dollar-sign::before { content: "💰" !important; }
+.fa-arrow-up::before { content: "⬆️" !important; }
+.fa-chart-area::before { content: "📉" !important; }
+
+/* انیمیشن کلیک */
+.fas:active, .far:active, .fab:active {
+    transform: scale(0.95);
+}

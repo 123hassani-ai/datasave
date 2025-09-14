@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Data Management Module</title>
+</head>
+<body>
+    <h1>تست ماژول مدیریت داده‌ها</h1>
+    <div id="result"></div>
+
+    <script type="module">
+        try {
+            console.log('Loading module...');
+            const module = await import('./assets/js/admin/modules/data-management.js');
+            console.log('Module loaded:', module);
+            console.log('Module default:', module.default);
+            console.log('loadContent function:', module.default.loadContent);
+            
+            if (typeof module.default.loadContent === 'function') {
+                const content = await module.default.loadContent();
+                document.getElementById('result').innerHTML = '<p style="color: green;">✅ Module loaded successfully!</p>';
+                console.log('Content loaded successfully:', content.substring(0, 100) + '...');
+            } else {
+                document.getElementById('result').innerHTML = '<p style="color: red;">❌ loadContent is not a function</p>';
+                console.error('loadContent is not a function:', typeof module.default.loadContent);
+            }
+        } catch (error) {
+            console.error('Error loading module:', error);
+            document.getElementById('result').innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+        }
+    </script>
+</body>
+</html>

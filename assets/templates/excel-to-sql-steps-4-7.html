@@ -1,0 +1,237 @@
+                <!-- Step 4: تحلیل اولیه و خلاصه محتوا -->
+                <div class="dm-timeline-step" id="excel2sql-step-4" data-step="4">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تحلیل اولیه</h4>
+                                <p class="dm-step-subtitle">خلاصه‌ای از محتوای فایل</p>
+                            </div>
+                            <span class="dm-step-status pending">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-analysis-header">
+                                <h5>تحلیل ساختاری داده‌ها</h5>
+                            </div>
+                            
+                            <div class="dm-analysis-content">
+                                <p>سیستم در حال تحلیل داده‌های شما و شناسایی ساختار آن‌هاست...</p>
+                                
+                                <div class="dm-sheet-preview">
+                                    <div class="dm-sheet-header">
+                                        <h6>پیش‌نمایش داده‌ها</h6>
+                                    </div>
+                                    <div class="dm-sheet-columns" id="e2s-column-preview">
+                                        <!-- Column previews will be added here -->
+                                    </div>
+                                </div>
+                                
+                                <div class="dm-analysis-section">
+                                    <h6>نتایج تحلیل</h6>
+                                    <ul class="dm-analysis-list" id="e2s-analysis-results">
+                                        <!-- Analysis results will be added here -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-prev-step-4">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="e2s-next-step-4">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 5: پیشنهاد هوش مصنوعی -->
+                <div class="dm-timeline-step" id="excel2sql-step-5" data-step="5">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پیشنهاد هوش مصنوعی</h4>
+                                <p class="dm-step-subtitle">نام و ساختار دیتابیس پیشنهادی</p>
+                            </div>
+                            <span class="dm-step-status pending">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-ai-suggestion">
+                                <div class="dm-ai-header">
+                                    <div class="dm-ai-avatar">
+                                        <i class="fas fa-robot"></i>
+                                    </div>
+                                    <div class="dm-ai-title">
+                                        <h5>پیشنهاد هوش مصنوعی</h5>
+                                        <span>براساس تحلیل داده‌های شما</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="dm-ai-message" id="e2s-ai-suggestion">
+                                    <!-- AI message will be added here -->
+                                </div>
+                                
+                                <div class="dm-form-group">
+                                    <label class="dm-form-label">نام پیشنهادی دیتابیس</label>
+                                    <input type="text" class="dm-form-control" id="e2s-db-name" placeholder="نام دیتابیس را وارد کنید">
+                                </div>
+                                
+                                <div class="dm-form-group">
+                                    <label class="dm-form-label">توضیحات دیتابیس</label>
+                                    <textarea class="dm-form-control" id="e2s-db-description" rows="3" placeholder="توضیحات دیتابیس را وارد کنید"></textarea>
+                                </div>
+                                
+                                <div class="dm-chat-interface">
+                                    <div class="dm-chat-messages" id="e2s-chat-messages">
+                                        <!-- Chat messages will appear here -->
+                                    </div>
+                                    <div class="dm-chat-input">
+                                        <input type="text" class="dm-form-control" id="e2s-chat-input" placeholder="سوال یا دستور خود را وارد کنید...">
+                                        <button class="dm-btn primary" id="e2s-send-chat">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-prev-step-5">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="e2s-next-step-5">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 6: لیست فیلدهای پیشنهادی -->
+                <div class="dm-timeline-step" id="excel2sql-step-6" data-step="6">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">فیلدهای پیشنهادی</h4>
+                                <p class="dm-step-subtitle">مقایسه و ویرایش فیلدهای دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status pending">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-fields-comparison">
+                                <div class="dm-fields-header">
+                                    <div class="dm-fields-title">
+                                        <h5>مقایسه فیلدهای اکسل با فیلدهای پیشنهادی دیتابیس</h5>
+                                        <p>شما می‌توانید نام فیلدها و نوع داده‌ها را ویرایش کنید.</p>
+                                    </div>
+                                    <div class="dm-fields-actions">
+                                        <button class="dm-btn secondary sm" id="e2s-optimize-fields">
+                                            <i class="fas fa-magic"></i>
+                                            بهینه‌سازی خودکار
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="dm-fields-table-wrapper">
+                                    <table class="dm-fields-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="5%">#</th>
+                                                <th width="25%">نام ستون اکسل</th>
+                                                <th width="10%">نوع داده اکسل</th>
+                                                <th width="25%">نام فیلد پیشنهادی</th>
+                                                <th width="15%">نوع داده SQL</th>
+                                                <th width="10%">کلید</th>
+                                                <th width="10%">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="e2s-fields-mapping">
+                                            <!-- Field mapping rows will be added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="dm-chat-interface small">
+                                    <div class="dm-chat-messages" id="e2s-field-chat-messages">
+                                        <!-- Field-specific chat messages will appear here -->
+                                    </div>
+                                    <div class="dm-chat-input">
+                                        <input type="text" class="dm-form-control" id="e2s-field-chat-input" placeholder="برای راهنمایی در مورد فیلدها، سوال خود را بپرسید...">
+                                        <button class="dm-btn primary" id="e2s-field-send-chat">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-prev-step-6">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="e2s-next-step-6">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 7: تایید تولید کوئری -->
+                <div class="dm-timeline-step" id="excel2sql-step-7" data-step="7">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تأیید کوئری SQL</h4>
+                                <p class="dm-step-subtitle">بررسی و تأیید کوئری ایجاد دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status pending">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-code-preview">
+                                <h5>کوئری SQL ایجاد جدول</h5>
+                                <pre id="e2s-sql-query">-- کوئری در حال آماده‌سازی است...</pre>
+                                <div class="dm-code-actions">
+                                    <button class="dm-btn secondary sm" id="e2s-copy-query">
+                                        <i class="fas fa-copy"></i>
+                                        کپی کوئری
+                                    </button>
+                                    <button class="dm-btn secondary sm" id="e2s-edit-query">
+                                        <i class="fas fa-edit"></i>
+                                        ویرایش کوئری
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-query-details">
+                                <h5>توضیحات کوئری</h5>
+                                <div class="dm-query-explanation" id="e2s-query-explanation">
+                                    <!-- Query explanation will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-prev-step-7">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="e2s-execute-query">
+                                <i class="fas fa-play"></i>
+                                اجرای کوئری
+                            </button>
+                        </div>
+                    </div>
+                </div>

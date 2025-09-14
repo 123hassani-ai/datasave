@@ -1,0 +1,105 @@
+/**
+ * فایل CSS فونت وزیرمتن - DataSave
+ * Vazirmatn Persian Font CSS for DataSave Project
+ * 
+ * @description: تعریف کامل فونت وزیرمتن با تمام وزن‌های موجود
+ * @version: 1.0.0
+ * @fonts: Regular, Medium, SemiBold, Bold
+ */
+
+/* وزن عادی - Regular (400) */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('./Vazirmatn-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* وزن متوسط - Medium (500) */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('./Vazirmatn-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* وزن نیمه‌ضخیم - SemiBold (600) */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('./Vazirmatn-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* وزن ضخیم - Bold (700) */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('./Vazirmatn-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* تعریف fallback برای وزن‌های بین‌راه */
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('./Vazirmatn-Regular.woff2') format('woff2');
+    font-weight: 100 399;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Vazirmatn';
+    src: url('./Vazirmatn-Bold.woff2') format('woff2');
+    font-weight: 701 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* کلاس‌های کمکی برای استفاده آسان */
+.vazirmatn-regular {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+    font-weight: 400;
+}
+
+.vazirmatn-medium {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+    font-weight: 500;
+}
+
+.vazirmatn-semibold {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+    font-weight: 600;
+}
+
+.vazirmatn-bold {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+    font-weight: 700;
+}
+
+/* تنظیمات عمومی فونت فارسی */
+.persian-text {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+    direction: rtl;
+    text-align: right;
+}
+
+/* تنظیمات برای عناصر HTML5 */
+html, body {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+}
+
+/* فونت پیش‌فرض برای ورودی‌ها */
+input, textarea, select, button {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+}
+
+/* فونت برای عناوین */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Vazirmatn', 'Tahoma', 'Arial', sans-serif;
+    font-weight: 600;
+}

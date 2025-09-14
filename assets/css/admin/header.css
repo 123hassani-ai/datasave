@@ -1,0 +1,326 @@
+/**
+ * Header Styles for Glassmorphism Admin Dashboard
+ * استایل‌های هدر برای داشبورد مدیریت شیشه‌ای
+ * 
+ * @description: استایل‌های هدر با افکت شیشه‌ای و دکمه toggle
+ * @version: 1.0.0
+ * @author: DataSave Team
+ */
+
+/* === هدر اصلی / Main Header === */
+.admin-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    z-index: var(--z-fixed);
+    
+    /* افکت شیشه‌ای */
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass);
+    
+    /* انیمیشن */
+    transition: all var(--transition-normal);
+}
+
+/* === محتوای هدر / Header Content === */
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    padding: 0 var(--spacing-6);
+    max-width: 100%;
+}
+
+/* === بخش چپ هدر (دکمه toggle و نام برنامه) / Left Section === */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    order: 1;
+}
+
+.sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-lg);
+    box-shadow: var(--shadow-sm);
+    margin-right: var(--spacing-3);
+}
+
+.sidebar-toggle:hover {
+    background: var(--glass-bg-hover);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar-toggle:active {
+    transform: scale(0.98);
+}
+
+.sidebar-toggle i {
+    transition: transform var(--transition-fast);
+}
+
+/* انیمیشن چرخش آیکون toggle */
+.sidebar-collapsed .sidebar-toggle i {
+    transform: rotate(180deg);
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-xl);
+    transition: all var(--transition-fast);
+}
+
+.app-logo:hover {
+    color: var(--primary-color);
+}
+
+.app-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-gradient);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-lg);
+    box-shadow: var(--shadow-md);
+    opacity: 0.9;
+    transition: all var(--transition-fast);
+}
+
+.app-logo-icon:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.app-logo-text {
+    font-family: var(--font-family-base);
+    font-weight: var(--font-weight-bold);
+}
+
+/* === بخش راست هدر (اعلانات و عملیات) / Right Section === */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    order: 2;
+}
+
+/* === نوار جستجو / Search Bar === */
+.header-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    width: 280px;
+    height: 42px;
+    padding: 0 var(--spacing-4) 0 var(--spacing-10);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    color: var(--text-primary);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    background: var(--glass-bg-hover);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.search-icon {
+    position: absolute;
+    right: var(--spacing-4);
+    color: var(--text-tertiary);
+    font-size: var(--font-size-sm);
+    pointer-events: none;
+}
+
+/* === دکمه‌های عمل / Action Buttons === */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.action-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-md);
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.action-btn:hover {
+    background: var(--glass-bg-hover);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    opacity: 1;
+}
+
+/* === نشان اعلان / Notification Badge === */
+.notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    background: var(--error-color);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* === دکمه تغییر تم / Theme Toggle === */
+.theme-toggle {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.theme-toggle:hover {
+    background: var(--glass-bg-hover);
+    color: var(--primary-color);
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 0 var(--spacing-4);
+    }
+    
+    .header-search {
+        display: none;
+    }
+    
+    .search-input {
+        width: 200px;
+    }
+    
+    .app-logo-text {
+        display: none;
+    }
+    
+    .header-actions {
+        gap: var(--spacing-1);
+    }
+    
+    .action-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-content {
+        padding: 0 var(--spacing-3);
+    }
+    
+    .theme-toggle {
+        display: none;
+    }
+    
+    .header-right {
+        gap: var(--spacing-2);
+    }
+}
+
+/* === انیمیشن‌های ویژه / Special Animations === */
+.header-slide-down {
+    animation: slideDown 0.3s ease-out;
+}
+
+.header-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* === حالت‌های خاص / Special States === */
+.header-hidden {
+    transform: translateY(-100%);
+}
+
+.header-floating {
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur-strong);
+    margin: var(--spacing-4);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+}
+
+/* === پشتیبانی از RTL / RTL Support === */
+/* تمام قوانین RTL به صورت پیش‌فرض اعمال شده */
+
+/* تنظیمات responsive برای RTL */
+[dir="rtl"] .header-content {
+    direction: rtl;
+}
+
+[dir="rtl"] .notification-badge {
+    right: -2px;
+    left: auto;
+}

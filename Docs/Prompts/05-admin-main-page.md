@@ -1,0 +1,36 @@
+پرامپت طراحی منوی مدیریت ادمین با سه بخش هدر و سایدبار و محتوای اصلی
+
+پرامپت به فارسی :
+
+شما یک توسعه‌دهنده حرفه‌ای رابط کاربری هستید که در طراحی داشبوردهای وب با استفاده از HTML، CSS و JavaScript خالص (بدون فریم‌ورک‌هایی مثل React مگر اینکه مشخص شود) تخصص دارید. من نیاز به طراحی و پیاده‌سازی یک صفحه اصلی داشبورد مدیریتی ادمین دارم که برای دسکتاپ بهینه شده باشد اما کاملاً پاسخ‌گو (responsive) باشد تا روی دستگاه‌های موبایل نیز قابل استفاده باشد (با اولویت دسکتاپ). این صفحه از سه بخش مجزای ماژولار تشکیل شده است: هدر (در بالا)، سایدبار (در سمت راست، با پشتیبانی از RTL برای فارسی) و بخش محتوای اصلی (زیر هدر و کنار سایدبار). هر بخش باید به‌صورت ماژول مستقل (مثلاً توابع یا فایل‌های جداگانه برای استفاده مجدد آسان) باشد، با گوشه‌های گرد (border-radius)، سایه‌های ظریف برای ظاهری زیبا و مدرن (مثلاً با box-shadow برای عمق) و افکت شیشه‌ای (glassmorphism) برای منوها جهت ایجاد ظاهری حرفه‌ای و شیک (پس‌زمینه نیمه‌شفاف با افکت بلور).
+
+نیازمندی‌های کلیدی صفحه:
+- هدر: ثابت در بالای صفحه، با عرض کامل، شامل یک دکمه برای جمع کردن/باز کردن سایدبار (نمایش فقط آیکون‌ها در حالت جمع‌شده). انیمیشن‌های روان (مثلاً تغییر عرض با transition در CSS، 0.3 ثانیه با ease-in-out). همچنین، نام یا لوگوی برنامه در سمت چپ نمایش داده شود، و شاید اعلان‌های کاربر یا نوار جستجو در سمت راست برای عملکرد بیشتر اضافه شود.
+- سایدبار: ثابت در سمت راست (با پشتیبانی از RTL)، با لوگوی برنامه در بالا و منوها در زیر آن. منوها باید آیکون‌های مرتبط داشته باشند (از Font Awesome یا placeholderهای مشابه استفاده کنید). در انتهای سایدبار، یک کادر پروفایل با گوشه‌های گرد شامل یک آواتار دایره‌ای و نام کاربر در کنار آن. با کلیک روی پروفایل، یک منوی کشویی ظریف و مینیمال با انیمیشن روان (مثل fade-in/slide-down) باز شود که شامل گزینه‌های: "تنظیمات پروفایل کاربر"، "نمایش صفحه کاربر"، "خروج" باشد.
+- محتوای اصلی: ناحیه قابل اسکرول زیر هدر و کنار سایدبار، که محتوا بر اساس انتخاب منو تغییر می‌کند (از JS برای مدیریت تغییر محتوا/روتینگ استفاده کنید، مثلاً نمایش محتوای placeholder برای هر منو).
+- کلیات: همه بخش‌ها با فاصله/حاشیه از هم جدا شوند. هدر و سایدبار ثابت (position: fixed) و محتوا به‌صورت دینامیک تنظیم شود. پاسخ‌گویی: سایدبار به‌صورت خودکار در صفحه‌نمایش‌های کوچک (مثلاً عرض < 768px) جمع شود و در صفحه‌نمایش‌های بزرگ باز شود. دکمه تغییر حالت در هدر این رفتار را به‌صورت دستی کنترل کند.
+- استایل: طراحی حرفه‌ای و زیبا با گوشه‌های گرد (مثل 8px)، سایه‌های نرم (box-shadow: 0 4px 6px rgba(0,0,0,0.1))، منوهای شیشه‌ای (background: rgba(255,255,255,0.1) با backdrop-filter: blur(10px)). پشتیبانی از تغییر تم روشن/تاریک (با متغیرهای CSS). استفاده از متن فارسی در جاهای مناسب (مثل برچسب‌های منو).
+- لیست منوها (پیش‌فرض + اضافات خلاقانه): داشبورد (با آیکون خانه)، مدیریت کاربران (با آیکون کاربران)، مدیریت فرم‌ها (با آیکون فرم)، مشتریان (با آیکون مشتری)، گزارشات (با آیکون نمودار)، تنظیمات (با آیکون چرخ‌دنده)، پشتیبانی (با آیکون کمک - برای تکمیل عملکرد)، تحلیل داده‌ها (با آیکون گراف - برای بهبود قابلیت‌های مدیریتی).
+- ماژولار بودن: کد را در فایل‌ها/بخش‌های جداگانه ارائه دهید: header.js/html/css، sidebar.js/html/css، content.js/html/css و یک index.html اصلی برای کنار هم قرار دادن آن‌ها. از JS برای تعاملات (مثل تغییر حالت سایدبار، باز کردن منوی پروفایل، تغییر محتوا با کلیک منو) استفاده کنید.
+- پاسخ‌گویی: از media queries برای موبایل استفاده کنید (مثلاً چیدمان عمودی بخش‌ها در صفحه‌نمایش کوچک، مخفی/نمایش عناصر). عملکرد روان بدون تأخیر در انیمیشن‌ها تضمین شود.
+- اضافات: شامل placeholder برای محتوا (مثلاً داشبورد با کارت‌های آماری) و آماده برای RTL در برنامه‌های فارسی.
+
+خروجی کد کامل: ساختار HTML، استایل CSS، منطق و انیمیشن‌های JS. کد باید آماده تولید، بدون باگ و شامل کامنت‌هایی برای وضوح باشد.
+
+
+پرامپت :
+
+You are an expert front-end developer specializing in responsive web dashboards using HTML, CSS, and vanilla JavaScript (no frameworks like React unless specified). I need you to design and implement a modular admin dashboard main page, optimized for desktop but fully responsive for mobile devices (with desktop priority). The layout consists of three separate modular sections: Header (top), Sidebar (right side, RTL-friendly for Persian), and Main Content area (below header and next to sidebar). Each section should be independent modules (e.g., separate JS functions or files for easy reuse), with rounded corners (border-radius), subtle shadows for a beautiful, modern look (e.g., using box-shadow for depth), and a glassmorphism effect on menus for a professional, sleek appearance (semi-transparent backgrounds with blur).
+
+Key layout requirements:
+- Header: Fixed at the top, full-width, containing a toggle button to collapse/expand the sidebar (show only icons when collapsed). Include smooth animations (e.g., CSS transitions for width change, 0.3s ease-in-out). Also, display the app name or logo on the left, and perhaps user notifications or search bar on the right for added functionality.
+- Sidebar: Fixed on the right (RTL support), with logo at the top, followed by menu items below. Menus should have associated icons (use Font Awesome or similar placeholders). At the bottom, a rounded profile box with a circular avatar, user name next to it. Clicking the profile opens a minimal, elegant dropdown menu with smooth animation (fade-in/slide-down) containing options: "تنظیمات پروفایل کاربر" (User Profile Settings), "نمایش صفحه کاربر" (View User Page), "خروج" (Logout).
+- Main Content: Scrollable area below header and beside sidebar, where content changes based on menu selection (use JS to handle routing/switching, e.g., show placeholder content for each menu).
+- Overall: All sections separated visually with margins/gaps. Header and sidebar fixed (position: fixed), content adjusts dynamically. Responsive behavior: Automatically collapse sidebar on smaller screens (e.g., < 768px width) and expand on larger ones. Toggle button in header overrides this for manual control.
+- Styling: Professional, beautiful design with rounded corners (e.g., 8px), soft shadows (box-shadow: 0 4px 6px rgba(0,0,0,0.1)), glass-like menus (background: rgba(255,255,255,0.1) with backdrop-filter: blur(10px)). Support light/dark theme toggle (via CSS variables). Use Persian text where appropriate (e.g., menu labels in Farsi).
+- Menu list (default + creative additions): داشبورد (Dashboard with home icon), مدیریت کاربران (User Management with users icon), مدیریت فرم‌ها (Form Management with form icon), مشتریان (Customers with client icon), گزارشات (Reports with chart icon), تنظیمات (Settings with gear icon), پشتیبانی (Support with help icon - added for completeness), تحلیل داده‌ها (Data Analytics with graph icon - added for enhanced admin features).
+- Modularity: Provide code in separate files/sections: header.js/html/css, sidebar.js/html/css, content.js/html/css, and a main index.html to assemble them. Use JS for interactions (e.g., toggle sidebar, open profile menu, change content on menu click).
+- Responsiveness: Use media queries for mobile (e.g., stack sections vertically on small screens, hide/show elements). Ensure smooth performance with no lag in animations.
+- Extras: Include placeholders for content (e.g., dashboard shows stats cards), and make it RTL-ready for Persian apps.
+
+Output the complete code: HTML structure, CSS for styling, JS for logic and animations. Make it production-ready, bug-free, and include comments in code for clarity.

@@ -1,0 +1,89 @@
+/**
+ * فایل CSS اختصاصی برای تب‌های مدیریت داده‌ها
+ * با اولویت بالا برای غلبه بر استایل‌های دیگر
+ */
+
+/* استایل‌های نویگیشن تب‌ها */
+.dm-tab-navigation {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    direction: rtl !important;
+    overflow-x: auto !important;
+    background: #2b3150 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    padding: 6px 10px !important;
+    margin-bottom: 20px !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 5px !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* استایل‌های تب‌ها */
+.dm-tab {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 10px 20px !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    background: transparent !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    min-width: auto !important;
+    flex-shrink: 0 !important;
+    border: none !important;
+    gap: 8px !important;
+    outline: none !important;
+    margin: 0 !important;
+}
+
+.dm-tab:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dm-tab i {
+    font-size: 16px !important;
+    margin-left: 4px !important;
+}
+
+/* استایل تب فعال */
+.dm-tab.active {
+    background: #6772e5 !important;
+    color: white !important;
+    box-shadow: 0 4px 12px rgba(103, 114, 229, 0.3) !important;
+    font-weight: 600 !important;
+}
+
+/* استایل محتوای تب‌ها */
+.dm-tab-contents {
+    position: relative !important;
+}
+
+.dm-tab-content {
+    display: none !important;
+    padding: 15px !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dm-tab-content.active {
+    display: block !important;
+    animation: fadeIn 0.3s ease !important;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست API تنظیمات - DataSave</title>
+    <style>
+        body { font-family: Tahoma, Arial; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .btn:hover { background: #005a87; }
+        .result { background: #f9f9f9; padding: 10px; margin: 10px 0; border-radius: 3px; font-family: monospace; white-space: pre-wrap; }
+        .error { background: #ffe6e6; border: 1px solid #ffcccc; }
+        .success { background: #e6ffe6; border: 1px solid #ccffcc; }
+    </style>
+</head>
+<body>
+    <h1>تست API تنظیمات SMS - DataSave</h1>
+    
+    <div class="section">
+        <h3>1. بارگذاری تنظیمات</h3>
+        <button class="btn" onclick="loadSettings()">بارگذاری تنظیمات</button>
+        <div id="loadResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>2. ذخیره تنظیمات تست</h3>
+        <button class="btn" onclick="saveTestSettings()">ذخیره تنظیمات تست</button>
+        <div id="saveResult" class="result"></div>
+    </div>
+    
+    <div class="section">
+        <h3>3. تست کامل</h3>
+        <button class="btn" onclick="runFullTest()">اجرای تست کامل</button>
+        <div id="fullTestResult" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/datasave/backend/api/v1';
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                const data = await response.json();
+                return { ok: response.ok, status: response.status, data };
+            } catch (error) {
+                return { ok: false, error: error.message };
+            }
+        }
+
+        async function loadSettings() {
+            const result = document.getElementById('loadResult');
+            result.textContent = 'در حال بارگذاری...';
+            
+            const response = await makeRequest(`${API_BASE}/settings.php`);
+            
+            if (response.ok) {
+                result.className = 'result success';
+                result.textContent = 'موفق!\n\n' + JSON.stringify(response.data, null, 2);
+            } else {
+                result.className = 'result error';
+                result.textContent = 'خطا!\n\n' + JSON.stringify(response, null, 2);
+            }
+        }
+
+        async function saveTestSettings() {
+            const result = document.getElementById('saveResult');
+            result.textContent = 'در حال ذخیره...';
+            
+            const testSettings = {
+                action: 'save',
+                type: 'sms_connection',
+                settings: {
+                    sms_username: 'test_user',
+                    sms_password: 'test_pass',
+                    sms_panel_number: '123456789',
+                    sms_enabled: '1',
+                    otp_length: '6',
+                    otp_expiry_minutes: '10',
+                    otp_message_template: 'کد تایید شما: {code} - معتبر تا 10 دقیقه'
+                }
+            };
+            
+            const response = await makeRequest(`${API_BASE}/settings.php`, {
+                method: 'POST',
+                body: JSON.stringify(testSettings)
+            });
+            
+            if (response.ok && response.data.success) {
+                result.className = 'result success';
+                result.textContent = 'موفق!\n\n' + JSON.stringify(response.data, null, 2);
+            } else {
+                result.className = 'result error';
+                result.textContent = 'خطا!\n\n' + JSON.stringify(response, null, 2);
+            }
+        }
+
+        async function runFullTest() {
+            const result = document.getElementById('fullTestResult');
+            result.textContent = 'شروع تست کامل...\n';
+            result.className = 'result';
+            
+            // 1. بارگذاری تنظیمات اولیه
+            result.textContent += '\n1. بارگذاری تنظیمات اولیه...';
+            const loadResponse1 = await makeRequest(`${API_BASE}/settings.php`);
+            
+            if (loadResponse1.ok) {
+                result.textContent += ' ✅';
+            } else {
+                result.textContent += ' ❌ ' + JSON.stringify(loadResponse1.error);
+                result.className = 'result error';
+                return;
+            }
+            
+            // 2. ذخیره تنظیمات جدید
+            result.textContent += '\n2. ذخیره تنظیمات جدید...';
+            const saveResponse = await saveTestSettings();
+            
+            // Wait a moment
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // 3. بارگذاری مجدد برای تایید
+            result.textContent += '\n3. بارگذاری مجدد برای تایید...';
+            const loadResponse2 = await makeRequest(`${API_BASE}/settings.php`);
+            
+            if (loadResponse2.ok && loadResponse2.data.success) {
+                result.textContent += ' ✅';
+                result.textContent += '\n\n✅ تست کامل موفقیت‌آمیز بود!';
+                result.textContent += '\n\nتنظیمات نهایی:\n' + JSON.stringify(loadResponse2.data.data, null, 2);
+                result.className = 'result success';
+            } else {
+                result.textContent += ' ❌';
+                result.className = 'result error';
+            }
+        }
+
+        // بارگذاری خودکار هنگام بارگذاری صفحه
+        window.addEventListener('load', loadSettings);
+    </script>
+</body>
+</html>

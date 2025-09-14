@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست تنظیمات Endpoint</title>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+            direction: rtl;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover { background: #0056b3; }
+        .result { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 5px; 
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تست کامل تنظیمات SMS Endpoint</h1>
+        
+        <div class="test-section">
+            <h3>1. بررسی تنظیمات فعلی</h3>
+            <button class="btn" onclick="loadCurrentSettings()">بارگذاری تنظیمات فعلی</button>
+            <div id="current-settings" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. تست ذخیره endpoint جدید</h3>
+            <input type="url" id="test-api-endpoint" placeholder="API Endpoint" style="width: 300px; padding: 8px; margin: 5px;">
+            <input type="url" id="test-webservice-endpoint" placeholder="WebService Endpoint" style="width: 300px; padding: 8px; margin: 5px;">
+            <br>
+            <button class="btn" onclick="testSaveEndpoints()">ذخیره تنظیمات تست</button>
+            <div id="save-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. تست بارگذاری مجدد</h3>
+            <button class="btn" onclick="testReloadAfterSave()">بارگذاری مجدد پس از ذخیره</button>
+            <div id="reload-result" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. بازگردانی مقادیر پیش‌فرض</h3>
+            <button class="btn" onclick="restoreDefaults()">بازگردانی پیش‌فرض</button>
+            <div id="restore-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        async function loadCurrentSettings() {
+            try {
+                const response = await fetch('proxy-settings.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'get' })
+                });
+                
+                const data = await response.json();
+                const resultDiv = document.getElementById('current-settings');
+                
+                if (data.success) {
+                    let html = '<div class="success"><h4>تنظیمات فعلی:</h4>';
+                    
+                    // نمایش endpoint ها
+                    const apiEndpoint = data.data.api_endpoint;
+                    const webserviceEndpoint = data.data.webservice_endpoint;
+                    
+                    html += `<p><strong>API Endpoint:</strong> ${apiEndpoint ? apiEndpoint.value : 'تنظیم نشده'}</p>`;
+                    html += `<p><strong>WebService Endpoint:</strong> ${webserviceEndpoint ? webserviceEndpoint.value : 'تنظیم نشده'}</p>`;
+                    
+                    // سایر تنظیمات
+                    html += '<hr><h5>سایر تنظیمات:</h5>';
+                    Object.keys(data.data).forEach(key => {
+                        if (key !== 'api_endpoint' && key !== 'webservice_endpoint') {
+                            html += `<p><strong>${key}:</strong> ${data.data[key].value || 'خالی'}</p>`;
+                        }
+                    });
+                    
+                    html += '</div>';
+                    resultDiv.innerHTML = html;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">خطا در بارگذاری: ${data.message}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('current-settings').innerHTML = `<div class="error">خطای شبکه: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSaveEndpoints() {
+            const apiEndpoint = document.getElementById('test-api-endpoint').value || 'https://test-api.example.com';
+            const webserviceEndpoint = document.getElementById('test-webservice-endpoint').value || 'https://test-webservice.example.com';
+            
+            try {
+                const response = await fetch('proxy-settings.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'save',
+                        settings: {
+                            api_endpoint: apiEndpoint,
+                            webservice_endpoint: webserviceEndpoint
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                const resultDiv = document.getElementById('save-result');
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ تنظیمات جدید ذخیره شد:<br>
+                        API: ${apiEndpoint}<br>
+                        WebService: ${webserviceEndpoint}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ خطا در ذخیره: ${data.message}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('save-result').innerHTML = `<div class="error">خطای شبکه: ${error.message}</div>`;
+            }
+        }
+        
+        async function testReloadAfterSave() {
+            // تست بارگذاری مجدد
+            await loadCurrentSettings();
+            document.getElementById('reload-result').innerHTML = '<div class="info">✅ بارگذاری مجدد انجام شد - نتایج در بالا قابل مشاهده است</div>';
+        }
+        
+        async function restoreDefaults() {
+            try {
+                const response = await fetch('proxy-settings.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'save',
+                        settings: {
+                            api_endpoint: 'https://0098sms.com/sendsmslink.aspx',
+                            webservice_endpoint: 'https://webservice.0098sms.com/service.asmx'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                const resultDiv = document.getElementById('restore-result');
+                
+                if (data.success) {
+                    resultDiv.innerHTML = '<div class="success">✅ مقادیر پیش‌فرض بازگردانی شد</div>';
+                    // بارگذاری مجدد تنظیمات
+                    await loadCurrentSettings();
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ خطا در بازگردانی: ${data.message}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('restore-result').innerHTML = `<div class="error">خطای شبکه: ${error.message}</div>`;
+            }
+        }
+        
+        // بارگذاری تنظیمات در شروع
+        window.onload = function() {
+            loadCurrentSettings();
+        };
+    </script>
+</body>
+</html>

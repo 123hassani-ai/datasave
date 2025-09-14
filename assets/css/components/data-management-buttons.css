@@ -1,0 +1,259 @@
+/**
+ * Data Management Buttons Component
+ * استایل‌های مربوط به دکمه‌های مدیریت داده
+ */
+
+/* === Button Styles === */
+.dm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.675rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--dm-radius);
+  border: 1px solid transparent;
+  transition: var(--dm-transition);
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1.5;
+  white-space: nowrap;
+  box-shadow: var(--dm-shadow-sm);
+}
+
+.dm-btn:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: var(--dm-shadow-md);
+}
+
+.dm-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--dm-shadow-sm);
+}
+
+/* Button Variants */
+.dm-btn.primary {
+  background: var(--dm-primary);
+  color: white;
+  border-color: var(--dm-primary);
+}
+
+.dm-btn.primary:hover {
+  background: var(--dm-primary-hover, var(--dm-primary-dark));
+  border-color: var(--dm-primary-hover, var(--dm-primary-dark));
+}
+
+.dm-btn.secondary {
+  background: var(--dm-card-bg);
+  color: var(--dm-text-secondary);
+  border-color: var(--dm-border-color);
+}
+
+.dm-btn.secondary:hover {
+  background: var(--dm-hover-bg, var(--dm-gray-50));
+  border-color: var(--dm-gray-400);
+  color: var(--dm-text-primary);
+}
+
+.dm-btn.success {
+  background: var(--dm-success);
+  color: white;
+  border-color: var(--dm-success);
+}
+
+.dm-btn.success:hover {
+  background: #0CA678;
+  border-color: #0CA678;
+}
+
+.dm-btn.warning {
+  background: var(--dm-warning);
+  color: white;
+  border-color: var(--dm-warning);
+}
+
+.dm-btn.warning:hover {
+  background: #D97706;
+  border-color: #D97706;
+}
+
+.dm-btn.danger {
+  background: var(--dm-danger);
+  color: white;
+  border-color: var(--dm-danger);
+}
+
+.dm-btn.danger:hover {
+  background: #DC2626;
+  border-color: #DC2626;
+}
+
+.dm-btn.info {
+  background: #0EA5E9;
+  color: white;
+  border-color: #0EA5E9;
+}
+
+.dm-btn.info:hover {
+  background: #0284C7;
+  border-color: #0284C7;
+}
+
+/* Outline Buttons */
+.dm-btn.outline-primary {
+  background: transparent;
+  color: var(--dm-primary);
+  border-color: var(--dm-primary);
+}
+
+.dm-btn.outline-primary:hover {
+  background: var(--dm-primary-light, rgba(var(--dm-primary-rgb), 0.1));
+  color: var(--dm-primary-dark);
+}
+
+.dm-btn.outline-secondary {
+  background: transparent;
+  color: var(--dm-text-secondary);
+  border-color: var(--dm-border-color);
+}
+
+.dm-btn.outline-secondary:hover {
+  background: var(--dm-hover-bg, var(--dm-gray-50));
+  color: var(--dm-text-primary);
+}
+
+.dm-btn.outline-success {
+  background: transparent;
+  color: var(--dm-success);
+  border-color: var(--dm-success);
+}
+
+.dm-btn.outline-success:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.dm-btn.outline-danger {
+  background: transparent;
+  color: var(--dm-danger);
+  border-color: var(--dm-danger);
+}
+
+.dm-btn.outline-danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #DC2626;
+}
+
+/* Button Sizes */
+.dm-btn.sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.dm-btn.lg {
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+}
+
+.dm-btn.xl {
+  padding: 1rem 1.75rem;
+  font-size: 1.1rem;
+  border-radius: var(--dm-radius-lg);
+}
+
+/* Icon Button */
+.dm-btn.icon-only {
+  padding: 0.675rem;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.dm-btn.icon-only.sm {
+  padding: 0.375rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.dm-btn.icon-only.lg {
+  padding: 0.875rem;
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Button Group */
+.dm-btn-group {
+  display: inline-flex;
+  border-radius: var(--dm-radius);
+  overflow: hidden;
+}
+
+.dm-btn-group .dm-btn {
+  border-radius: 0;
+  margin: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+.dm-btn-group .dm-btn:not(:last-child) {
+  border-right: none;
+}
+
+.dm-btn-group .dm-btn:first-child {
+  border-radius: var(--dm-radius) 0 0 var(--dm-radius);
+}
+
+.dm-btn-group .dm-btn:last-child {
+  border-radius: 0 var(--dm-radius) var(--dm-radius) 0;
+}
+
+.dm-btn-group .dm-btn:hover {
+  z-index: 1;
+}
+
+/* Block Button */
+.dm-btn.block {
+  display: flex;
+  width: 100%;
+}
+
+/* Disabled Button */
+.dm-btn.disabled,
+.dm-btn:disabled {
+  opacity: 0.65;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+/* Loading Button */
+.dm-btn.loading {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.dm-btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  top: calc(50% - 0.5rem);
+  left: calc(50% - 0.5rem);
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+}
+
+.dm-btn.outline-primary.loading::after,
+.dm-btn.outline-secondary.loading::after,
+.dm-btn.outline-success.loading::after,
+.dm-btn.outline-danger.loading::after {
+  border: 2px solid rgba(var(--dm-primary-rgb), 0.3);
+  border-top-color: var(--dm-primary);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

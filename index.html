@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="داشبورد مدیریت مدرن DataSave با افکت شیشه‌ای">
+    <meta name="author" content="DataSave Team">
+    <title>داشبورد مدیریت - DataSave</title>
+    
+    <!-- فونت وزیرمتن -->
+    <link href="assets/fonts/vazirmatn.css" rel="stylesheet">
+    
+    <!-- آیکون‌های مینیمال جایگزین -->
+    <link rel="stylesheet" href="assets/fonts/minimal-icons.css">
+    
+    <!-- استایل‌های ماژولار -->
+    <link href="assets/css/admin/variables.css" rel="stylesheet">
+    <link href="assets/css/admin/header.css" rel="stylesheet">
+    <link href="assets/css/admin/sidebar.css" rel="stylesheet">
+    <link href="assets/css/admin/content.css" rel="stylesheet">
+    <link href="assets/css/admin/modules/data-management.css" rel="stylesheet">
+    
+    <!-- استایل‌های اضافی -->
+    <style>
+        /* بهینه‌سازی بارگذاری */
+        body {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        
+        body.loaded {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* لودینگ اولیه */
+        .initial-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction:center;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .initial-loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            margin-bottom: var(--spacing-6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .loading-title {
+            font-size: var(--font-size-2xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-3);
+        }
+        
+        .loading-subtitle {
+            font-size: var(--font-size-md);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: var(--glass-bg);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: var(--radius-full);
+            width: 0%;
+            animation: loading 3s ease-in-out;
+        }
+        
+        @keyframes loading {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        /* پشتیبانی از backdrop-filter */
+        @supports not (backdrop-filter: blur(10px)) {
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.95) !important;
+            }
+            
+            [data-theme="dark"] .glass-effect {
+                background: rgba(15, 23, 42, 0.95) !important;
+            }
+        }
+        
+        /* بهینه‌سازی عملکرد */
+        * {
+            will-change: auto;
+        }
+        
+        .admin-header,
+        .admin-sidebar,
+        .admin-content {
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+    <!-- لودینگ اولیه -->
+    <div class="initial-loading" id="initialLoading">
+        <div class="loading-logo">
+            <i class="fas fa-database"></i>
+        </div>
+        <h1 class="loading-title">DataSave</h1>
+        <p class="loading-subtitle">در حال بارگذاری داشبورد مدیریت...</p>
+        <div class="loading-progress">
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+
+    <!-- محتوای اصلی برنامه -->
+    <!-- هدر، سایدبار و محتوا به صورت خودکار توسط JavaScript ایجاد می‌شوند -->
+
+    <!-- اسکریپت فونت خودکار -->
+    <script src="assets/js/modules/vazirmatn-auto.js"></script>
+    
+    <!-- Logger ساده برای persian-calendar.js -->
+    <script>
+        const Logger = {
+            trace: (message) => {
+                console.log('TRACE:', message);
+                return () => {}; // exitTrace function
+            },
+            debug: (message, data) => console.log('DEBUG:', message, data),
+            error: (message, error, data) => console.error('ERROR:', message, error, data)
+        };
+    </script>
+    
+    <!-- ماژول‌های کاربردی -->
+    <script src="assets/js/modules/numberUtils.js"></script>
+
+    
+    <!-- ماژول‌های اصلی - استفاده از ES Modules -->
+    <script type="module">
+        import AdminMain from './assets/js/admin/admin-main.js';
+        import RouterModule from './assets/js/admin/router.js';
+        import ContentModule from './assets/js/admin/content.js';
+        
+        // شروع برنامه پس از بارگذاری صفحه
+        window.addEventListener('DOMContentLoaded', () => {
+            // ماژول‌های سنتی را بارگذاری می‌کنیم
+            const headerScript = document.createElement('script');
+            headerScript.src = 'assets/js/admin/header.js';
+            document.head.appendChild(headerScript);
+            
+            const sidebarScript = document.createElement('script');
+            sidebarScript.src = 'assets/js/admin/sidebar.js';
+            document.head.appendChild(sidebarScript);
+            
+            // ماژول‌های اصلی را مقداردهی می‌کنیم
+            AdminMain.init();
+        });
+        
+        // اتصال به window برای دسترسی از کدهای قدیمی
+        window.RouterModule = RouterModule;
+    </script>
+    
+    <!-- اسکریپت اصلی -->
+    <script>
+        'use strict';
+        
+        /**
+         * مدیریت اصلی داشبورد
+         * Main Dashboard Manager
+         */
+        const DashboardManager = (function() {
+            let modulesLoaded = {
+                header: false,
+                sidebar: false,
+                content: false
+            };
+            
+            /**
+             * مقداردهی اولیه
+             */
+            function init() {
+                console.log('🚀 Starting DataSave Admin Dashboard...');
+                
+                // رویدادهای آماده شدن ماژول‌ها
+                document.addEventListener('headerReady', () => {
+                    modulesLoaded.header = true;
+                    checkAllModulesLoaded();
+                });
+                
+                document.addEventListener('sidebarReady', () => {
+                    modulesLoaded.sidebar = true;
+                    checkAllModulesLoaded();
+                });
+                
+                document.addEventListener('DOMContentLoaded', () => {
+                    modulesLoaded.content = true;
+                    checkAllModulesLoaded();
+                });
+                
+                // تنظیمات اولیه
+                setupGlobalHandlers();
+                setupKeyboardShortcuts();
+                
+                // شروع بارگذاری
+                setTimeout(hideInitialLoading, 2000);
+            }
+            
+            /**
+             * بررسی بارگذاری تمام ماژول‌ها
+             */
+            function checkAllModulesLoaded() {
+                const allLoaded = Object.values(modulesLoaded).every(loaded => loaded);
+                
+                if (allLoaded) {
+                    finishLoading();
+                }
+            }
+            
+            /**
+             * پایان بارگذاری
+             */
+            function finishLoading() {
+                console.log('✅ All modules loaded successfully!');
+                
+                // نمایش body
+                document.body.classList.add('loaded');
+                
+                // حذف لودینگ اولیه
+                setTimeout(hideInitialLoading, 500);
+                
+                // آماده‌سازی نهایی
+                setupFinalConfiguration();
+                
+                console.log('🎉 DataSave Admin Dashboard is ready!');
+            }
+            
+            /**
+             * حذف لودینگ اولیه
+             */
+            function hideInitialLoading() {
+                const loading = document.getElementById('initialLoading');
+                if (loading) {
+                    loading.classList.add('hidden');
+                    setTimeout(() => {
+                        loading.remove();
+                    }, 500);
+                }
+            }
+            
+            /**
+             * تنظیمات کلی
+             */
+            function setupGlobalHandlers() {
+                // مدیریت خطاهای JavaScript
+                window.addEventListener('error', function(event) {
+                    console.error('Global error:', event.error);
+                });
+                
+                // مدیریت تغییر اندازه صفحه
+                let resizeTimeout;
+                window.addEventListener('resize', function() {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        handleResize();
+                    }, 250);
+                });
+                
+                // مدیریت تغییر فوکوس صفحه
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        console.log('Dashboard hidden');
+                    } else {
+                        console.log('Dashboard visible');
+                    }
+                });
+            }
+            
+            /**
+             * کلیدهای میانبر کلی
+             */
+            function setupKeyboardShortcuts() {
+                document.addEventListener('keydown', function(event) {
+                    // Ctrl/Cmd + K: باز کردن جستجو
+                    if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+                        event.preventDefault();
+                        const searchInput = document.querySelector('.search-input');
+                        if (searchInput) {
+                            searchInput.focus();
+                        }
+                    }
+                    
+                    // Ctrl/Cmd + B: toggle سایدبار
+                    if ((event.ctrlKey || event.metaKey) && event.key === 'b') {
+                        event.preventDefault();
+                        if (window.HeaderModule) {
+                            window.HeaderModule.toggle();
+                        }
+                    }
+                    
+                    // Ctrl/Cmd + D: داشبورد
+                    if ((event.ctrlKey || event.metaKey) && event.key === 'd') {
+                        event.preventDefault();
+                        if (window.SidebarModule) {
+                            window.SidebarModule.setActiveMenu('dashboard');
+                        }
+                    }
+                });
+            }
+            
+            /**
+             * مدیریت تغییر اندازه
+             */
+            function handleResize() {
+                const isMobile = window.innerWidth < 768;
+                console.log('Resize detected, mobile:', isMobile);
+                
+                // اطلاع‌رسانی به ماژول‌ها
+                document.dispatchEvent(new CustomEvent('dashboardResize', {
+                    detail: { 
+                        isMobile: isMobile,
+                        width: window.innerWidth,
+                        height: window.innerHeight
+                    }
+                }));
+            }
+            
+            /**
+             * تنظیمات نهایی
+             */
+            function setupFinalConfiguration() {
+                // بررسی پشتیبانی از backdrop-filter
+                const supportsBackdrop = CSS.supports('backdrop-filter', 'blur(10px)');
+                if (!supportsBackdrop) {
+                    console.warn('⚠️ backdrop-filter not supported, using fallback');
+                    document.body.classList.add('no-backdrop-filter');
+                }
+                
+                // بررسی حالت تاریک سیستم
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    console.log('🌙 Dark mode detected');
+                }
+                
+                // تنظیم متا تگ theme-color
+                const themeColor = getComputedStyle(document.documentElement)
+                    .getPropertyValue('--primary-color').trim();
+                
+                let metaTheme = document.querySelector('meta[name="theme-color"]');
+                if (!metaTheme) {
+                    metaTheme = document.createElement('meta');
+                    metaTheme.name = 'theme-color';
+                    document.head.appendChild(metaTheme);
+                }
+                metaTheme.content = themeColor;
+                
+                // ثبت Service Worker (اختیاری)
+                if ('serviceWorker' in navigator) {
+                    console.log('Service Worker supported');
+                }
+            }
+            
+            /**
+             * دریافت اطلاعات dashboard
+             */
+            function getInfo() {
+                return {
+                    version: '1.0.0',
+                    modules: Object.keys(modulesLoaded),
+                    loaded: Object.values(modulesLoaded).every(Boolean),
+                    theme: document.documentElement.getAttribute('data-theme') || 'light',
+                    rtl: document.dir === 'rtl'
+                };
+            }
+            
+            // API عمومی
+            return {
+                init: init,
+                getInfo: getInfo
+            };
+        })();
+        
+        // شروع برنامه
+        DashboardManager.init();
+        
+        // اتصال به window برای دسترسی سراسری
+        window.DashboardManager = DashboardManager;
+        
+        // لاگ شروع
+        console.log('%c🚀 DataSave Admin Dashboard', 'color: #6366f1; font-size: 24px; font-weight: bold;');
+        console.log('%cGlassmorphism Design System v1.0.0', 'color: #64748b; font-size: 14px;');
+        console.log('%c✨ RTL Support • 📱 Responsive • 🎨 Modern UI', 'color: #10b981; font-size: 12px;');
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Modules Test</title>
+</head>
+<body>
+    <h1>تست Admin Modules</h1>
+    <div id="status">در حال بارگذاری...</div>
+    
+    <!-- Core modules -->
+    <script src="assets/js/modules/logging.js"></script>
+    <script src="assets/js/modules/logger-config.js"></script>
+    <script src="assets/js/modules/numberUtils.js"></script>
+    <script src="assets/js/modules/persian-calendar.js"></script>
+    
+    <!-- Admin modules -->
+    <script src="assets/js/admin/safe-logger.js"></script>
+    <script src="assets/js/admin/utils.js"></script>
+    
+    <script>
+        // Wait for Logger to be ready
+        function testAdmin() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // Test Logger directly
+                console.log('Testing Logger methods...');
+                console.log('Logger.debug type:', typeof Logger.debug);
+                console.log('Logger.info type:', typeof Logger.info);
+                console.log('Logger.error type:', typeof Logger.error);
+                
+                // Try calling Logger.debug
+                Logger.debug('✅ Logger.debug direct call works!');
+                statusDiv.innerHTML += '<p style="color: green;">✅ Logger.debug کار کرد</p>';
+                
+                Logger.info('✅ Logger.info direct call works!');
+                statusDiv.innerHTML += '<p style="color: green;">✅ Logger.info کار کرد</p>';
+                
+                Logger.error('✅ Logger.error direct call works!');  
+                statusDiv.innerHTML += '<p style="color: green;">✅ Logger.error کار کرد</p>';
+                
+                statusDiv.innerHTML += '<p style="color: blue;">🎉 همه تست‌ها موفق!</p>';
+                
+            } catch (error) {
+                console.error('Test failed:', error);
+                statusDiv.innerHTML += `<p style="color: red;">❌ خطا: ${error.message}</p>`;
+                statusDiv.innerHTML += `<p>Stack: ${error.stack}</p>`;
+            }
+        }
+        
+        // Wait for everything to load
+        setTimeout(testAdmin, 2000);
+        
+    </script>
+</body>
+</html>

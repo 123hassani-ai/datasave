@@ -1,0 +1,1327 @@
+<!-- Excel to SQL Timeline - UI Component -->
+<div class="dm-timeline-container">
+    <!-- Tabs Navigation -->
+    <div class="timeline-tabs">
+        <div class="timeline-tab active" data-tab="dashboard">
+            <i class="fas fa-chart-pie"></i>
+            داشبورد
+        </div>
+        <div class="timeline-tab" data-tab="import-wizard">
+            <i class="fas fa-magic"></i>
+            ویزارد تبدیل
+            <span class="dm-badge hidden" id="active-project-badge">1</span>
+        </div>
+        <div class="timeline-tab" data-tab="excel-to-sql">
+            <i class="fas fa-exchange-alt"></i>
+            تبدیل اکسل به SQL
+            <span class="dm-badge hidden" id="new-conversion-badge">جدید</span>
+        </div>
+    </div>
+
+    <!-- Dashboard Tab Content -->
+    <div class="timeline-tab-content active" id="dashboard-tab">
+        <div class="dm-stats">
+            <div class="dm-stat-card">
+                <div class="dm-stat-content">
+                    <div class="dm-stat-info">
+                        <h3 id="total-projects-count">0</h3>
+                        <p>کل پروژه‌ها</p>
+                    </div>
+                    <div class="dm-stat-icon primary">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-stat-card">
+                <div class="dm-stat-content">
+                    <div class="dm-stat-info">
+                        <h3 id="successful-imports-count">0</h3>
+                        <p>عملیات موفق</p>
+                    </div>
+                    <div class="dm-stat-icon success">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-stat-card">
+                <div class="dm-stat-content">
+                    <div class="dm-stat-info">
+                        <h3 id="total-records-count">0</h3>
+                        <p>رکوردهای وارد شده</p>
+                    </div>
+                    <div class="dm-stat-icon secondary">
+                        <i class="fas fa-database"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="dm-stat-card">
+                <div class="dm-stat-content">
+                    <div class="dm-stat-info">
+                        <h3 id="pending-projects-count">0</h3>
+                        <p>در انتظار پردازش</p>
+                    </div>
+                    <div class="dm-stat-icon warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dm-content">
+            <div class="dm-card">
+                <div class="dm-card-header">
+                    <h3 class="dm-card-title">
+                        <i class="fas fa-plus-circle"></i>
+                        پروژه جدید
+                    </h3>
+                </div>
+                <div class="dm-card-body">
+                    <p>
+                        فایل اکسل خود را بارگذاری کنید و در چند مرحله ساده آن را به دیتابیس SQL تبدیل کنید.
+                        هوش مصنوعی به شما کمک می‌کند تا این فرآیند را ساده‌تر انجام دهید.
+                    </p>
+                    <div class="dm-form-group">
+                        <label class="dm-form-label">نام پروژه</label>
+                        <input type="text" class="dm-form-control" id="project-name" placeholder="نام پروژه را وارد کنید">
+                    </div>
+                </div>
+                <div class="dm-card-footer">
+                    <button id="start-new-project" class="dm-btn primary">
+                        <i class="fas fa-play"></i>
+                        شروع پروژه جدید
+                    </button>
+                </div>
+            </div>
+
+            <div class="dm-card">
+                <div class="dm-card-header">
+                    <h3 class="dm-card-title">
+                        <i class="fas fa-history"></i>
+                        تاریخچه تبدیل‌ها
+                    </h3>
+                </div>
+                <div class="dm-card-body">
+                    <div id="history-list" class="dm-history-list">
+                        <div class="dm-empty-state">
+                            <div class="icon"><i class="fas fa-history"></i></div>
+                            <h3>تاریخچه خالی</h3>
+                            <p>هنوز هیچ فایلی تبدیل نشده است.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Wizard Tab Content -->
+    <div class="timeline-tab-content" id="import-wizard-tab">
+        <div class="dm-progress-timeline">
+            <div class="dm-timeline-track">
+                <div class="dm-timeline-track-progress" style="height: 0%"></div>
+            </div>
+        </div>
+    </div>
+            
+    <!-- Excel to SQL New Timeline Tab Content -->
+    <div class="timeline-tab-content" id="excel-to-sql-tab">
+        <!-- Timeline Progress Bar -->
+        <div class="dm-timeline-progress">
+            <h4>پیشرفت تبدیل اکسل به SQL</h4>
+            <div class="progress-container">
+                <div class="progress-bar" id="excel-to-sql-progress" style="width: 0%"></div>
+            </div>
+            <div class="progress-info">
+                <span id="progress-step-name">مرحله 1: انتخاب فایل اکسل</span>
+                <span id="progress-percentage">0%</span>
+            </div>
+        </div>
+        
+        <div class="dm-progress-timeline">
+            <div class="dm-timeline-track">
+                <div class="dm-timeline-track-progress" style="height: 0%"></div>
+            </div>
+            
+            <div class="dm-timeline-steps">
+                <!-- Step 1: انتخاب فایل اکسل -->
+                <div class="dm-timeline-step active" id="excel2sql-step-1" data-step="1">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">انتخاب فایل اکسل</h4>
+                                <p class="dm-step-subtitle">لطفاً فایل اکسل خود را بارگذاری کنید</p>
+                            </div>
+                            <span class="dm-step-status active">فعال</span>
+                        </div>
+                        <div class="dm-step-body">
+                            <div class="dm-form-file-wrapper">
+                                <input type="file" id="e2s-excel-file" class="dm-file-input" accept=".xlsx, .xls, .csv">
+                                <div class="dm-file-drop-area" id="e2s-excel-drop-area">
+                                    <div class="dm-file-icon">
+                                        <i class="fas fa-file-excel"></i>
+                                    </div>
+                                    <h4 class="dm-file-message">فایل اکسل خود را اینجا رها کنید</h4>
+                                    <p>یا برای انتخاب فایل کلیک کنید</p>
+                                    <div class="dm-file-button">انتخاب فایل</div>
+                                </div>
+                            </div>
+                            <div class="dm-file-info" id="e2s-excel-file-info"></div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-back-to-dashboard">
+                                <i class="fas fa-arrow-right"></i>
+                                بازگشت
+                            </button>
+                            <button class="dm-btn primary" id="e2s-next-step-1" disabled>
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: شناسایی فایل و اطلاعات ظاهری -->
+                <div class="dm-timeline-step" id="excel2sql-step-2" data-step="2">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">شناسایی فایل</h4>
+                                <p class="dm-step-subtitle">اطلاعات و ساختار فایل اکسل</p>
+                            </div>
+                            <span class="dm-step-status pending">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-file-preview">
+                                <div class="dm-file-preview-header">
+                                    <div class="dm-file-preview-info">
+                                        <span class="dm-file-preview-name" id="e2s-file-name">نام فایل</span>
+                                        <span class="dm-file-preview-meta" id="e2s-file-meta">
+                                            <span id="e2s-file-size">0 KB</span> | 
+                                            <span id="e2s-file-sheets">0 شیت</span> | 
+                                            <span id="e2s-file-rows">0 سطر</span> | 
+                                            <span id="e2s-file-cols">0 ستون</span>
+                                        </span>
+                                    </div>
+                                    <div class="dm-file-preview-actions">
+                                        <button class="dm-btn secondary sm" id="e2s-preview-file">
+                                            <i class="fas fa-eye"></i>
+                                            پیش‌نمایش
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="e2s-file-structure-preview" class="dm-file-structure-preview">
+                                    <!-- Sheet structure will be populated here -->
+                                </div>
+                                
+                                <div class="dm-sheet-selector">
+                                    <label class="dm-form-label">انتخاب شیت:</label>
+                                    <select class="dm-form-control" id="e2s-sheet-selector">
+                                        <!-- Sheet options will be populated here -->
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-prev-step-2">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="e2s-next-step-2">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: شروع پردازش -->
+                <div class="dm-timeline-step" id="excel2sql-step-3" data-step="3">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">شروع پردازش</h4>
+                                <p class="dm-step-subtitle">آماده‌سازی برای تبدیل به SQL</p>
+                            </div>
+                            <span class="dm-step-status pending">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert primary">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">آماده شروع پردازش</h5>
+                                    <p class="dm-alert-message">
+                                        سیستم آماده تحلیل و تبدیل فایل اکسل شما به ساختار دیتابیس SQL است.
+                                        با کلیک روی دکمه «شروع پردازش»، هوش مصنوعی شروع به تحلیل داده‌های شما خواهد کرد.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-processing-options">
+                                <h5>تنظیمات پردازش</h5>
+                                <div class="dm-form-group">
+                                    <label class="dm-form-label">انتخاب نوع دیتابیس</label>
+                                    <select class="dm-form-control" id="e2s-db-type">
+                                        <option value="mysql">MySQL</option>
+                                        <option value="mariadb">MariaDB</option>
+                                        <option value="postgresql">PostgreSQL</option>
+                                    </select>
+                                </div>
+                                <div class="dm-form-group">
+                                    <label class="dm-form-label">گزینه‌های پیشرفته</label>
+                                    <div class="dm-checkbox">
+                                        <input type="checkbox" id="e2s-auto-optimize" checked>
+                                        <label for="e2s-auto-optimize">بهینه‌سازی خودکار ساختار</label>
+                                    </div>
+                                    <div class="dm-checkbox">
+                                        <input type="checkbox" id="e2s-create-indexes" checked>
+                                        <label for="e2s-create-indexes">ایجاد ایندکس‌های پیشنهادی</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="e2s-prev-step-3">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="e2s-start-processing">
+                                <i class="fas fa-play"></i>
+                                شروع پردازش
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+            <div class="dm-timeline-steps">
+                <!-- Step 1: Select Excel File -->
+                <div class="dm-timeline-step active" id="step-1" data-step="1">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">انتخاب فایل اکسل</h4>
+                                <p class="dm-step-subtitle">فایل اکسل خود را بارگذاری کنید</p>
+                            </div>
+                            <span class="dm-step-status in-progress">در حال انجام</span>
+                        </div>
+                        <div class="dm-step-body">
+                            <div class="dm-form-file-wrapper">
+                                <input type="file" id="excel-file" class="dm-file-input" accept=".xlsx, .xls, .csv">
+                                <div class="dm-file-drop-area" id="excel-drop-area">
+                                    <div class="dm-file-icon">
+                                        <i class="fas fa-file-excel"></i>
+                                    </div>
+                                    <h4 class="dm-file-message">فایل اکسل خود را اینجا رها کنید</h4>
+                                    <p>یا برای انتخاب فایل کلیک کنید</p>
+                                    <div class="dm-file-button">انتخاب فایل</div>
+                                </div>
+                            </div>
+                            <div class="dm-file-info" id="excel-file-info"></div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="back-to-dashboard">
+                                <i class="fas fa-arrow-right"></i>
+                                بازگشت
+                            </button>
+                            <button class="dm-btn primary" id="next-step-1" disabled>
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: File Identification -->
+                <div class="dm-timeline-step" id="step-2" data-step="2">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">شناسایی فایل</h4>
+                                <p class="dm-step-subtitle">بررسی اطلاعات فایل اکسل</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-file-preview">
+                                <div class="dm-file-preview-header">
+                                    <div class="dm-file-preview-info">
+                                        <span class="dm-file-preview-name" id="file-name">نام فایل</span>
+                                        <span class="dm-file-preview-meta" id="file-meta">
+                                            <span id="file-size">0 KB</span> | 
+                                            <span id="file-sheets">0 شیت</span> | 
+                                            <span id="file-rows">0 سطر</span> | 
+                                            <span id="file-cols">0 ستون</span>
+                                        </span>
+                                    </div>
+                                    <div class="dm-file-preview-actions">
+                                        <button class="dm-btn secondary sm">
+                                            <i class="fas fa-eye"></i>
+                                            پیش‌نمایش
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="file-structure-preview" class="dm-file-structure-preview">
+                                    <!-- Sheet structure will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-2">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-2">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Start Processing -->
+                <div class="dm-timeline-step" id="step-3" data-step="3">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">شروع پردازش</h4>
+                                <p class="dm-step-subtitle">آماده‌سازی فایل برای تبدیل</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert primary">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">آماده شروع پردازش</h5>
+                                    <p class="dm-alert-message">
+                                        سیستم آماده تحلیل و تبدیل فایل اکسل شما به ساختار دیتابیس است.
+                                        در ادامه هوش مصنوعی به شما کمک خواهد کرد تا ساختار بهینه دیتابیس را ایجاد کنید.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">انتخاب شیت (در صورت وجود چند شیت)</label>
+                                <select class="dm-form-control" id="sheet-selector">
+                                    <!-- Sheet options will be populated here -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-3">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="start-processing">
+                                <i class="fas fa-play"></i>
+                                شروع پردازش
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Initial Analysis -->
+                <div class="dm-timeline-step" id="step-4" data-step="4">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تحلیل اولیه</h4>
+                                <p class="dm-step-subtitle">نمایش خلاصه محتوای فایل</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-file-analysis" id="file-analysis">
+                                <!-- Analysis results will be populated here -->
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-4">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-4">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 5: AI First Message -->
+                <div class="dm-timeline-step" id="step-5" data-step="5">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پیشنهاد هوش مصنوعی</h4>
+                                <p class="dm-step-subtitle">نام و ساختار پیشنهادی دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">نام دیتابیس پیشنهادی</label>
+                                <input type="text" class="dm-form-control" id="db-name" placeholder="نام دیتابیس">
+                            </div>
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">توضیحات دیتابیس</label>
+                                <textarea class="dm-form-control dm-form-textarea" id="db-description" placeholder="توضیحات دیتابیس"></textarea>
+                            </div>
+                            
+                            <div class="dm-chat-interface">
+                                <div class="dm-chat-messages" id="ai-chat-messages">
+                                    <!-- Chat messages will be populated here -->
+                                </div>
+                                <div class="dm-chat-input">
+                                    <input type="text" class="dm-chat-input-field" id="ai-chat-input" placeholder="سوال خود را بپرسید...">
+                                    <button class="dm-chat-send" id="ai-chat-send">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-5">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-5">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 6: Field Mapping -->
+                <div class="dm-timeline-step" id="step-6" data-step="6">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">نگاشت فیلدها</h4>
+                                <p class="dm-step-subtitle">تطبیق ستون‌های اکسل با فیلدهای دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-field-mapping">
+                                <div class="dm-field-mapping-header">
+                                    <h5 class="dm-field-mapping-title">نگاشت فیلدها</h5>
+                                    <div class="dm-field-mapping-actions">
+                                        <button class="dm-btn secondary sm">
+                                            <i class="fas fa-sync"></i>
+                                            پیشنهاد مجدد
+                                        </button>
+                                        <button class="dm-btn primary sm">
+                                            <i class="fas fa-magic"></i>
+                                            اصلاح خودکار
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="dm-field-mapping-table-container">
+                                    <table class="dm-field-mapping-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="45%">ستون اکسل</th>
+                                                <th width="45%">فیلد دیتابیس</th>
+                                                <th width="10%">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="field-mapping-body">
+                                            <!-- Field mapping rows will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-chat-interface">
+                                <div class="dm-chat-messages" id="field-chat-messages">
+                                    <!-- Chat messages will be populated here -->
+                                </div>
+                                <div class="dm-chat-input">
+                                    <input type="text" class="dm-chat-input-field" id="field-chat-input" placeholder="دستورالعمل برای هوش مصنوعی...">
+                                    <button class="dm-chat-send" id="field-chat-send">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-6">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-6">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 7: SQL Query Generation -->
+                <div class="dm-timeline-step" id="step-7" data-step="7">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تولید کوئری SQL</h4>
+                                <p class="dm-step-subtitle">ایجاد دستور SQL برای ساخت دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert success">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">کوئری SQL آماده است</h5>
+                                    <p class="dm-alert-message">
+                                        کوئری SQL برای ساخت جدول دیتابیس آماده است.
+                                        در صورت تایید، این کوئری اجرا خواهد شد.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">کوئری SQL</label>
+                                <div class="dm-code-preview">
+                                    <pre id="sql-query-preview">-- SQL query will be shown here</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-7">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="execute-sql">
+                                <i class="fas fa-play"></i>
+                                اجرای کوئری
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 8: SQL Execution -->
+                <div class="dm-timeline-step" id="step-8" data-step="8">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">اجرای دستور SQL</h4>
+                                <p class="dm-step-subtitle">ایجاد جدول در دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div id="sql-execution-result">
+                                <!-- SQL execution result will be populated here -->
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-8">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-8">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 9: Data Import Confirmation -->
+                <div class="dm-timeline-step" id="step-9" data-step="9">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تأیید ورود داده‌ها</h4>
+                                <p class="dm-step-subtitle">افزودن داده‌های اکسل به دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert info">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">تأیید ورود داده‌ها</h5>
+                                    <p class="dm-alert-message">
+                                        جدول دیتابیس با موفقیت ایجاد شد. آیا می‌خواهید داده‌های فایل اکسل را وارد دیتابیس کنید؟
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-data-summary">
+                                <div class="dm-data-summary-item">
+                                    <span class="dm-data-summary-label">تعداد کل سطرها:</span>
+                                    <span class="dm-data-summary-value" id="total-rows-count">0</span>
+                                </div>
+                                <div class="dm-data-summary-item">
+                                    <span class="dm-data-summary-label">تعداد کل ستون‌ها:</span>
+                                    <span class="dm-data-summary-value" id="total-cols-count">0</span>
+                                </div>
+                                <div class="dm-data-summary-item">
+                                    <span class="dm-data-summary-label">حجم تقریبی داده:</span>
+                                    <span class="dm-data-summary-value" id="data-size">0 KB</span>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-form-group">
+                                <div class="dm-form-check">
+                                    <input type="checkbox" id="import-headers" class="dm-form-check-input" checked>
+                                    <label for="import-headers" class="dm-form-check-label">
+                                        ردیف اول به عنوان سرستون (Header) در نظر گرفته شود
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-9">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="start-data-import">
+                                <i class="fas fa-upload"></i>
+                                شروع ورود داده‌ها
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 10: Import Progress -->
+                <div class="dm-timeline-step" id="step-10" data-step="10">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پیشرفت ورود داده‌ها</h4>
+                                <p class="dm-step-subtitle">وضعیت انتقال داده‌ها به دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-progress-container">
+                                <div class="dm-progress-bar" id="import-progress-bar" style="width: 0%"></div>
+                                <div class="dm-progress-text" id="import-progress-text">0%</div>
+                            </div>
+                            <div class="dm-progress-stats">
+                                <span id="processed-records">0 / 0 رکورد</span>
+                                <span id="import-time">00:00:00</span>
+                            </div>
+                            
+                            <div class="dm-import-log" id="import-log">
+                                <div class="dm-log-entry">
+                                    <span class="dm-log-time">00:00:00</span>
+                                    <span class="dm-log-message">آماده شروع ورود داده‌ها...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="cancel-import" disabled>
+                                <i class="fas fa-stop"></i>
+                                لغو عملیات
+                            </button>
+                            <button class="dm-btn primary" id="next-step-10" disabled>
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 11: Import Results -->
+                <div class="dm-timeline-step" id="step-11" data-step="11">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">نتیجه ورود داده‌ها</h4>
+                                <p class="dm-step-subtitle">گزارش نهایی ورود داده‌ها به دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div id="import-result-summary">
+                                <!-- Import results will be populated here -->
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-11">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-11">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 12: Completion -->
+                <div class="dm-timeline-step" id="step-12" data-step="12">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پایان فرآیند</h4>
+                                <p class="dm-step-subtitle">فرآیند تبدیل با موفقیت انجام شد</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-completion-summary">
+                                <div class="dm-completion-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h3 class="dm-completion-title">تبریک! فرآیند تبدیل با موفقیت انجام شد</h3>
+                                <p class="dm-completion-message">
+                                    فایل اکسل شما با موفقیت به دیتابیس SQL تبدیل شد.
+                                    حالا می‌توانید از داده‌های خود در دیتابیس استفاده کنید.
+                                </p>
+                                
+                                <div class="dm-completion-stats">
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-table-name">-</span>
+                                        <span class="dm-completion-stat-label">نام جدول</span>
+                                    </div>
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-record-count">0</span>
+                                        <span class="dm-completion-stat-label">رکورد</span>
+                                    </div>
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-field-count">0</span>
+                                        <span class="dm-completion-stat-label">فیلد</span>
+                                    </div>
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-duration">00:00:00</span>
+                                        <span class="dm-completion-stat-label">زمان کل</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="view-table">
+                                <i class="fas fa-table"></i>
+                                مشاهده جدول
+                            </button>
+                            <button class="dm-btn primary" id="back-to-dashboard-final">
+                                <i class="fas fa-home"></i>
+                                بازگشت به داشبورد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">شروع پردازش</h4>
+                                <p class="dm-step-subtitle">آماده‌سازی فایل برای تبدیل</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert primary">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">آماده شروع پردازش</h5>
+                                    <p class="dm-alert-message">
+                                        سیستم آماده تحلیل و تبدیل فایل اکسل شما به ساختار دیتابیس است.
+                                        در ادامه هوش مصنوعی به شما کمک خواهد کرد تا ساختار بهینه دیتابیس را ایجاد کنید.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">انتخاب شیت (در صورت وجود چند شیت)</label>
+                                <select class="dm-form-control" id="sheet-selector">
+                                    <!-- Sheet options will be populated here -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-3">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="start-processing">
+                                <i class="fas fa-play"></i>
+                                شروع پردازش
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Initial Analysis -->
+                <div class="dm-timeline-step" id="step-4" data-step="4">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تحلیل اولیه</h4>
+                                <p class="dm-step-subtitle">نمایش خلاصه محتوای فایل</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-file-analysis" id="file-analysis">
+                                <!-- Analysis results will be populated here -->
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-4">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-4">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 5: AI First Message -->
+                <div class="dm-timeline-step" id="step-5" data-step="5">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پیشنهاد هوش مصنوعی</h4>
+                                <p class="dm-step-subtitle">نام و ساختار پیشنهادی دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">نام دیتابیس پیشنهادی</label>
+                                <input type="text" class="dm-form-control" id="db-name" placeholder="نام دیتابیس">
+                            </div>
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">توضیحات دیتابیس</label>
+                                <textarea class="dm-form-control dm-form-textarea" id="db-description" placeholder="توضیحات دیتابیس"></textarea>
+                            </div>
+                            
+                            <div class="dm-chat-interface">
+                                <div class="dm-chat-messages" id="ai-chat-messages">
+                                    <!-- Chat messages will be populated here -->
+                                </div>
+                                <div class="dm-chat-input">
+                                    <input type="text" class="dm-chat-input-field" id="ai-chat-input" placeholder="سوال خود را بپرسید...">
+                                    <button class="dm-chat-send" id="ai-chat-send">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-5">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-5">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 6: Field Mapping -->
+                <div class="dm-timeline-step" id="step-6" data-step="6">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">نگاشت فیلدها</h4>
+                                <p class="dm-step-subtitle">تطبیق ستون‌های اکسل با فیلدهای دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-field-mapping">
+                                <div class="dm-field-mapping-header">
+                                    <h5 class="dm-field-mapping-title">نگاشت فیلدها</h5>
+                                    <div class="dm-field-mapping-actions">
+                                        <button class="dm-btn secondary sm">
+                                            <i class="fas fa-sync"></i>
+                                            پیشنهاد مجدد
+                                        </button>
+                                        <button class="dm-btn primary sm">
+                                            <i class="fas fa-magic"></i>
+                                            اصلاح خودکار
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="dm-field-mapping-table-container">
+                                    <table class="dm-field-mapping-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="45%">ستون اکسل</th>
+                                                <th width="45%">فیلد دیتابیس</th>
+                                                <th width="10%">عملیات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="field-mapping-body">
+                                            <!-- Field mapping rows will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-chat-interface">
+                                <div class="dm-chat-messages" id="field-chat-messages">
+                                    <!-- Chat messages will be populated here -->
+                                </div>
+                                <div class="dm-chat-input">
+                                    <input type="text" class="dm-chat-input-field" id="field-chat-input" placeholder="دستورالعمل برای هوش مصنوعی...">
+                                    <button class="dm-chat-send" id="field-chat-send">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-6">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-6">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 7: SQL Query Generation -->
+                <div class="dm-timeline-step" id="step-7" data-step="7">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تولید کوئری SQL</h4>
+                                <p class="dm-step-subtitle">ایجاد دستور SQL برای ساخت دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert success">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">کوئری SQL آماده است</h5>
+                                    <p class="dm-alert-message">
+                                        کوئری SQL برای ساخت جدول دیتابیس آماده است.
+                                        در صورت تایید، این کوئری اجرا خواهد شد.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-form-group">
+                                <label class="dm-form-label">کوئری SQL</label>
+                                <div class="dm-code-preview">
+                                    <pre id="sql-query-preview">-- SQL query will be shown here</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-7">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="execute-sql">
+                                <i class="fas fa-play"></i>
+                                اجرای کوئری
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 8: SQL Execution -->
+                <div class="dm-timeline-step" id="step-8" data-step="8">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">اجرای دستور SQL</h4>
+                                <p class="dm-step-subtitle">ایجاد جدول در دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div id="sql-execution-result">
+                                <!-- SQL execution result will be populated here -->
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-8">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-8">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 9: Data Import Confirmation -->
+                <div class="dm-timeline-step" id="step-9" data-step="9">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">تأیید ورود داده‌ها</h4>
+                                <p class="dm-step-subtitle">افزودن داده‌های اکسل به دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-alert info">
+                                <div class="dm-alert-icon">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="dm-alert-content">
+                                    <h5 class="dm-alert-title">تأیید ورود داده‌ها</h5>
+                                    <p class="dm-alert-message">
+                                        جدول دیتابیس با موفقیت ایجاد شد. آیا می‌خواهید داده‌های فایل اکسل را وارد دیتابیس کنید؟
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-data-summary">
+                                <div class="dm-data-summary-item">
+                                    <span class="dm-data-summary-label">تعداد کل سطرها:</span>
+                                    <span class="dm-data-summary-value" id="total-rows-count">0</span>
+                                </div>
+                                <div class="dm-data-summary-item">
+                                    <span class="dm-data-summary-label">تعداد کل ستون‌ها:</span>
+                                    <span class="dm-data-summary-value" id="total-cols-count">0</span>
+                                </div>
+                                <div class="dm-data-summary-item">
+                                    <span class="dm-data-summary-label">حجم تقریبی داده:</span>
+                                    <span class="dm-data-summary-value" id="data-size">0 KB</span>
+                                </div>
+                            </div>
+                            
+                            <div class="dm-form-group">
+                                <div class="dm-form-check">
+                                    <input type="checkbox" id="import-headers" class="dm-form-check-input" checked>
+                                    <label for="import-headers" class="dm-form-check-label">
+                                        ردیف اول به عنوان سرستون (Header) در نظر گرفته شود
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-9">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="start-data-import">
+                                <i class="fas fa-upload"></i>
+                                شروع ورود داده‌ها
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 10: Import Progress -->
+                <div class="dm-timeline-step" id="step-10" data-step="10">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پیشرفت ورود داده‌ها</h4>
+                                <p class="dm-step-subtitle">وضعیت انتقال داده‌ها به دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-progress-container">
+                                <div class="dm-progress-bar" id="import-progress-bar" style="width: 0%"></div>
+                                <div class="dm-progress-text" id="import-progress-text">0%</div>
+                            </div>
+                            <div class="dm-progress-stats">
+                                <span id="processed-records">0 / 0 رکورد</span>
+                                <span id="import-time">00:00:00</span>
+                            </div>
+                            
+                            <div class="dm-import-log" id="import-log">
+                                <div class="dm-log-entry">
+                                    <span class="dm-log-time">00:00:00</span>
+                                    <span class="dm-log-message">آماده شروع ورود داده‌ها...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="cancel-import" disabled>
+                                <i class="fas fa-stop"></i>
+                                لغو عملیات
+                            </button>
+                            <button class="dm-btn primary" id="next-step-10" disabled>
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 11: Import Results -->
+                <div class="dm-timeline-step" id="step-11" data-step="11">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">نتیجه ورود داده‌ها</h4>
+                                <p class="dm-step-subtitle">گزارش نهایی ورود داده‌ها به دیتابیس</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div id="import-result-summary">
+                                <!-- Import results will be populated here -->
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="prev-step-11">
+                                <i class="fas fa-arrow-right"></i>
+                                مرحله قبل
+                            </button>
+                            <button class="dm-btn primary" id="next-step-11">
+                                <i class="fas fa-arrow-left"></i>
+                                مرحله بعد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 12: Completion -->
+                <div class="dm-timeline-step" id="step-12" data-step="12">
+                    <div class="dm-step-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="dm-step-content">
+                        <div class="dm-step-header">
+                            <div>
+                                <h4 class="dm-step-title">پایان فرآیند</h4>
+                                <p class="dm-step-subtitle">فرآیند تبدیل با موفقیت انجام شد</p>
+                            </div>
+                            <span class="dm-step-status waiting">در انتظار</span>
+                        </div>
+                        <div class="dm-step-body hidden">
+                            <div class="dm-completion-summary">
+                                <div class="dm-completion-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h3 class="dm-completion-title">تبریک! فرآیند تبدیل با موفقیت انجام شد</h3>
+                                <p class="dm-completion-message">
+                                    فایل اکسل شما با موفقیت به دیتابیس SQL تبدیل شد.
+                                    حالا می‌توانید از داده‌های خود در دیتابیس استفاده کنید.
+                                </p>
+                                
+                                <div class="dm-completion-stats">
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-table-name">-</span>
+                                        <span class="dm-completion-stat-label">نام جدول</span>
+                                    </div>
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-record-count">0</span>
+                                        <span class="dm-completion-stat-label">رکورد</span>
+                                    </div>
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-field-count">0</span>
+                                        <span class="dm-completion-stat-label">فیلد</span>
+                                    </div>
+                                    <div class="dm-completion-stat">
+                                        <span class="dm-completion-stat-value" id="completion-duration">00:00:00</span>
+                                        <span class="dm-completion-stat-label">زمان کل</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dm-step-actions">
+                            <button class="dm-btn secondary" id="view-table">
+                                <i class="fas fa-table"></i>
+                                مشاهده جدول
+                            </button>
+                            <button class="dm-btn primary" id="back-to-dashboard-final">
+                                <i class="fas fa-home"></i>
+                                بازگشت به داشبورد
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

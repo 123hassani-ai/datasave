@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست خطاهای JavaScript - DataSave</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .result-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            direction: ltr;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 8px;
+        }
+        .status-success { background-color: #28a745; }
+        .status-warning { background-color: #ffc107; }
+        .status-error { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="text-white mb-3">
+                <i class="fas fa-bug me-3"></i>
+                تست خطاهای JavaScript
+            </h1>
+            <p class="text-white-50 mb-0">آزمایش سیستم گرفتن و ثبت خطاهای JavaScript در فایل‌های لاگ</p>
+        </div>
+
+        <!-- وضعیت سیستم -->
+        <div class="test-container">
+            <h2 class="text-primary mb-4">
+                <i class="fas fa-info-circle me-2"></i>
+                وضعیت سیستم لاگ‌گیری
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5>Logger محلی</h5>
+                            <span id="loggerStatus" class="status-indicator status-warning"></span>
+                            <span id="loggerStatusText">در حال بررسی...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5>API سرور</h5>
+                            <span id="serverApiStatus" class="status-indicator status-warning"></span>
+                            <span id="serverApiStatusText">در حال بررسی...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5>پوشه لاگ</h5>
+                            <span id="logDirStatus" class="status-indicator status-warning"></span>
+                            <span id="logDirStatusText">در حال بررسی...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تست‌های خطاهای مختلف -->
+        <div class="test-container">
+            <h2 class="text-danger mb-4">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                تست‌های خطای JavaScript
+            </h2>
+
+            <div class="btn-group mb-3" role="group">
+                <button class="btn btn-warning" onclick="testReferenceError()">
+                    <i class="fas fa-times me-2"></i>
+                    خطای مرجع
+                </button>
+                <button class="btn btn-danger" onclick="testTypeError()">
+                    <i class="fas fa-bug me-2"></i>
+                    خطای نوع
+                </button>
+                <button class="btn btn-dark" onclick="testSyntaxError()">
+                    <i class="fas fa-code me-2"></i>
+                    خطای نحوی
+                </button>
+                <button class="btn btn-secondary" onclick="testCustomError()">
+                    <i class="fas fa-cog me-2"></i>
+                    خطای سفارشی
+                </button>
+            </div>
+
+            <div class="btn-group mb-3" role="group">
+                <button class="btn btn-info" onclick="testPromiseRejection()">
+                    <i class="fas fa-hourglass me-2"></i>
+                    Promise رد شده
+                </button>
+                <button class="btn btn-success" onclick="testAsyncError()">
+                    <i class="fas fa-sync me-2"></i>
+                    خطای Async
+                </button>
+                <button class="btn btn-primary" onclick="testMultipleErrors()">
+                    <i class="fas fa-list me-2"></i>
+                    خطاهای متعدد
+                </button>
+                <button class="btn btn-outline-primary" onclick="testEarlyError()">
+                    <i class="fas fa-clock me-2"></i>
+                    خطای اولیه
+                </button>
+            </div>
+
+            <div id="errorResults" class="result-display">
+نتایج تست‌ها اینجا نمایش داده می‌شوند...
+            </div>
+        </div>
+
+        <!-- بررسی لاگ‌های سرور -->
+        <div class="test-container">
+            <h2 class="text-success mb-4">
+                <i class="fas fa-server me-2"></i>
+                بررسی لاگ‌های سرور
+            </h2>
+
+            <div class="btn-group mb-3" role="group">
+                <button class="btn btn-success" onclick="checkServerLogs()">
+                    <i class="fas fa-search me-2"></i>
+                    بررسی فایل‌های لاگ
+                </button>
+                <button class="btn btn-info" onclick="getRecentErrors()">
+                    <i class="fas fa-history me-2"></i>
+                    خطاهای اخیر
+                </button>
+                <button class="btn btn-warning" onclick="testServerConnection()">
+                    <i class="fas fa-wifi me-2"></i>
+                    تست اتصال
+                </button>
+                <button class="btn btn-outline-danger" onclick="clearResults()">
+                    <i class="fas fa-trash me-2"></i>
+                    پاک کردن نتایج
+                </button>
+            </div>
+
+            <div id="serverResults" class="result-display">
+نتایج بررسی سرور اینجا نمایش داده می‌شوند...
+            </div>
+        </div>
+    </div>
+
+    <!-- بارگذاری سیستم لاگ‌گیری -->
+    <script src="assets/js/modules/logging.js"></script>
+    
+    <script>
+        let testCounter = 0;
+
+        // بررسی وضعیت اولیه سیستم
+        function checkSystemStatus() {
+            // وضعیت Logger
+            if (window.Logger && window.Logger.isInitialized) {
+                document.getElementById('loggerStatus').className = 'status-indicator status-success';
+                document.getElementById('loggerStatusText').textContent = 'آماده';
+            } else if (window.Logger) {
+                document.getElementById('loggerStatus').className = 'status-indicator status-warning';
+                document.getElementById('loggerStatusText').textContent = 'در حال آماده‌سازی...';
+            } else {
+                document.getElementById('loggerStatus').className = 'status-indicator status-error';
+                document.getElementById('loggerStatusText').textContent = 'خطا';
+            }
+
+            // تست API سرور
+            testServerAPI();
+        }
+
+        // تست API سرور
+        async function testServerAPI() {
+            try {
+                const response = await fetch('./backend/api/v1/logging.php?action=stats', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    document.getElementById('serverApiStatus').className = 'status-indicator status-success';
+                    document.getElementById('serverApiStatusText').textContent = 'فعال';
+                    
+                    // تست پوشه لاگ
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('logDirStatus').className = 'status-indicator status-success';
+                        document.getElementById('logDirStatusText').textContent = 'قابل دسترسی';
+                    }
+                } else {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+            } catch (error) {
+                document.getElementById('serverApiStatus').className = 'status-indicator status-error';
+                document.getElementById('serverApiStatusText').textContent = 'خطا';
+                document.getElementById('logDirStatus').className = 'status-indicator status-error';
+                document.getElementById('logDirStatusText').textContent = 'غیرقابل دسترسی';
+            }
+        }
+
+        // تست‌های خطا
+        function testReferenceError() {
+            try {
+                // متغیر تعریف نشده
+                console.log(undefinedVariable);
+            } catch (error) {
+                appendResult(`✅ خطای مرجع ایجاد شد: ${error.message}`);
+            }
+        }
+
+        function testTypeError() {
+            try {
+                // فراخوانی null به عنوان تابع
+                null.someMethod();
+            } catch (error) {
+                appendResult(`✅ خطای نوع ایجاد شد: ${error.message}`);
+            }
+        }
+
+        function testSyntaxError() {
+            try {
+                // استفاده از eval برای ایجاد خطای نحوی
+                eval('function test() { return }');
+            } catch (error) {
+                appendResult(`✅ خطای نحوی ایجاد شد: ${error.message}`);
+            }
+        }
+
+        function testCustomError() {
+            const customError = new Error('این یک خطای تستی سفارشی است');
+            customError.name = 'CustomTestError';
+            
+            // ارسال مستقیم به Logger
+            if (window.Logger) {
+                Logger.error('خطای سفارشی تست', customError, {
+                    test_type: 'custom_error',
+                    counter: ++testCounter
+                });
+            }
+            
+            appendResult(`✅ خطای سفارشی ارسال شد`);
+        }
+
+        function testPromiseRejection() {
+            // Promise رد شده که مدیریت نشده
+            Promise.reject(new Error('تست Promise رد شده'));
+            appendResult(`✅ Promise رد شده ایجاد شد`);
+        }
+
+        async function testAsyncError() {
+            try {
+                await new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        reject(new Error('خطای Async تستی'));
+                    }, 100);
+                });
+            } catch (error) {
+                appendResult(`✅ خطای Async ایجاد شد: ${error.message}`);
+            }
+        }
+
+        function testMultipleErrors() {
+            appendResult(`🔄 شروع تست خطاهای متعدد...`);
+            
+            // ایجاد چندین خطا پشت سر هم
+            setTimeout(() => testReferenceError(), 100);
+            setTimeout(() => testTypeError(), 200);
+            setTimeout(() => testPromiseRejection(), 300);
+            
+            appendResult(`✅ 3 خطای متعدد ایجاد شد`);
+        }
+
+        function testEarlyError() {
+            // تست خطای اولیه (قبل از آماده شدن کامل Logger)
+            if (window._pendingErrors) {
+                window._pendingErrors.push({
+                    type: 'error',
+                    error: new Error('خطای اولیه تستی'),
+                    message: 'تست خطای اولیه',
+                    timestamp: new Date().toISOString()
+                });
+                
+                // پردازش مجدد خطاهای معلق
+                if (window.Logger && typeof Logger.processPendingErrors === 'function') {
+                    Logger.processPendingErrors();
+                }
+                
+                appendResult(`✅ خطای اولیه تست شد`);
+            } else {
+                appendResult(`❌ سیستم خطاهای معلق فعال نیست`);
+            }
+        }
+
+        async function checkServerLogs() {
+            try {
+                const response = await fetch('./backend/api/v1/logging.php?action=logs&limit=10&level=error');
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    let output = `=== آخرین خطاهای ثبت شده در سرور ===\n\n`;
+                    
+                    if (result.data.length === 0) {
+                        output += `هیچ خطای اخیری یافت نشد.\n`;
+                    } else {
+                        result.data.forEach((log, index) => {
+                            output += `${index + 1}. [${log.timestamp}] ${log.message}\n`;
+                            if (log.error) {
+                                output += `   خطا: ${JSON.stringify(log.error, null, 2)}\n`;
+                            }
+                            output += `${'─'.repeat(60)}\n`;
+                        });
+                    }
+                    
+                    document.getElementById('serverResults').textContent = output;
+                } else {
+                    throw new Error(result.message || 'خطا در دریافت لاگ‌ها');
+                }
+            } catch (error) {
+                document.getElementById('serverResults').textContent = `خطا در بررسی لاگ‌های سرور: ${error.message}`;
+            }
+        }
+
+        async function getRecentErrors() {
+            try {
+                const response = await fetch('./backend/api/v1/logging.php?action=logs&level=error&limit=20');
+                const result = await response.json();
+                
+                if (result.success) {
+                    let output = `=== ${result.data.length} خطای اخیر ===\n\n`;
+                    
+                    result.data.forEach((log, index) => {
+                        const timestamp = log.timestamp || 'نامشخص';
+                        output += `${index + 1}. [${timestamp}] ${log.level}: ${log.message}\n`;
+                        
+                        if (log.data && Object.keys(log.data).length > 0) {
+                            output += `   داده‌ها: ${JSON.stringify(log.data, null, 2)}\n`;
+                        }
+                        
+                        output += `${'─'.repeat(50)}\n`;
+                    });
+                    
+                    document.getElementById('serverResults').textContent = output;
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                document.getElementById('serverResults').textContent = `خطا: ${error.message}`;
+            }
+        }
+
+        async function testServerConnection() {
+            appendResult(`🔄 تست اتصال به سرور...`);
+            
+            try {
+                // ارسال یک لاگ تست به سرور
+                const testLog = {
+                    level: 'info',
+                    message: 'تست اتصال سرور',
+                    data: {
+                        test: true,
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                const response = await fetch('./backend/api/v1/logging.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testLog)
+                });
+                
+                if (response.ok) {
+                    appendResult(`✅ اتصال سرور موفقیت‌آمیز`);
+                    document.getElementById('serverResults').textContent = 'اتصال با سرور برقرار است و لاگ تست ارسال شد.';
+                } else {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+            } catch (error) {
+                appendResult(`❌ خطا در اتصال سرور: ${error.message}`);
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('errorResults').textContent = 'نتایج پاک شدند...';
+            document.getElementById('serverResults').textContent = 'نتایج پاک شدند...';
+        }
+
+        function appendResult(message) {
+            const results = document.getElementById('errorResults');
+            const timestamp = new Date().toLocaleTimeString('fa-IR');
+            results.textContent += `[${timestamp}] ${message}\n`;
+            results.scrollTop = results.scrollHeight;
+        }
+
+        // مقداردهی اولیه
+        document.addEventListener('DOMContentLoaded', function() {
+            // بررسی وضعیت سیستم
+            checkSystemStatus();
+            
+            // بررسی دوره‌ای وضعیت
+            setInterval(checkSystemStatus, 10000);
+            
+            // لاگ آغاز تست
+            if (window.Logger) {
+                Logger.info('صفحه تست خطاهای JavaScript بارگذاری شد', {
+                    page: 'test-errors.html',
+                    purpose: 'JavaScript error testing',
+                    user_agent: navigator.userAgent
+                });
+            }
+            
+            appendResult('🎯 سیستم تست خطاهای JavaScript آماده است');
+        });
+
+        // رصد خطاهای سراسری
+        const originalErrorHandler = window.onerror;
+        window.onerror = function(message, source, lineno, colno, error) {
+            appendResult(`🚨 خطای گرفته شده: ${message} در خط ${lineno}`);
+            
+            if (originalErrorHandler) {
+                return originalErrorHandler.apply(this, arguments);
+            }
+        };
+
+        // رصد Promise رد شده
+        window.addEventListener('unhandledrejection', function(event) {
+            appendResult(`🚨 Promise رد شده گرفته شد: ${event.reason}`);
+        });
+    </script>
+</body>
+</html>

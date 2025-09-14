@@ -1,0 +1,584 @@
+/**
+ * Sidebar Styles for Glassmorphism Admin Dashboard
+ * استایل‌های سایدبار برای داشبورد مدیریت شیشه‌ای
+ * 
+ * @description: سایدبار ثابت با پشتیبانی RTL و منوی پروفایل
+ * @version: 1.0.0
+ * @author: DataSave Team
+ */
+
+/* === سایدبار اصلی / Main Sidebar === */
+.admin-sidebar {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+    z-index: var(--z-sticky);
+    
+    /* افکت شیشه‌ای */
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-left: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-glass);
+    
+    /* انیمیشن */
+    transition: all var(--transition-normal);
+    
+    /* اسکرول */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* === حالت جمع‌شده / Collapsed State === */
+.sidebar-collapsed .admin-sidebar {
+    width: var(--sidebar-collapsed-width);
+}
+
+/* === محتوای سایدبار / Sidebar Content === */
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--spacing-4) 0;
+}
+
+/* === لوگوی برنامه در سایدبار / App Logo in Sidebar === */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4) var(--spacing-6);
+    margin-bottom: var(--spacing-6);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.sidebar-logo-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    transition: all var(--transition-normal);
+}
+
+.sidebar-logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-gradient);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar-logo-text {
+    font-family: var(--font-family-base);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    color: var(--text-primary);
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+}
+
+/* مخفی کردن متن در حالت جمع‌شده */
+.sidebar-collapsed .sidebar-logo-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* === منوهای سایدبار / Sidebar Menu === */
+.sidebar-menu {
+    flex: 1;
+    padding: 0 var(--spacing-3);
+}
+
+.menu-section {
+    margin-bottom: var(--spacing-6);
+}
+
+.menu-section-title {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0 var(--spacing-3) var(--spacing-2);
+    margin-bottom: var(--spacing-2);
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+}
+
+.sidebar-collapsed .menu-section-title {
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu-item {
+    margin-bottom: var(--spacing-1);
+    position: relative;
+}
+
+.menu-item.has-submenu .menu-arrow {
+    margin-right: auto;
+    transition: transform var(--transition-fast);
+}
+
+.menu-item.has-submenu.active .menu-arrow {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    display: none;
+    padding-right: var(--spacing-6);
+    margin-top: var(--spacing-2);
+    border-right: 2px solid var(--primary-color);
+    margin-right: var(--spacing-4);
+}
+
+.menu-item.active .submenu {
+    display: block;
+}
+
+.submenu-item {
+    margin-bottom: var(--spacing-1);
+}
+
+.submenu-link {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-2) var(--spacing-3);
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-sm);
+}
+
+.submenu-link:hover {
+    background: var(--glass-bg-hover);
+    color: var(--primary-color);
+    transform: translateX(-2px);
+}
+
+.submenu-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.submenu-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: var(--spacing-2);
+    font-size: var(--font-size-sm);
+}
+
+.submenu-text {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-link:hover {
+    background: var(--glass-bg-hover);
+    color: var(--primary-color);
+    transform: translateX(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.menu-link.active {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.menu-link.active::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: var(--radius-sm);
+}
+
+.menu-icon {
+    min-width: 20px;
+    text-align: center;
+    font-size: var(--font-size-md);
+    transition: transform var(--transition-fast);
+    opacity: 0.8;
+    color: var(--text-secondary);
+}
+
+.menu-link:hover .menu-icon {
+    transform: scale(1.1);
+    opacity: 1;
+    color: var(--primary-color);
+}
+
+.menu-link.active .menu-icon {
+    opacity: 1;
+    color: var(--primary-color);
+}
+
+.menu-text {
+    flex: 1;
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar-collapsed .menu-text {
+    opacity: 0;
+    width: 0;
+}
+
+/* === نشان‌های منو / Menu Badges === */
+.menu-badge {
+    min-width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+}
+
+.sidebar-collapsed .menu-badge {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* === بخش پروفایل / Profile Section === */
+.sidebar-profile {
+    padding: var(--spacing-4) var(--spacing-3);
+    border-top: 1px solid var(--glass-border);
+    position: relative;
+}
+
+.profile-card {
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-4);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.profile-card:hover {
+    background: var(--glass-bg-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+}
+
+.profile-details {
+    flex: 1;
+    min-width: 0;
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+}
+
+.profile-name {
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-role {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-dropdown-icon {
+    color: var(--text-tertiary);
+    font-size: var(--font-size-sm);
+    transition: transform var(--transition-fast);
+    opacity: 1;
+}
+
+.profile-card.active .profile-dropdown-icon {
+    transform: rotate(180deg);
+}
+
+.sidebar-collapsed .profile-details,
+.sidebar-collapsed .profile-dropdown-icon {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+/* === منوی کشویی پروفایل / Profile Dropdown === */
+.profile-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: var(--spacing-3);
+    right: var(--spacing-3);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px) scale(0.95);
+    transition: all var(--transition-fast);
+    z-index: var(--z-dropdown);
+    margin-bottom: var(--spacing-2);
+}
+
+.profile-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    animation: slideDown 0.3s ease-out;
+}
+
+.dropdown-menu {
+    list-style: none;
+    padding: var(--spacing-2);
+    margin: 0;
+}
+
+.dropdown-item {
+    margin-bottom: var(--spacing-1);
+}
+
+.dropdown-item:last-child {
+    margin-bottom: 0;
+}
+
+.dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    transition: all var(--transition-fast);
+}
+
+.dropdown-link:hover {
+    background: var(--glass-bg-hover);
+    color: var(--primary-color);
+}
+
+.dropdown-link.danger:hover {
+    background: var(--error-light);
+    color: var(--error-color);
+}
+
+.dropdown-icon {
+    width: 16px;
+    text-align: center;
+    font-size: var(--font-size-sm);
+}
+
+/* === اسکرول بار سفارشی / Custom Scrollbar === */
+.admin-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: var(--radius-full);
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+
+/* === Responsive Design === */
+@media (max-width: 768px) {
+    .admin-sidebar {
+        transform: translateX(100%);
+        z-index: var(--z-modal);
+    }
+    
+    .sidebar-open .admin-sidebar {
+        transform: translateX(0);
+    }
+    
+    /* بک‌دراپ برای موبایل */
+    .sidebar-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: var(--z-modal-backdrop);
+        opacity: 0;
+        visibility: hidden;
+        transition: all var(--transition-normal);
+    }
+    
+    .sidebar-open .sidebar-backdrop {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-sidebar {
+        width: 100%;
+        border-left: none;
+    }
+    
+    .profile-dropdown {
+        left: var(--spacing-2);
+        right: var(--spacing-2);
+    }
+}
+
+/* === انیمیشن‌های ویژه / Special Animations === */
+.menu-item {
+    opacity: 0;
+    animation: slideInRight 0.3s ease-out forwards;
+}
+
+.menu-item:nth-child(1) { animation-delay: 0.1s; }
+.menu-item:nth-child(2) { animation-delay: 0.15s; }
+.menu-item:nth-child(3) { animation-delay: 0.2s; }
+.menu-item:nth-child(4) { animation-delay: 0.25s; }
+.menu-item:nth-child(5) { animation-delay: 0.3s; }
+.menu-item:nth-child(6) { animation-delay: 0.35s; }
+.menu-item:nth-child(7) { animation-delay: 0.4s; }
+.menu-item:nth-child(8) { animation-delay: 0.45s; }
+
+/* === حالت‌های خاص / Special States === */
+.sidebar-hidden {
+    transform: translateX(100%);
+}
+
+.sidebar-floating {
+    top: calc(var(--header-height) + var(--spacing-4));
+    height: calc(100vh - var(--header-height) - var(--spacing-8));
+    margin: 0 var(--spacing-4) var(--spacing-4) 0;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+}
+
+/* === تولتیپ برای حالت جمع‌شده / Tooltip for Collapsed === */
+.sidebar-collapsed .menu-link {
+    position: relative;
+}
+
+.sidebar-collapsed .menu-link::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + var(--spacing-2));
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-xs);
+    color: var(--text-primary);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+    z-index: var(--z-tooltip);
+    pointer-events: none;
+}
+
+.sidebar-collapsed .menu-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* === پشتیبانی از RTL / RTL Support === */
+[dir="rtl"] .menu-link.active::before {
+    left: auto;
+    right: 0;
+}
+
+[dir="rtl"] .admin-sidebar {
+    left: auto;
+    right: 0;
+    border-right: none;
+    border-left: 1px solid var(--glass-border);
+}
+
+[dir="rtl"] .menu-link:hover {
+    transform: translateX(-2px);
+}
+
+[dir="rtl"] .sidebar-collapsed .menu-link::after {
+    right: auto;
+    left: calc(100% + var(--spacing-2));
+}

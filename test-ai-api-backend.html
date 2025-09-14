@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست API هوش مصنوعی (با استفاده از PHP Backend)</title>
+    <style>
+        body {
+            font-family: Vazir, sans-serif;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        input, textarea, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        button.secondary {
+            background-color: #6c757d;
+        }
+        button.secondary:hover {
+            background-color: #5a6268;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تست API هوش مصنوعی (با استفاده از PHP Backend)</h1>
+        <p>این صفحه برای تست APIهای هوش مصنوعی از طریق سرور PHP طراحی شده است.</p>
+        
+        <div class="test-section">
+            <h2>۱. اطلاعات کلید API</h2>
+            <button onclick="testKeyInfo()">دریافت اطلاعات کلید</button>
+            <div class="loading" id="keyInfoLoading">
+                <div class="spinner"></div>
+                <p>در حال دریافت اطلاعات...</p>
+            </div>
+            <div id="keyInfoResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>۲. لیست مدل‌های موجود</h2>
+            <button onclick="testModels()">دریافت لیست مدل‌ها</button>
+            <div class="loading" id="modelsLoading">
+                <div class="spinner"></div>
+                <p>در حال دریافت لیست مدل‌ها...</p>
+            </div>
+            <div id="modelsResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>۳. تست Chat Completion</h2>
+            <label for="modelSelect">انتخاب مدل:</label>
+            <select id="modelSelect">
+                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                <option value="gpt-4">GPT-4</option>
+                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+            </select>
+            
+            <label for="chatMessage">پیام برای تست:</label>
+            <textarea id="chatMessage" rows="3" placeholder="سلام، یک جمله کوتاه فارسی بگو">سلام، یک جمله کوتاه فارسی بگو</textarea>
+            
+            <button onclick="testChatCompletion()">تست Chat Completion</button>
+            <div class="loading" id="chatLoading">
+                <div class="spinner"></div>
+                <p>در حال ارسال درخواست به OpenAI...</p>
+            </div>
+            <div id="chatResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>۴. تست TTS (تبدیل متن به صوت)</h2>
+            <label for="ttsText">متن برای تبدیل به صوت:</label>
+            <textarea id="ttsText" rows="2" placeholder="این یک متن تست است">این یک متن تست است</textarea>
+            
+            <label for="voiceSelect">انتخاب صدا:</label>
+            <select id="voiceSelect">
+                <option value="nova">Nova (زن)</option>
+                <option value="onyx">Onyx (مرد)</option>
+                <option value="alloy">Alloy</option>
+                <option value="echo">Echo</option>
+                <option value="fable">Fable</option>
+                <option value="shimmer">Shimmer</option>
+            </select>
+            
+            <button onclick="testTTS()">تست TTS</button>
+            <div class="loading" id="ttsLoading">
+                <div class="spinner"></div>
+                <p>در حال تبدیل متن به صوت...</p>
+            </div>
+            <div id="ttsResult" class="result" style="display: none;"></div>
+            <audio id="audioPlayer" controls style="width: 100%; margin-top: 10px; display: none;"></audio>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * نمایش نتیجه
+         */
+        function showResult(elementId, message, isSuccess, isJson = false) {
+            const element = document.getElementById(elementId);
+            if (isJson) {
+                element.innerHTML = `<pre>${JSON.stringify(message, null, 2)}</pre>`;
+            } else {
+                element.textContent = message;
+            }
+            element.className = 'result ' + (isSuccess ? 'success' : 'error');
+            element.style.display = 'block';
+        }
+        
+        /**
+         * نمایش/پنهان کردن لودینگ
+         */
+        function toggleLoading(show, elementId) {
+            document.getElementById(elementId).style.display = show ? 'block' : 'none';
+        }
+        
+        /**
+         * تست اطلاعات کلید
+         */
+        async function testKeyInfo() {
+            try {
+                toggleLoading(true, 'keyInfoLoading');
+                document.getElementById('keyInfoResult').style.display = 'none';
+                
+                const response = await fetch('test-ai-api.php?action=info');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('keyInfoResult', data, true, true);
+                } else {
+                    showResult('keyInfoResult', data.message, false);
+                }
+            } catch (error) {
+                showResult('keyInfoResult', `خطا: ${error.message}`, false);
+            } finally {
+                toggleLoading(false, 'keyInfoLoading');
+            }
+        }
+        
+        /**
+         * تست لیست مدل‌ها
+         */
+        async function testModels() {
+            try {
+                toggleLoading(true, 'modelsLoading');
+                document.getElementById('modelsResult').style.display = 'none';
+                
+                const response = await fetch('test-ai-api.php?action=models');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // فیلتر کردن فقط چند مدل مهم
+                    const importantModels = data.data?.data?.filter(model => 
+                        model.id.includes('gpt') || model.id.includes('dall') || model.id.includes('tts')
+                    ).slice(0, 10) || [];
+                    
+                    showResult('modelsResult', {
+                        message: data.message,
+                        model_count: data.data?.data?.length || 0,
+                        important_models: importantModels
+                    }, true, true);
+                } else {
+                    showResult('modelsResult', data.message, false);
+                }
+            } catch (error) {
+                showResult('modelsResult', `خطا: ${error.message}`, false);
+            } finally {
+                toggleLoading(false, 'modelsLoading');
+            }
+        }
+        
+        /**
+         * تست Chat Completion
+         */
+        async function testChatCompletion() {
+            try {
+                toggleLoading(true, 'chatLoading');
+                document.getElementById('chatResult').style.display = 'none';
+                
+                const message = document.getElementById('chatMessage').value;
+                const model = document.getElementById('modelSelect').value;
+                
+                if (!message.trim()) {
+                    showResult('chatResult', 'لطفاً یک پیام برای تست وارد کنید', false);
+                    toggleLoading(false, 'chatLoading');
+                    return;
+                }
+                
+                const response = await fetch('test-ai-api.php?action=chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `message=${encodeURIComponent(message)}`
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const reply = data.data?.choices?.[0]?.message?.content || "پاسخی دریافت نشد";
+                    showResult('chatResult', {
+                        message: "پاسخ از OpenAI دریافت شد",
+                        reply: reply,
+                        usage: data.data?.usage
+                    }, true, true);
+                } else {
+                    showResult('chatResult', data.message, false);
+                }
+            } catch (error) {
+                showResult('chatResult', `خطا: ${error.message}`, false);
+            } finally {
+                toggleLoading(false, 'chatLoading');
+            }
+        }
+        
+        /**
+         * تست TTS
+         */
+        async function testTTS() {
+            try {
+                toggleLoading(true, 'ttsLoading');
+                document.getElementById('ttsResult').style.display = 'none';
+                document.getElementById('audioPlayer').style.display = 'none';
+                
+                const text = document.getElementById('ttsText').value;
+                const voice = document.getElementById('voiceSelect').value;
+                
+                if (!text.trim()) {
+                    showResult('ttsResult', 'لطفاً متنی برای تبدیل به صوت وارد کنید', false);
+                    toggleLoading(false, 'ttsLoading');
+                    return;
+                }
+                
+                // برای TTS باید از یک endpoint مخصوص استفاده کنیم
+                // در اینجا فقط یک پیام نمایش می‌دهیم
+                showResult('ttsResult', 'تست TTS از طریق سرور در حال توسعه است. لطفاً از صفحه اصلی برای این تست استفاده کنید.', false);
+                
+            } catch (error) {
+                showResult('ttsResult', `خطا: ${error.message}`, false);
+            } finally {
+                toggleLoading(false, 'ttsLoading');
+            }
+        }
+    </script>
+</body>
+</html>

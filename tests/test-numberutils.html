@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست NumberUtils - DataSave</title>
+    <style>
+        body { 
+            font-family: 'Tahoma', Arial; 
+            margin: 20px; 
+            direction: rtl; 
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .test-box {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        .result {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧮 تست ماژول NumberUtils</h1>
+        
+        <div class="test-box">
+            <h3>📞 تست شماره پنل SMS</h3>
+            <label>شماره پنل (فارسی/انگلیسی):</label>
+            <input type="text" id="panel-input" placeholder="مثال: ۳۰۰۰۱۶۴۵۴۵">
+            <div id="panel-result" class="result"></div>
+        </div>
+        
+        <div class="test-box">
+            <h3>📱 تست شماره تلفن</h3>
+            <label>شماره تلفن:</label>
+            <input type="text" id="phone-input" placeholder="مثال: ۰۹۱۲۳۴۵۶۷۸۹">
+            <div id="phone-result" class="result"></div>
+        </div>
+        
+        <div class="test-box">
+            <h3>🔢 تست اعداد مختلف</h3>
+            <label>عدد برای تست:</label>
+            <input type="text" id="number-input" placeholder="مثال: ۱۲۳٫۴۵">
+            <button onclick="testConversion()">تبدیل</button>
+            <div id="number-result" class="result"></div>
+        </div>
+        
+        <div class="test-box">
+            <h3>💰 تست فرمت مالی</h3>
+            <label>مبلغ (عدد):</label>
+            <input type="number" id="money-input" placeholder="1234567">
+            <button onclick="testMoney()">فرمت مالی</button>
+            <div id="money-result" class="result"></div>
+        </div>
+    </div>
+
+    <!-- بارگذاری NumberUtils Lite -->
+    <script src="assets/js/modules/numberUtils-lite.js"></script>
+    
+    <script>
+        // تست real-time برای شماره پنل
+        document.getElementById('panel-input').addEventListener('input', function(e) {
+            const original = e.target.value;
+            const converted = NumberUtils.toEnglish(original);
+            document.getElementById('panel-result').innerHTML = `
+                <strong>ورودی:</strong> ${original}<br>
+                <strong>تبدیل شده:</strong> ${converted}<br>
+                <strong>معتبر:</strong> ${NumberUtils.isValidNumber(converted) ? '✅ بله' : '❌ خیر'}
+            `;
+        });
+        
+        // تست real-time برای شماره تلفن
+        document.getElementById('phone-input').addEventListener('input', function(e) {
+            const original = e.target.value;
+            const converted = NumberUtils.toEnglish(original);
+            const normalized = NumberUtils.normalizePhone(original);
+            const isValid = NumberUtils.validatePhone(original);
+            
+            document.getElementById('phone-result').innerHTML = `
+                <strong>ورودی:</strong> ${original}<br>
+                <strong>تبدیل شده:</strong> ${converted}<br>
+                <strong>نرمال شده:</strong> ${normalized || 'نامعتبر'}<br>
+                <strong>معتبر:</strong> ${isValid ? '✅ بله' : '❌ خیر'}
+            `;
+        });
+        
+        function testConversion() {
+            const input = document.getElementById('number-input').value;
+            const toEnglish = NumberUtils.toEnglish(input);
+            const toPersian = NumberUtils.toPersian(input);
+            const parsed = NumberUtils.parseNumber(input);
+            
+            document.getElementById('number-result').innerHTML = `
+                <strong>ورودی:</strong> ${input}<br>
+                <strong>به انگلیسی:</strong> ${toEnglish}<br>
+                <strong>به فارسی:</strong> ${toPersian}<br>
+                <strong>عدد پارس شده:</strong> ${parsed}<br>
+                <strong>معتبر:</strong> ${NumberUtils.isValidNumber(input) ? '✅ بله' : '❌ خیر'}
+            `;
+        }
+        
+        function testMoney() {
+            const input = parseFloat(document.getElementById('money-input').value);
+            if (isNaN(input)) {
+                document.getElementById('money-result').innerHTML = '❌ لطفاً عدد معتبر وارد کنید';
+                return;
+            }
+            
+            const formatted = NumberUtils.formatCurrency(input);
+            const withSeparator = NumberUtils.formatWithSeparators(input, {persian: true});
+            const fileSize = NumberUtils.formatFileSize(input);
+            
+            document.getElementById('money-result').innerHTML = `
+                <strong>عدد:</strong> ${input}<br>
+                <strong>فرمت مالی:</strong> ${formatted}<br>
+                <strong>با جداکننده:</strong> ${withSeparator}<br>
+                <strong>اندازه فایل:</strong> ${fileSize}
+            `;
+        }
+        
+        // تست اولیه
+        console.log('🧮 NumberUtils loaded:', typeof NumberUtils !== 'undefined');
+        console.log('📞 Sample conversion: ۳۰۰۰۱۶۴۵۴۵ →', NumberUtils.toEnglish('۳۰۰۰۱۶۴۵۴۵'));
+        console.log('📱 Phone validation: ۰۹۱۲۳۴۵۶۷۸۹ →', NumberUtils.validatePhone('۰۹۱۲۳۴۵۶۷۸۹'));
+    </script>
+</body>
+</html>

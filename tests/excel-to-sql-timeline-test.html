@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمایش تایم‌لاین تبدیل اکسل به SQL - DataSave</title>
+    <link rel="stylesheet" href="../assets/css/admin/modules/data-management.css">
+    <link rel="stylesheet" href="../assets/css/admin/modules/excel-to-sql-timeline.css">
+    <link rel="stylesheet" href="../assets/fonts/vazirmatn.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="dm-container">
+        <div class="dm-header">
+            <div class="dm-header-content">
+                <h1 class="dm-title">آزمایش تایم‌لاین تبدیل اکسل به SQL</h1>
+                <p class="dm-subtitle">پیش‌نمایش و آزمایش مراحل 12گانه تبدیل فایل اکسل به پایگاه داده</p>
+            </div>
+        </div>
+        
+        <div class="dm-content">
+            <!-- نمایش تایم‌لاین -->
+            <div id="timeline-container"></div>
+            
+            <div class="dm-test-controls">
+                <h3>کنترل‌های آزمایشی</h3>
+                <div class="dm-button-row">
+                    <button class="dm-btn primary" id="test-load-template">
+                        <i class="fas fa-file-import"></i>
+                        بارگذاری قالب
+                    </button>
+                    <button class="dm-btn secondary" id="test-step1">
+                        <i class="fas fa-play"></i>
+                        اجرای مرحله 1
+                    </button>
+                    <button class="dm-btn secondary" id="test-all-steps">
+                        <i class="fas fa-fast-forward"></i>
+                        اجرای تمام مراحل
+                    </button>
+                </div>
+                
+                <div class="dm-test-info">
+                    <h4>راهنمای آزمایش</h4>
+                    <p>1. ابتدا با کلیک روی دکمه «بارگذاری قالب»، قالب تایم‌لاین را بارگذاری کنید.</p>
+                    <p>2. سپس می‌توانید با کلیک روی «اجرای مرحله 1» فرآیند را گام به گام آزمایش کنید.</p>
+                    <p>3. یا با کلیک روی «اجرای تمام مراحل» کل فرآیند را به صورت خودکار شبیه‌سازی کنید.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('timeline-container');
+            const loadTemplateBtn = document.getElementById('test-load-template');
+            const step1Btn = document.getElementById('test-step1');
+            const allStepsBtn = document.getElementById('test-all-steps');
+            
+            // Load timeline template
+            loadTemplateBtn.addEventListener('click', async function() {
+                try {
+                    const response = await fetch('../assets/templates/excel-to-sql-timeline.html');
+                    const html = await response.text();
+                    container.innerHTML = html;
+                    
+                    // Load scripts
+                    const script = document.createElement('script');
+                    script.src = '../assets/js/admin/modules/excel-to-sql-timeline.js';
+                    document.body.appendChild(script);
+                    
+                    loadTemplateBtn.disabled = true;
+                    step1Btn.disabled = false;
+                    allStepsBtn.disabled = false;
+                    
+                    alert('قالب تایم‌لاین با موفقیت بارگذاری شد.');
+                } catch (error) {
+                    console.error('Error loading template:', error);
+                    alert('خطا در بارگذاری قالب: ' + error.message);
+                }
+            });
+            
+            // Test step 1
+            step1Btn.addEventListener('click', function() {
+                // Find the first step and activate it
+                const step1 = document.querySelector('.dm-timeline-step[data-step="1"]');
+                if (step1) {
+                    // Make sure the Excel to SQL tab is active
+                    const excelToSqlTab = document.querySelector('.dm-tab[data-tab="excel-to-sql"]');
+                    if (excelToSqlTab) {
+                        excelToSqlTab.click();
+                    }
+                    
+                    // Simulate file selection
+                    const fileInput = document.getElementById('excel-file');
+                    if (fileInput) {
+                        // Create a fake file event
+                        const fakeFile = new File([''], 'test-data.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        
+                        // Set the file
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(fakeFile);
+                        fileInput.files = dataTransfer.files;
+                        
+                        // Trigger change event
+                        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        alert('مرحله 1 با موفقیت اجرا شد. اکنون می‌توانید فرآیند را ادامه دهید.');
+                    }
+                }
+            });
+            
+            // Test all steps
+            allStepsBtn.addEventListener('click', function() {
+                // First load step 1
+                step1Btn.click();
+                
+                // Then simulate going through all steps with delays
+                setTimeout(() => {
+                    document.getElementById('next-step-1')?.click();
+                    
+                    setTimeout(() => {
+                        document.getElementById('next-step-2')?.click();
+                        
+                        setTimeout(() => {
+                            document.getElementById('start-processing')?.click();
+                            
+                            setTimeout(() => {
+                                document.getElementById('next-step-4')?.click();
+                                
+                                setTimeout(() => {
+                                    document.getElementById('next-step-5')?.click();
+                                    
+                                    setTimeout(() => {
+                                        document.getElementById('next-step-6')?.click();
+                                        
+                                        setTimeout(() => {
+                                            document.getElementById('execute-sql')?.click();
+                                            
+                                            setTimeout(() => {
+                                                document.getElementById('next-step-8')?.click();
+                                                
+                                                setTimeout(() => {
+                                                    document.getElementById('start-data-import')?.click();
+                                                    
+                                                    setTimeout(() => {
+                                                        document.getElementById('next-step-10')?.click();
+                                                        
+                                                        setTimeout(() => {
+                                                            document.getElementById('next-step-11')?.click();
+                                                        }, 2000);
+                                                    }, 6000);
+                                                }, 2000);
+                                            }, 2000);
+                                        }, 1000);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            });
+            
+            // Disable test buttons initially
+            step1Btn.disabled = true;
+            allStepsBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>

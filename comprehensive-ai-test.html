@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست جامع API هوش مصنوعی</title>
+    <style>
+        body {
+            font-family: Vazir, sans-serif;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        input, textarea, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .test-buttons button {
+            flex: 1;
+            min-width: 120px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تست جامع API هوش مصنوعی</h1>
+        <p>این صفحه برای تست کامل کلید API و توکن‌های OpenAI طراحی شده است.</p>
+        
+        <div class="test-section">
+            <h2>۱. بررسی کلید API</h2>
+            <button id="checkKeyBtn">بررسی کلید API</button>
+            <div id="keyCheckResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>۲. اعتبارسنجی کلید API</h2>
+            <button id="validateKeyBtn">اعتبارسنجی کلید API</button>
+            <div id="keyValidationResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>۳. تست Chat Completions</h2>
+            <label for="testMessage">پیام برای تست:</label>
+            <textarea id="testMessage" rows="3" placeholder="سلام، یک جمله کوتاه فارسی بگو">سلام، یک جمله کوتاه فارسی بگو</textarea>
+            <button id="testChatBtn">تست Chat Completion</button>
+            <div id="chatTestResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>۴. اطلاعات کلید API</h2>
+            <button id="getKeyInfoBtn">دریافت اطلاعات کلید</button>
+            <div id="keyInfoResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Utility function to show results
+        function showResult(elementId, data, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.className = 'result ' + (isSuccess ? 'success' : 'error');
+            element.style.display = 'block';
+        }
+        
+        // Utility function to show info
+        function showInfo(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = 'result info';
+            element.style.display = 'block';
+        }
+        
+        // Check API key
+        document.getElementById('checkKeyBtn').addEventListener('click', async function() {
+            try {
+                showInfo('keyCheckResult', 'در حال بررسی کلید API...');
+                
+                const response = await fetch('comprehensive-ai-test.php?action=info');
+                const data = await response.json();
+                
+                showResult('keyCheckResult', data, data.success);
+            } catch (error) {
+                showResult('keyCheckResult', {error: error.message}, false);
+            }
+        });
+        
+        // Validate API key
+        document.getElementById('validateKeyBtn').addEventListener('click', async function() {
+            try {
+                showInfo('keyValidationResult', 'در حال اعتبارسنجی کلید API...');
+                
+                const response = await fetch('comprehensive-ai-test.php?action=validate_key');
+                const data = await response.json();
+                
+                showResult('keyValidationResult', data, data.success);
+            } catch (error) {
+                showResult('keyValidationResult', {error: error.message}, false);
+            }
+        });
+        
+        // Test chat completion
+        document.getElementById('testChatBtn').addEventListener('click', async function() {
+            try {
+                showInfo('chatTestResult', 'در حال تست Chat API...');
+                
+                const message = document.getElementById('testMessage').value;
+                const response = await fetch('comprehensive-ai-test.php?action=test_chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({message: message})
+                });
+                
+                const data = await response.json();
+                
+                showResult('chatTestResult', data, data.success);
+            } catch (error) {
+                showResult('chatTestResult', {error: error.message}, false);
+            }
+        });
+        
+        // Get key info
+        document.getElementById('getKeyInfoBtn').addEventListener('click', async function() {
+            try {
+                showInfo('keyInfoResult', 'در حال دریافت اطلاعات کلید...');
+                
+                const response = await fetch('comprehensive-ai-test.php?action=info');
+                const data = await response.json();
+                
+                showResult('keyInfoResult', data, data.success);
+            } catch (error) {
+                showResult('keyInfoResult', {error: error.message}, false);
+            }
+        });
+    </script>
+</body>
+</html>

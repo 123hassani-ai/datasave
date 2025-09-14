@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست مدیریت داده‌ها - حالت مینیمال</title>
+    
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Vazirmatn Font -->
+    <link href="assets/fonts/vazirmatn.css" rel="stylesheet">
+    <!-- Data Management Styles -->
+    <link href="assets/css/admin/modules/data-management.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .theme-switch {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background: #fff;
+            border-radius: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .theme-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-btn.light {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .theme-btn.dark {
+            background: #333;
+            color: #fff;
+        }
+        
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-btn.active {
+            box-shadow: 0 0 0 2px #3B82F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="data-management-page">
+        <!-- Header -->
+        <header class="dm-header">
+            <div class="dm-header-content">
+                <div class="dm-header-title">
+                    <div class="icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div>
+                        <h1>مدیریت داده‌ها</h1>
+                        <p class="dm-header-subtitle">تبدیل فایل‌های Excel به MySQL با هوش مصنوعی</p>
+                    </div>
+                </div>
+                <div class="dm-header-actions">
+                    <button class="dm-btn secondary" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        تازه‌سازی
+                    </button>
+                    <button class="dm-btn primary lg" id="newProjectBtn">
+                        <i class="fas fa-plus"></i>
+                        پروژه جدید
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dm-main">
+            <!-- Stats -->
+            <section class="dm-stats">
+                <div class="dm-stat-card">
+                    <div class="dm-stat-content">
+                        <div class="dm-stat-info">
+                            <h3>12</h3>
+                            <p>کل پروژه‌ها</p>
+                        </div>
+                        <div class="dm-stat-icon primary">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dm-stat-card">
+                    <div class="dm-stat-content">
+                        <div class="dm-stat-info">
+                            <h3>8</h3>
+                            <p>تکمیل شده</p>
+                        </div>
+                        <div class="dm-stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dm-stat-card">
+                    <div class="dm-stat-content">
+                        <div class="dm-stat-info">
+                            <h3>3</h3>
+                            <p>در حال پردازش</p>
+                        </div>
+                        <div class="dm-stat-icon warning">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dm-stat-card">
+                    <div class="dm-stat-content">
+                        <div class="dm-stat-info">
+                            <h3>1</h3>
+                            <p>خطا</p>
+                        </div>
+                        <div class="dm-stat-icon" style="background:var(--dm-danger)">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Projects Section -->
+            <section class="dm-projects-section">
+                <div class="dm-projects-header">
+                    <h2 class="dm-projects-title">پروژه‌های اخیر</h2>
+                    <div class="dm-projects-filters">
+                        <button class="dm-filter active">همه</button>
+                        <button class="dm-filter">تکمیل شده</button>
+                        <button class="dm-filter">در حال پردازش</button>
+                        <button class="dm-filter">با خطا</button>
+                    </div>
+                </div>
+                
+                <div class="dm-projects-content">
+                    <!-- Empty State (for testing) -->
+                    <div class="dm-empty-state">
+                        <div class="icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>هیچ پروژه‌ای یافت نشد</h3>
+                        <p>هنوز هیچ پروژه‌ای برای تبدیل اکسل به SQL ایجاد نکرده‌اید. برای شروع، روی دکمه «پروژه جدید» کلیک کنید.</p>
+                        <button class="dm-btn primary">
+                            <i class="fas fa-plus"></i>
+                            ایجاد پروژه جدید
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Theme Switcher -->
+    <div class="theme-switch">
+        <div class="theme-btn light active" onclick="setTheme('light')">
+            <i class="fas fa-sun"></i>
+        </div>
+        <div class="theme-btn dark" onclick="setTheme('dark')">
+            <i class="fas fa-moon"></i>
+        </div>
+    </div>
+    
+    <script>
+        // Theme Switcher
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            
+            // Update active state
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.theme-btn.${theme}`).classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست KamaDatePicker و Scrolling Jalali Picker</title>
+    
+    <!-- فونت وزیرمتن -->
+    <link href="assets/fonts/vazirmatn.css" rel="stylesheet">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KamaDatePicker CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/kamadatepicker/dist/css/kamadatepicker.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.3s ease;
+        }
+        
+        .test-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .test-card h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .badge.modern {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        .badge.simple {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-size: 13px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn.success {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        .output {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 2px 0;
+        }
+        
+        .status.loading {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status.success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .status.error {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        /* Scrolling Jalali Picker Styles */
+        .scrolling-picker {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .picker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .picker-container {
+            display: flex;
+            gap: 20px;
+            text-align: center;
+        }
+        
+        .picker-column {
+            width: 80px;
+        }
+        
+        .picker-column h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .picker-scroll {
+            height: 150px;
+            overflow-y: scroll;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        
+        .picker-item {
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .picker-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .picker-item.selected {
+            background: #667eea;
+            color: white;
+        }
+        
+        .picker-buttons {
+            margin-top: 20px;
+            text-align: center;
+            gap: 10px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .picker-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 13px;
+        }
+        
+        .picker-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .picker-btn.secondary {
+            background: #ddd;
+            color: #333;
+        }
+        
+        .comparison {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin-top: 30px;
+        }
+        
+        .comparison h2 {
+            color: white;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .comparison-table {
+            overflow-x: auto;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: center;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .comparison-table th {
+            background: rgba(0,0,0,0.2);
+            font-weight: 600;
+        }
+        
+        .comparison-table .check {
+            color: #2ecc71;
+            font-size: 1.2rem;
+        }
+        
+        .comparison-table .cross {
+            color: #e74c3c;
+            font-size: 1.2rem;
+        }
+        
+        .comparison-table .rating {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+        }
+        
+        .star {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 تست KamaDatePicker و Scrolling Jalali Picker</h1>
+            <p>مقایسه کتابخانه‌های مدرن دیت پیکر فارسی</p>
+        </div>
+
+        <div class="test-grid">
+            <!-- تست KamaDatePicker -->
+            <div class="test-card">
+                <h2>
+                    KamaDatePicker
+                    <span class="badge simple">ساده</span>
+                </h2>
+                <div class="form-group">
+                    <label>تاریخ شروع:</label>
+                    <input type="text" id="kama1" placeholder="انتخاب تاریخ..." readonly>
+                </div>
+                <div class="form-group">
+                    <label>تاریخ پایان:</label>
+                    <input type="text" id="kama2" placeholder="انتخاب تاریخ..." readonly>
+                </div>
+                <button class="btn" onclick="testKamaDatePicker()">تست عملکرد</button>
+                <button class="btn success" onclick="clearKama()">پاک کردن</button>
+                <button class="btn danger" onclick="initKama()">راه‌اندازی مجدد</button>
+                <div class="output" id="kamaOutput">
+                    <span class="status loading">در حال بارگذاری...</span>
+                </div>
+            </div>
+
+            <!-- تست Scrolling Jalali Picker -->
+            <div class="test-card">
+                <h2>
+                    Scrolling Jalali Picker
+                    <span class="badge modern">مدرن</span>
+                </h2>
+                <div class="form-group">
+                    <label>تاریخ شروع:</label>
+                    <input type="text" id="scrolling1" placeholder="کلیک کنید..." readonly onclick="openScrollingPicker(this)">
+                </div>
+                <div class="form-group">
+                    <label>تاریخ پایان:</label>
+                    <input type="text" id="scrolling2" placeholder="کلیک کنید..." readonly onclick="openScrollingPicker(this)">
+                </div>
+                <button class="btn" onclick="testScrollingPicker()">تست عملکرد</button>
+                <button class="btn success" onclick="clearScrolling()">پاک کردن</button>
+                <button class="btn" onclick="showScrollingPicker()">نمایش Picker</button>
+                <div class="output" id="scrollingOutput">
+                    <span class="status success">آماده برای استفاده</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scrolling Picker Modal -->
+        <div class="picker-overlay" id="pickerOverlay"></div>
+        <div class="scrolling-picker" id="scrollingPicker">
+            <h3 style="color: #333; text-align: center; margin-bottom: 15px;">انتخاب تاریخ شمسی</h3>
+            <div class="picker-container">
+                <div class="picker-column">
+                    <h4>سال</h4>
+                    <div class="picker-scroll" id="yearScroll"></div>
+                </div>
+                <div class="picker-column">
+                    <h4>ماه</h4>
+                    <div class="picker-scroll" id="monthScroll"></div>
+                </div>
+                <div class="picker-column">
+                    <h4>روز</h4>
+                    <div class="picker-scroll" id="dayScroll"></div>
+                </div>
+            </div>
+            <div class="picker-buttons">
+                <button class="picker-btn primary" onclick="selectScrollingDate()">انتخاب</button>
+                <button class="picker-btn secondary" onclick="closeScrollingPicker()">انصراف</button>
+            </div>
+        </div>
+
+        <!-- مقایسه -->
+        <div class="comparison">
+            <h2>📊 مقایسه جامع</h2>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ویژگی</th>
+                            <th>KamaDatePicker</th>
+                            <th>Scrolling Jalali</th>
+                            <th>Persian DatePicker</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>سهولت نصب</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="cross">✗</span></td>
+                        </tr>
+                        <tr>
+                            <td>رابط کاربری</td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★★★</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★★★★</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="rating">
+                                    <span class="star">★★★★★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>سازگاری موبایل</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>بدون وابستگی</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="cross">✗</span> (jQuery)</td>
+                        </tr>
+                        <tr>
+                            <td>حجم فایل</td>
+                            <td>کم</td>
+                            <td>خیلی کم</td>
+                            <td>زیاد</td>
+                        </tr>
+                        <tr>
+                            <td>قابلیت شخصی‌سازی</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- کتابخانه‌ها -->
+    <script src="https://unpkg.com/kamadatepicker/dist/js/kamadatepicker.min.js"></script>
+    
+    <script>
+        let currentScrollingInput = null;
+        let selectedDate = { year: 1403, month: 6, day: 20 };
+
+        // ماه‌های فارسی
+        const persianMonths = [
+            'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+            'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'
+        ];
+
+        // تابع کمکی برای نمایش خروجی
+        function showOutput(elementId, message, status = 'success') {
+            const output = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString('fa-IR');
+            const statusClass = status === 'error' ? 'error' : status === 'loading' ? 'loading' : 'success';
+            
+            output.innerHTML += `
+                <div><span class="status ${statusClass}">[${timestamp}]</span> ${message}</div>
+            `;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        // راه‌اندازی KamaDatePicker
+        function initKama() {
+            try {
+                if (typeof KamaDatePicker !== 'undefined') {
+                    // تلاش برای راه‌اندازی KamaDatePicker
+                    new KamaDatePicker('#kama1', {
+                        placeholder: 'انتخاب تاریخ شروع',
+                        twodigit: true,
+                        closeAfterSelect: true,
+                        nextButtonIcon: '❯',
+                        previousButtonIcon: '❮',
+                        buttonsColor: '#667eea',
+                        markToday: false,
+                        markHolidays: true,
+                        holidayColorInCalendar: '#e74c3c'
+                    });
+
+                    new KamaDatePicker('#kama2', {
+                        placeholder: 'انتخاب تاریخ پایان',
+                        twodigit: true,
+                        closeAfterSelect: true,
+                        nextButtonIcon: '❯',
+                        previousButtonIcon: '❮',
+                        buttonsColor: '#667eea',
+                        markToday: true,
+                        markHolidays: true,
+                        holidayColorInCalendar: '#e74c3c'
+                    });
+
+                    showOutput('kamaOutput', '✅ KamaDatePicker راه‌اندازی شد', 'success');
+                } else {
+                    throw new Error('KamaDatePicker library not found');
+                }
+            } catch (error) {
+                showOutput('kamaOutput', `❌ خطا در راه‌اندازی KamaDatePicker: ${error.message}`, 'error');
+                
+                // Fallback: شبیه‌سازی ساده
+                document.getElementById('kama1').addEventListener('click', function() {
+                    const today = new Date();
+                    const persianYear = today.getFullYear() - 621;
+                    const persianMonth = today.getMonth() + 1;
+                    const persianDay = today.getDate();
+                    this.value = `${persianYear}/${persianMonth.toString().padStart(2, '0')}/${persianDay.toString().padStart(2, '0')}`;
+                });
+                
+                document.getElementById('kama2').addEventListener('click', function() {
+                    const future = new Date();
+                    future.setDate(future.getDate() + 7);
+                    const persianYear = future.getFullYear() - 621;
+                    const persianMonth = future.getMonth() + 1;
+                    const persianDay = future.getDate();
+                    this.value = `${persianYear}/${persianMonth.toString().padStart(2, '0')}/${persianDay.toString().padStart(2, '0')}`;
+                });
+                
+                showOutput('kamaOutput', '🔄 Fallback mode فعال شد - کلیک کنید', 'success');
+            }
+        }
+
+        // تست عملکرد KamaDatePicker
+        function testKamaDatePicker() {
+            const start = performance.now();
+            try {
+                const val1 = document.getElementById('kama1').value;
+                const val2 = document.getElementById('kama2').value;
+                const end = performance.now();
+                
+                showOutput('kamaOutput', `📊 تست عملکرد: ${(end - start).toFixed(2)}ms`);
+                showOutput('kamaOutput', `📅 مقادیر: شروع="${val1}" پایان="${val2}"`);
+                
+                if (!val1 && !val2) {
+                    showOutput('kamaOutput', '⚠️ هیچ تاریخی انتخاب نشده - روی input ها کلیک کنید', 'error');
+                }
+            } catch (error) {
+                showOutput('kamaOutput', `❌ خطا در تست: ${error.message}`, 'error');
+            }
+        }
+
+        // پاک کردن KamaDatePicker
+        function clearKama() {
+            document.getElementById('kama1').value = '';
+            document.getElementById('kama2').value = '';
+            showOutput('kamaOutput', '🧹 مقادیر پاک شدند', 'success');
+        }
+
+        // راه‌اندازی Scrolling Jalali Picker
+        function initScrollingPicker() {
+            // ایجاد لیست سال‌ها
+            const yearScroll = document.getElementById('yearScroll');
+            yearScroll.innerHTML = '';
+            for (let year = 1380; year <= 1420; year++) {
+                const div = document.createElement('div');
+                div.className = 'picker-item';
+                div.textContent = year;
+                div.onclick = () => selectYear(year, div);
+                if (year === selectedDate.year) div.classList.add('selected');
+                yearScroll.appendChild(div);
+            }
+
+            // ایجاد لیست ماه‌ها
+            const monthScroll = document.getElementById('monthScroll');
+            monthScroll.innerHTML = '';
+            persianMonths.forEach((month, index) => {
+                const div = document.createElement('div');
+                div.className = 'picker-item';
+                div.textContent = month;
+                div.onclick = () => selectMonth(index + 1, div);
+                if (index + 1 === selectedDate.month) div.classList.add('selected');
+                monthScroll.appendChild(div);
+            });
+
+            // ایجاد لیست روزها
+            updateDays();
+        }
+
+        function selectYear(year, element) {
+            document.querySelectorAll('#yearScroll .picker-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDate.year = year;
+            updateDays();
+        }
+
+        function selectMonth(month, element) {
+            document.querySelectorAll('#monthScroll .picker-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDate.month = month;
+            updateDays();
+        }
+
+        function selectDay(day, element) {
+            document.querySelectorAll('#dayScroll .picker-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedDate.day = day;
+        }
+
+        function updateDays() {
+            const dayScroll = document.getElementById('dayScroll');
+            dayScroll.innerHTML = '';
+            
+            // محاسبه تعداد روزهای ماه (ساده)
+            let daysInMonth = 31;
+            if (selectedDate.month > 6) daysInMonth = 30;
+            if (selectedDate.month === 12) daysInMonth = 29; // فرض کنیم غیر کبیسه
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const div = document.createElement('div');
+                div.className = 'picker-item';
+                div.textContent = day;
+                div.onclick = () => selectDay(day, div);
+                if (day === selectedDate.day && day <= daysInMonth) div.classList.add('selected');
+                dayScroll.appendChild(div);
+            }
+        }
+
+        function openScrollingPicker(input) {
+            currentScrollingInput = input;
+            document.getElementById('pickerOverlay').style.display = 'block';
+            document.getElementById('scrollingPicker').style.display = 'block';
+            initScrollingPicker();
+            showOutput('scrollingOutput', '📱 Scrolling Picker باز شد', 'success');
+        }
+
+        function closeScrollingPicker() {
+            document.getElementById('pickerOverlay').style.display = 'none';
+            document.getElementById('scrollingPicker').style.display = 'none';
+            currentScrollingInput = null;
+            showOutput('scrollingOutput', '❌ Picker بسته شد', 'success');
+        }
+
+        function selectScrollingDate() {
+            if (currentScrollingInput) {
+                const dateString = `${selectedDate.year}/${selectedDate.month.toString().padStart(2, '0')}/${selectedDate.day.toString().padStart(2, '0')}`;
+                const persianDateString = `${selectedDate.day} ${persianMonths[selectedDate.month - 1]} ${selectedDate.year}`;
+                
+                currentScrollingInput.value = persianDateString;
+                currentScrollingInput.dataset.date = dateString;
+                
+                showOutput('scrollingOutput', `✅ تاریخ انتخاب شد: ${persianDateString}`, 'success');
+            }
+            closeScrollingPicker();
+        }
+
+        function showScrollingPicker() {
+            openScrollingPicker(document.getElementById('scrolling1'));
+        }
+
+        function testScrollingPicker() {
+            const start = performance.now();
+            try {
+                const val1 = document.getElementById('scrolling1').value;
+                const val2 = document.getElementById('scrolling2').value;
+                const date1 = document.getElementById('scrolling1').dataset.date;
+                const date2 = document.getElementById('scrolling2').dataset.date;
+                const end = performance.now();
+                
+                showOutput('scrollingOutput', `📊 تست عملکرد: ${(end - start).toFixed(2)}ms`);
+                showOutput('scrollingOutput', `📅 مقادیر نمایشی: شروع="${val1}" پایان="${val2}"`);
+                showOutput('scrollingOutput', `📅 مقادیر داده: شروع="${date1}" پایان="${date2}"`);
+            } catch (error) {
+                showOutput('scrollingOutput', `❌ خطا در تست: ${error.message}`, 'error');
+            }
+        }
+
+        function clearScrolling() {
+            document.getElementById('scrolling1').value = '';
+            document.getElementById('scrolling2').value = '';
+            document.getElementById('scrolling1').dataset.date = '';
+            document.getElementById('scrolling2').dataset.date = '';
+            showOutput('scrollingOutput', '🧹 مقادیر پاک شدند', 'success');
+        }
+
+        // راه‌اندازی اولیه
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                initKama();
+                initScrollingPicker();
+                
+                showOutput('scrollingOutput', '✅ Scrolling Jalali Picker آماده است', 'success');
+                showOutput('scrollingOutput', '🎯 روی input ها کلیک کنید تا picker باز شود', 'success');
+                
+                // بستن picker با کلیک روی overlay
+                document.getElementById('pickerOverlay').onclick = closeScrollingPicker;
+            }, 500);
+        });
+    </script>
+</body>
+</html>
