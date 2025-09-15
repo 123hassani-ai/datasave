@@ -1,0 +1,1520 @@
+/**
+ * Excel to SQL Timeline CSS
+ * استایل‌های تایم‌لاین تبدیل فایل Excel به پایگاه داده MySQL
+ * 
+ * این فایل شامل تمام استایل‌های مورد نیاز برای تایم‌لاین ۱۲ مرحله‌ای است
+ * طراحی مدرن، رسپانسیو و سازگار با تم تاریک/روشن
+ */
+
+/* ================================
+   متغیرهای CSS برای تم‌بندی
+   ================================ */
+:root {
+    /* رنگ‌های اصلی */
+    --e2s-primary: #6772e5;
+    --e2s-primary-dark: #5469d4;
+    --e2s-primary-light: #7c8aef;
+    --e2s-secondary: #6c757d;
+    --e2s-success: #28a745;
+    --e2s-danger: #dc3545;
+    --e2s-warning: #ffc107;
+    --e2s-info: #17a2b8;
+    
+    /* رنگ‌های پس‌زمینه */
+    --e2s-bg-primary: #ffffff;
+    --e2s-bg-secondary: #f8f9fa;
+    --e2s-bg-tertiary: #e9ecef;
+    --e2s-bg-dark: #343a40;
+    
+    /* رنگ‌های متن */
+    --e2s-text-primary: #212529;
+    --e2s-text-secondary: #6c757d;
+    --e2s-text-muted: #adb5bd;
+    --e2s-text-white: #ffffff;
+    
+    /* سایه‌ها */
+    --e2s-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --e2s-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --e2s-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    
+    /* حاشیه‌ها */
+    --e2s-border-radius: 0.5rem;
+    --e2s-border-radius-sm: 0.25rem;
+    --e2s-border-radius-lg: 0.75rem;
+    
+    /* فاصله‌ها */
+    --e2s-spacing-xs: 0.25rem;
+    --e2s-spacing-sm: 0.5rem;
+    --e2s-spacing-md: 1rem;
+    --e2s-spacing-lg: 1.5rem;
+    --e2s-spacing-xl: 3rem;
+    
+    /* انیمیشن‌ها */
+    --e2s-transition: all 0.3s ease;
+    --e2s-transition-fast: all 0.15s ease;
+}
+
+/* تم تاریک */
+[data-theme="dark"] {
+    --e2s-bg-primary: #1a1a1a;
+    --e2s-bg-secondary: #2d2d2d;
+    --e2s-bg-tertiary: #404040;
+    --e2s-bg-dark: #121212;
+    
+    --e2s-text-primary: #ffffff;
+    --e2s-text-secondary: #cccccc;
+    --e2s-text-muted: #999999;
+    
+    --e2s-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+    --e2s-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.4);
+    --e2s-shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.5);
+}
+
+/* ================================
+   کانتینر اصلی تایم‌لاین
+   ================================ */
+.e2s-timeline-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-primary);
+    border-radius: var(--e2s-border-radius-lg);
+    box-shadow: var(--e2s-shadow-lg);
+    direction: rtl;
+    font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ================================
+   هدر تایم‌لاین و نوار پیشرفت
+   ================================ */
+.e2s-timeline-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2s-spacing-md);
+    margin-bottom: var(--e2s-spacing-xl);
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-primary);
+}
+
+.e2s-progress-bar {
+    width: 100%;
+    height: 12px;
+    background: var(--e2s-bg-tertiary);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.e2s-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--e2s-primary), var(--e2s-primary-light));
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.e2s-progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: e2s-shimmer 2s infinite;
+}
+
+@keyframes e2s-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.e2s-step-counter {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--e2s-text-primary);
+}
+
+/* ================================
+   مراحل تایم‌لاین
+   ================================ */
+.e2s-timeline-steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2s-spacing-lg);
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-step {
+    background: var(--e2s-bg-primary);
+    border: 2px solid var(--e2s-bg-tertiary);
+    border-radius: var(--e2s-border-radius);
+    overflow: hidden;
+    transition: var(--e2s-transition);
+    opacity: 0.6;
+}
+
+.e2s-step.active {
+    opacity: 1;
+    border-color: var(--e2s-primary);
+    box-shadow: var(--e2s-shadow);
+    transform: scale(1.02);
+}
+
+.e2s-step.completed {
+    opacity: 0.8;
+    border-color: var(--e2s-success);
+}
+
+.e2s-step-header {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-md);
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-secondary);
+    cursor: pointer;
+    transition: var(--e2s-transition);
+}
+
+.e2s-step.active .e2s-step-header {
+    background: linear-gradient(135deg, var(--e2s-primary), var(--e2s-primary-light));
+    color: var(--e2s-text-white);
+}
+
+.e2s-step.completed .e2s-step-header {
+    background: linear-gradient(135deg, var(--e2s-success), #32ce50);
+    color: var(--e2s-text-white);
+}
+
+.e2s-step-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--e2s-bg-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--e2s-primary);
+    transition: var(--e2s-transition);
+}
+
+.e2s-step.active .e2s-step-icon {
+    background: var(--e2s-text-white);
+    color: var(--e2s-primary);
+    animation: e2s-pulse 2s infinite;
+}
+
+.e2s-step.completed .e2s-step-icon {
+    background: var(--e2s-text-white);
+    color: var(--e2s-success);
+}
+
+@keyframes e2s-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.e2s-step-info {
+    flex: 1;
+}
+
+.e2s-step-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 var(--e2s-spacing-xs) 0;
+    color: inherit;
+}
+
+.e2s-step-subtitle {
+    font-size: 0.9rem;
+    margin: 0;
+    opacity: 0.8;
+    color: inherit;
+}
+
+.e2s-step-status {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-xs);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.e2s-status {
+    padding: var(--e2s-spacing-xs) var(--e2s-spacing-sm);
+    border-radius: var(--e2s-border-radius-sm);
+    white-space: nowrap;
+}
+
+.e2s-status.completed {
+    background: var(--e2s-success);
+    color: var(--e2s-text-white);
+}
+
+.e2s-status.active {
+    background: var(--e2s-primary);
+    color: var(--e2s-text-white);
+}
+
+.e2s-status.pending {
+    background: var(--e2s-bg-tertiary);
+    color: var(--e2s-text-secondary);
+}
+
+/* ================================
+   محتوای مراحل
+   ================================ */
+.e2s-step-body {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+}
+
+.e2s-step-body.active {
+    padding: var(--e2s-spacing-xl);
+    max-height: 2000px;
+}
+
+/* ================================
+   فرم‌ها و ورودی‌ها
+   ================================ */
+.e2s-form-group {
+    margin-bottom: var(--e2s-spacing-lg);
+}
+
+.e2s-form-label {
+    display: block;
+    margin-bottom: var(--e2s-spacing-sm);
+    font-weight: 600;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-form-control {
+    width: 100%;
+    padding: var(--e2s-spacing-sm) var(--e2s-spacing-md);
+    border: 2px solid var(--e2s-bg-tertiary);
+    border-radius: var(--e2s-border-radius);
+    background: var(--e2s-bg-primary);
+    color: var(--e2s-text-primary);
+    font-size: 1rem;
+    transition: var(--e2s-transition);
+    box-sizing: border-box;
+}
+
+.e2s-form-control:focus {
+    outline: none;
+    border-color: var(--e2s-primary);
+    box-shadow: 0 0 0 3px rgba(103, 114, 229, 0.1);
+}
+
+.e2s-form-control.sm {
+    padding: var(--e2s-spacing-xs) var(--e2s-spacing-sm);
+    font-size: 0.9rem;
+}
+
+/* ================================
+   دکمه‌ها
+   ================================ */
+.e2s-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--e2s-spacing-xs);
+    padding: var(--e2s-spacing-sm) var(--e2s-spacing-lg);
+    border: none;
+    border-radius: var(--e2s-border-radius);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--e2s-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.e2s-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.e2s-btn.primary {
+    background: var(--e2s-primary);
+    color: var(--e2s-text-white);
+}
+
+.e2s-btn.primary:hover:not(:disabled) {
+    background: var(--e2s-primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--e2s-shadow);
+}
+
+.e2s-btn.secondary {
+    background: var(--e2s-secondary);
+    color: var(--e2s-text-white);
+}
+
+.e2s-btn.secondary:hover:not(:disabled) {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.e2s-btn.success {
+    background: var(--e2s-success);
+    color: var(--e2s-text-white);
+}
+
+.e2s-btn.success:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.e2s-btn.danger {
+    background: var(--e2s-danger);
+    color: var(--e2s-text-white);
+}
+
+.e2s-btn.danger:hover:not(:disabled) {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.e2s-btn.lg {
+    padding: var(--e2s-spacing-md) var(--e2s-spacing-xl);
+    font-size: 1.1rem;
+}
+
+.e2s-btn.sm {
+    padding: var(--e2s-spacing-xs) var(--e2s-spacing-sm);
+    font-size: 0.8rem;
+}
+
+.e2s-btn.xs {
+    padding: calc(var(--e2s-spacing-xs) / 2) var(--e2s-spacing-xs);
+    font-size: 0.7rem;
+}
+
+/* ================================
+   آپلود فایل
+   ================================ */
+.e2s-file-selection {
+    text-align: center;
+}
+
+.e2s-upload-area {
+    border: 3px dashed var(--e2s-bg-tertiary);
+    border-radius: var(--e2s-border-radius-lg);
+    padding: var(--e2s-spacing-xl);
+    background: var(--e2s-bg-secondary);
+    transition: var(--e2s-transition);
+    cursor: pointer;
+}
+
+.e2s-upload-area:hover {
+    border-color: var(--e2s-primary);
+    background: var(--e2s-bg-primary);
+}
+
+.e2s-upload-area.dragover {
+    border-color: var(--e2s-primary);
+    background: rgba(103, 114, 229, 0.1);
+    transform: scale(1.02);
+}
+
+.e2s-upload-icon {
+    font-size: 3rem;
+    color: var(--e2s-primary);
+    margin-bottom: var(--e2s-spacing-md);
+}
+
+.e2s-upload-area h3 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-upload-area p {
+    margin: var(--e2s-spacing-xs) 0;
+    color: var(--e2s-text-secondary);
+}
+
+.e2s-file-info {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-md);
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-success);
+}
+
+.e2s-file-icon {
+    font-size: 2rem;
+    color: var(--e2s-success);
+}
+
+.e2s-file-details {
+    flex: 1;
+}
+
+.e2s-file-details h4 {
+    margin: 0 0 var(--e2s-spacing-xs) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-file-details p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--e2s-text-secondary);
+}
+
+/* ================================
+   آمار و اطلاعات
+   ================================ */
+.e2s-file-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--e2s-spacing-md);
+    margin: var(--e2s-spacing-lg) 0;
+}
+
+.e2s-stat-card {
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    padding: var(--e2s-spacing-lg);
+    text-align: center;
+    border: 2px solid transparent;
+    transition: var(--e2s-transition);
+}
+
+.e2s-stat-card:hover {
+    border-color: var(--e2s-primary);
+    transform: translateY(-2px);
+}
+
+.e2s-stat-icon {
+    font-size: 2rem;
+    color: var(--e2s-primary);
+    margin-bottom: var(--e2s-spacing-sm);
+}
+
+.e2s-stat-info h4 {
+    margin: 0 0 var(--e2s-spacing-xs) 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-stat-info p {
+    margin: 0;
+    color: var(--e2s-text-secondary);
+}
+
+/* ================================
+   لودینگ و اسپینر
+   ================================ */
+.e2s-analysis-loading,
+.e2s-initial-loading {
+    text-align: center;
+    padding: var(--e2s-spacing-xl);
+}
+
+.e2s-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--e2s-bg-tertiary);
+    border-top: 4px solid var(--e2s-primary);
+    border-radius: 50%;
+    animation: e2s-spin 1s linear infinite;
+    margin: 0 auto var(--e2s-spacing-md) auto;
+}
+
+@keyframes e2s-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ================================
+   چت و پیام‌ها
+   ================================ */
+.e2s-chat-interface {
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-bg-tertiary);
+    overflow: hidden;
+    margin-top: var(--e2s-spacing-lg);
+}
+
+.e2s-chat-header {
+    padding: var(--e2s-spacing-md) var(--e2s-spacing-lg);
+    background: var(--e2s-primary);
+    color: var(--e2s-text-white);
+    border-bottom: 2px solid var(--e2s-primary-dark);
+}
+
+.e2s-chat-header h4 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-sm);
+}
+
+.e2s-chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    padding: var(--e2s-spacing-md);
+    background: var(--e2s-bg-primary);
+}
+
+.e2s-chat-message {
+    margin-bottom: var(--e2s-spacing-md);
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+}
+
+.e2s-chat-message.user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.e2s-chat-message.ai {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.e2s-message-content {
+    padding: var(--e2s-spacing-sm) var(--e2s-spacing-md);
+    border-radius: var(--e2s-border-radius);
+    word-wrap: break-word;
+}
+
+.e2s-chat-message.user .e2s-message-content {
+    background: var(--e2s-primary);
+    color: var(--e2s-text-white);
+    border-bottom-right-radius: var(--e2s-spacing-xs);
+}
+
+.e2s-chat-message.ai .e2s-message-content {
+    background: var(--e2s-bg-tertiary);
+    color: var(--e2s-text-primary);
+    border-bottom-left-radius: var(--e2s-spacing-xs);
+}
+
+.e2s-message-time {
+    font-size: 0.75rem;
+    color: var(--e2s-text-muted);
+    margin-top: var(--e2s-spacing-xs);
+    padding: 0 var(--e2s-spacing-sm);
+}
+
+.e2s-chat-input {
+    display: flex;
+    gap: var(--e2s-spacing-sm);
+    padding: var(--e2s-spacing-md);
+    background: var(--e2s-bg-primary);
+    border-top: 2px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-chat-input .e2s-form-control {
+    margin: 0;
+}
+
+/* ================================
+   جداول
+   ================================ */
+.e2s-mapping-table {
+    overflow-x: auto;
+    margin: var(--e2s-spacing-lg) 0;
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--e2s-bg-primary);
+}
+
+.e2s-table th,
+.e2s-table td {
+    padding: var(--e2s-spacing-sm) var(--e2s-spacing-md);
+    text-align: right;
+    border-bottom: 1px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-table th {
+    background: var(--e2s-bg-secondary);
+    font-weight: 600;
+    color: var(--e2s-text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.e2s-table tr:hover {
+    background: var(--e2s-bg-secondary);
+}
+
+.e2s-data-type {
+    padding: var(--e2s-spacing-xs) var(--e2s-spacing-sm);
+    background: var(--e2s-info);
+    color: var(--e2s-text-white);
+    border-radius: var(--e2s-border-radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* ================================
+   کد و SQL
+   ================================ */
+.e2s-sql-preview {
+    margin-bottom: var(--e2s-spacing-lg);
+}
+
+.e2s-sql-editor {
+    position: relative;
+    background: var(--e2s-bg-dark);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-bg-tertiary);
+    overflow: hidden;
+}
+
+.e2s-sql-editor pre {
+    margin: 0;
+    padding: var(--e2s-spacing-lg);
+    overflow-x: auto;
+    background: var(--e2s-bg-dark);
+    color: #f8f8f2;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.e2s-sql-actions {
+    display: flex;
+    gap: var(--e2s-spacing-sm);
+    padding: var(--e2s-spacing-md);
+    background: var(--e2s-bg-secondary);
+    border-top: 2px solid var(--e2s-bg-tertiary);
+}
+
+/* ================================
+   اجرای کوئری و لاگ
+   ================================ */
+.e2s-execution-status {
+    text-align: center;
+    padding: var(--e2s-spacing-xl);
+}
+
+.e2s-status-pending,
+.e2s-status-running,
+.e2s-status-success,
+.e2s-status-error {
+    padding: var(--e2s-spacing-lg);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid;
+}
+
+.e2s-status-pending {
+    background: var(--e2s-bg-secondary);
+    border-color: var(--e2s-secondary);
+    color: var(--e2s-text-primary);
+}
+
+.e2s-status-running {
+    background: rgba(23, 162, 184, 0.1);
+    border-color: var(--e2s-info);
+    color: var(--e2s-info);
+}
+
+.e2s-status-success {
+    background: rgba(40, 167, 69, 0.1);
+    border-color: var(--e2s-success);
+    color: var(--e2s-success);
+}
+
+.e2s-status-error {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: var(--e2s-danger);
+    color: var(--e2s-danger);
+}
+
+.e2s-execution-log {
+    margin-top: var(--e2s-spacing-lg);
+}
+
+.e2s-log-container {
+    height: 200px;
+    overflow-y: auto;
+    background: var(--e2s-bg-dark);
+    border-radius: var(--e2s-border-radius);
+    padding: var(--e2s-spacing-md);
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+}
+
+.e2s-log-item {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-sm);
+    padding: var(--e2s-spacing-xs) 0;
+    color: #f8f8f2;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.e2s-log-item.success {
+    color: #50fa7b;
+}
+
+.e2s-log-item.error {
+    color: #ff5555;
+}
+
+.e2s-log-item.warning {
+    color: #f1fa8c;
+}
+
+.e2s-log-item small {
+    margin-right: auto;
+    opacity: 0.7;
+}
+
+/* ================================
+   انتقال داده‌ها و پیشرفت
+   ================================ */
+.e2s-data-transfer {
+    text-align: center;
+}
+
+.e2s-transfer-progress {
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-progress-info {
+    margin-bottom: var(--e2s-spacing-lg);
+}
+
+.e2s-progress-info h4 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-progress-bar-container {
+    position: relative;
+    margin: var(--e2s-spacing-lg) 0;
+}
+
+.e2s-progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 600;
+    color: var(--e2s-text-primary);
+    font-size: 0.9rem;
+}
+
+.e2s-transfer-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--e2s-spacing-md);
+    margin: var(--e2s-spacing-lg) 0;
+}
+
+.e2s-stat {
+    background: var(--e2s-bg-secondary);
+    padding: var(--e2s-spacing-md);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--e2s-primary);
+    margin-bottom: var(--e2s-spacing-xs);
+}
+
+.e2s-stat-label {
+    font-size: 0.85rem;
+    color: var(--e2s-text-secondary);
+}
+
+.e2s-transfer-log {
+    margin-top: var(--e2s-spacing-xl);
+}
+
+.e2s-transfer-log h5 {
+    margin: 0 0 var(--e2s-spacing-md) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-log-messages {
+    height: 150px;
+    overflow-y: auto;
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    padding: var(--e2s-spacing-md);
+    border: 2px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-log-message {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-sm);
+    padding: var(--e2s-spacing-xs) 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-log-message.success {
+    color: var(--e2s-success);
+}
+
+.e2s-log-time {
+    font-weight: 500;
+    opacity: 0.8;
+    margin-left: auto;
+}
+
+.e2s-log-text {
+    flex: 1;
+}
+
+/* ================================
+   نتایج نهایی
+   ================================ */
+.e2s-final-result {
+    text-align: center;
+}
+
+.e2s-result-header {
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-result-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--e2s-spacing-lg) auto;
+    font-size: 2.5rem;
+}
+
+.e2s-result-icon.success {
+    background: var(--e2s-success);
+    color: var(--e2s-text-white);
+    animation: e2s-success-bounce 0.6s ease;
+}
+
+.e2s-result-icon.error {
+    background: var(--e2s-danger);
+    color: var(--e2s-text-white);
+}
+
+@keyframes e2s-success-bounce {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.e2s-result-header h3 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+    font-size: 1.8rem;
+}
+
+.e2s-result-header p {
+    margin: 0;
+    color: var(--e2s-text-secondary);
+    font-size: 1.1rem;
+}
+
+.e2s-result-summary {
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--e2s-spacing-md);
+}
+
+.e2s-summary-item {
+    background: var(--e2s-bg-secondary);
+    padding: var(--e2s-spacing-lg);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-bg-tertiary);
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-md);
+    transition: var(--e2s-transition);
+}
+
+.e2s-summary-item:hover {
+    border-color: var(--e2s-primary);
+    transform: translateY(-2px);
+}
+
+.e2s-summary-item i {
+    font-size: 1.5rem;
+    color: var(--e2s-primary);
+}
+
+.e2s-summary-item h5 {
+    margin: 0 0 var(--e2s-spacing-xs) 0;
+    color: var(--e2s-text-primary);
+    font-size: 0.9rem;
+}
+
+.e2s-summary-item p {
+    margin: 0;
+    color: var(--e2s-text-secondary);
+    font-weight: 600;
+}
+
+.e2s-result-actions {
+    display: flex;
+    gap: var(--e2s-spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ================================
+   تکمیل فرآیند
+   ================================ */
+.e2s-completion {
+    text-align: center;
+}
+
+.e2s-completion-message {
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-completion-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, var(--e2s-success), #32ce50);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--e2s-spacing-lg) auto;
+    font-size: 3rem;
+    color: var(--e2s-text-white);
+    animation: e2s-completion-celebration 1s ease;
+}
+
+@keyframes e2s-completion-celebration {
+    0% { transform: scale(0) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+.e2s-completion-message h3 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+    font-size: 2rem;
+}
+
+.e2s-completion-message p {
+    margin: 0;
+    color: var(--e2s-text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.e2s-completion-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--e2s-spacing-lg);
+}
+
+.e2s-option-card {
+    background: var(--e2s-bg-secondary);
+    padding: var(--e2s-spacing-xl);
+    border-radius: var(--e2s-border-radius-lg);
+    border: 2px solid var(--e2s-bg-tertiary);
+    transition: var(--e2s-transition);
+    cursor: pointer;
+}
+
+.e2s-option-card:hover {
+    border-color: var(--e2s-primary);
+    transform: translateY(-5px);
+    box-shadow: var(--e2s-shadow-lg);
+}
+
+.e2s-option-card i {
+    font-size: 2.5rem;
+    color: var(--e2s-primary);
+    margin-bottom: var(--e2s-spacing-md);
+}
+
+.e2s-option-card h4 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-option-card p {
+    margin: 0 0 var(--e2s-spacing-lg) 0;
+    color: var(--e2s-text-secondary);
+    font-size: 0.9rem;
+}
+
+/* ================================
+   ناوبری تایم‌لاین
+   ================================ */
+.e2s-timeline-navigation {
+    display: flex;
+    gap: var(--e2s-spacing-md);
+    align-items: center;
+    justify-content: center;
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    border: 2px solid var(--e2s-bg-tertiary);
+}
+
+/* ================================
+   چک‌باکس‌ها
+   ================================ */
+.e2s-confirmation-options {
+    margin: var(--e2s-spacing-xl) 0;
+}
+
+.e2s-option-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--e2s-spacing-md);
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-sm);
+    cursor: pointer;
+    padding: var(--e2s-spacing-sm);
+    border-radius: var(--e2s-border-radius);
+    transition: var(--e2s-transition);
+}
+
+.e2s-checkbox:hover {
+    background: var(--e2s-bg-secondary);
+}
+
+.e2s-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.e2s-checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--e2s-bg-tertiary);
+    border-radius: var(--e2s-border-radius-sm);
+    background: var(--e2s-bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--e2s-transition);
+}
+
+.e2s-checkbox input[type="checkbox"]:checked + .e2s-checkmark {
+    background: var(--e2s-primary);
+    border-color: var(--e2s-primary);
+    color: var(--e2s-text-white);
+}
+
+.e2s-checkbox input[type="checkbox"]:checked + .e2s-checkmark::after {
+    content: '✓';
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* ================================
+   مودال‌ها
+   ================================ */
+.e2s-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: e2s-modal-fade-in 0.3s ease;
+}
+
+@keyframes e2s-modal-fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.e2s-modal-content {
+    background: var(--e2s-bg-primary);
+    border-radius: var(--e2s-border-radius-lg);
+    box-shadow: var(--e2s-shadow-lg);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: e2s-modal-slide-in 0.3s ease;
+}
+
+@keyframes e2s-modal-slide-in {
+    0% { transform: scale(0.8) translateY(-50px); }
+    100% { transform: scale(1) translateY(0); }
+}
+
+.e2s-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-secondary);
+    border-bottom: 2px solid var(--e2s-bg-tertiary);
+}
+
+.e2s-modal-header h4 {
+    margin: 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--e2s-text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--e2s-transition);
+}
+
+.e2s-modal-close:hover {
+    background: var(--e2s-danger);
+    color: var(--e2s-text-white);
+}
+
+.e2s-modal-body {
+    padding: var(--e2s-spacing-lg);
+}
+
+.e2s-sql-textarea {
+    width: 100%;
+    height: 400px;
+    padding: var(--e2s-spacing-md);
+    border: 2px solid var(--e2s-bg-tertiary);
+    border-radius: var(--e2s-border-radius);
+    background: var(--e2s-bg-dark);
+    color: #f8f8f2;
+    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.e2s-modal-footer {
+    display: flex;
+    gap: var(--e2s-spacing-md);
+    justify-content: flex-end;
+    padding: var(--e2s-spacing-lg);
+    background: var(--e2s-bg-secondary);
+    border-top: 2px solid var(--e2s-bg-tertiary);
+}
+
+/* ================================
+   نوتیفیکیشن‌ها
+   ================================ */
+.e2s-error-notification,
+.e2s-success-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--e2s-bg-primary);
+    border-radius: var(--e2s-border-radius);
+    box-shadow: var(--e2s-shadow-lg);
+    padding: var(--e2s-spacing-md) var(--e2s-spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-sm);
+    z-index: 1001;
+    animation: e2s-notification-slide-down 0.3s ease;
+    max-width: 90vw;
+}
+
+@keyframes e2s-notification-slide-down {
+    0% { transform: translateX(-50%) translateY(-100%); }
+    100% { transform: translateX(-50%) translateY(0); }
+}
+
+.e2s-error-notification {
+    border: 2px solid var(--e2s-danger);
+    color: var(--e2s-danger);
+}
+
+.e2s-success-notification {
+    border: 2px solid var(--e2s-success);
+    color: var(--e2s-success);
+}
+
+.e2s-error-notification button,
+.e2s-success-notification button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: var(--e2s-spacing-xs);
+    border-radius: 50%;
+    transition: var(--e2s-transition);
+    margin-right: var(--e2s-spacing-sm);
+}
+
+.e2s-error-notification button:hover {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.e2s-success-notification button:hover {
+    background: rgba(40, 167, 69, 0.1);
+}
+
+/* ================================
+   اینسایت‌ها و توضیحات
+   ================================ */
+.e2s-insight-card,
+.e2s-explanation-card {
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    padding: var(--e2s-spacing-lg);
+    border: 2px solid var(--e2s-bg-tertiary);
+    margin: var(--e2s-spacing-md) 0;
+}
+
+.e2s-insight-card h5,
+.e2s-insight-card h6,
+.e2s-explanation-card h5,
+.e2s-explanation-card h6 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-insight-card p,
+.e2s-explanation-card p {
+    margin: var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-secondary);
+}
+
+.e2s-insight-card ul,
+.e2s-explanation-card ul {
+    margin: var(--e2s-spacing-sm) 0;
+    padding-right: var(--e2s-spacing-lg);
+}
+
+.e2s-insight-card li,
+.e2s-explanation-card li {
+    margin: var(--e2s-spacing-xs) 0;
+    color: var(--e2s-text-secondary);
+}
+
+/* ================================
+   اعمال اقدامات و بهینه‌سازی
+   ================================ */
+.e2s-mapping-actions {
+    display: flex;
+    gap: var(--e2s-spacing-md);
+    justify-content: center;
+    margin: var(--e2s-spacing-lg) 0;
+    flex-wrap: wrap;
+}
+
+.e2s-processing-start {
+    text-align: center;
+}
+
+.e2s-processing-info {
+    background: var(--e2s-bg-secondary);
+    border-radius: var(--e2s-border-radius);
+    padding: var(--e2s-spacing-xl);
+    border: 2px solid var(--e2s-info);
+    margin-bottom: var(--e2s-spacing-xl);
+}
+
+.e2s-info-icon {
+    font-size: 3rem;
+    color: var(--e2s-info);
+    margin-bottom: var(--e2s-spacing-md);
+}
+
+.e2s-info-content h4 {
+    margin: 0 0 var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-primary);
+}
+
+.e2s-info-content p {
+    margin: 0 0 var(--e2s-spacing-lg) 0;
+    color: var(--e2s-text-secondary);
+}
+
+.e2s-processing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: right;
+}
+
+.e2s-processing-features li {
+    display: flex;
+    align-items: center;
+    gap: var(--e2s-spacing-sm);
+    margin: var(--e2s-spacing-sm) 0;
+    color: var(--e2s-text-secondary);
+}
+
+.e2s-processing-features li i {
+    color: var(--e2s-success);
+}
+
+/* ================================
+   رسپانسیو
+   ================================ */
+@media (max-width: 768px) {
+    .e2s-timeline-container {
+        padding: var(--e2s-spacing-md);
+    }
+    
+    .e2s-step-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--e2s-spacing-sm);
+    }
+    
+    .e2s-step-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .e2s-file-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .e2s-summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .e2s-completion-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .e2s-timeline-navigation {
+        flex-direction: column;
+    }
+    
+    .e2s-result-actions {
+        flex-direction: column;
+    }
+    
+    .e2s-mapping-actions {
+        flex-direction: column;
+    }
+    
+    .e2s-transfer-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .e2s-chat-message {
+        max-width: 95%;
+    }
+    
+    .e2s-modal-content {
+        max-width: 95vw;
+        margin: var(--e2s-spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .e2s-timeline-container {
+        padding: var(--e2s-spacing-sm);
+    }
+    
+    .e2s-step-body.active {
+        padding: var(--e2s-spacing-md);
+    }
+    
+    .e2s-mapping-table {
+        font-size: 0.8rem;
+    }
+    
+    .e2s-sql-editor pre {
+        font-size: 0.75rem;
+    }
+    
+    .e2s-btn {
+        padding: var(--e2s-spacing-sm);
+        font-size: 0.8rem;
+    }
+    
+    .e2s-btn.lg {
+        padding: var(--e2s-spacing-sm) var(--e2s-spacing-md);
+        font-size: 0.9rem;
+    }
+}
+
+/* ================================
+   افکت‌های خاص
+   ================================ */
+.e2s-step.active {
+    animation: e2s-step-glow 2s infinite alternate;
+}
+
+@keyframes e2s-step-glow {
+    0% { box-shadow: 0 0 5px rgba(103, 114, 229, 0.3); }
+    100% { box-shadow: 0 0 20px rgba(103, 114, 229, 0.6); }
+}
+
+.e2s-file-info {
+    animation: e2s-file-appear 0.5s ease;
+}
+
+@keyframes e2s-file-appear {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================
+   پرینت
+   ================================ */
+@media print {
+    .e2s-timeline-navigation,
+    .e2s-btn,
+    .e2s-chat-input {
+        display: none !important;
+    }
+    
+    .e2s-timeline-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .e2s-step {
+        page-break-inside: avoid;
+    }
+}
