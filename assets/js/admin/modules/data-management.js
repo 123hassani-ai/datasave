@@ -23,46 +23,78 @@ class DataManagement {
             totalRecords: 0
         };
         
-        this.init();
+        this.initialized = false;
+    }
+
+    /**
+     * بارگذاری محتوا برای router
+     */
+    async loadContent() {
+        console.log('📊 Loading Data Management content...');
+        
+        if (!this.initialized) {
+            await this.init();
+        }
+        
+        return this.render();
     }
 
     /**
      * مقداردهی اولیه ماژول
      */
-    init() {
-        console.log('📊 Data Management Module initialized');
+    async init() {
+        if (this.initialized) return;
+        
+        console.log('📊 Initializing Data Management Module...');
         this.loadDependencies();
-        this.loadData();
+        await this.loadData();
+        
+        // Attach event listeners after a short delay
+        setTimeout(() => {
+            this.attachEventListeners();
+        }, 100);
+        
+        this.initialized = true;
+        console.log('✅ Data Management Module initialized');
     }
 
     /**
      * بارگذاری وابستگی‌ها
      */
     loadDependencies() {
+        // تعیین مسیر پایه
+        const basePath = this.getBasePath();
+        
         // بارگذاری استایل مدیریت داده‌ها
-        const dmStyle = document.createElement('link');
-        dmStyle.rel = 'stylesheet';
-        dmStyle.href = '/datasave/assets/css/admin/modules/data-management.css';
-        if (!document.querySelector(`link[href="${dmStyle.href}"]`)) {
-            document.head.appendChild(dmStyle);
-        }
+        this.loadStylesheet(`${basePath}/assets/css/admin/modules/data-management.css`);
         
         // بارگذاری استایل تایم‌لاین Excel to SQL
-        const timelineStyle = document.createElement('link');
-        timelineStyle.rel = 'stylesheet';
-        timelineStyle.href = '/datasave/assets/css/admin/modules/excel-to-sql-timeline.css';
-        if (!document.querySelector(`link[href="${timelineStyle.href}"]`)) {
-            document.head.appendChild(timelineStyle);
-        }
+        this.loadStylesheet(`${basePath}/assets/js/admin/modules/excel-to-sql-timeline.css`);
+    }
 
-        // بارگذاری ماژول تایم‌لاین
-        if (!window.ExcelToSqlTimeline) {
-            const timelineScript = document.createElement('script');
-            timelineScript.src = '/datasave/assets/js/admin/modules/excel-to-sql-timeline.js';
-            timelineScript.onload = () => {
-                console.log('✅ Excel to SQL Timeline module loaded');
+    /**
+     * تشخیص مسیر پایه
+     */
+    getBasePath() {
+        const currentPath = window.location.pathname;
+        if (currentPath.includes('/datasave/')) {
+            return '/datasave';
+        }
+        return '';
+    }
+
+    /**
+     * بارگذاری فایل استایل
+     */
+    loadStylesheet(href) {
+        if (!document.querySelector(`link[href="${href}"]`)) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            link.onerror = () => {
+                console.warn(`⚠️ Could not load stylesheet: ${href}`);
             };
-            document.head.appendChild(timelineScript);
+            document.head.appendChild(link);
         }
     }
 
@@ -1285,15 +1317,16 @@ class DataManagement {
 if (typeof window !== 'undefined') {
     window.DataManagement = DataManagement;
     
-    // Auto-initialize if needed
-    window.addEventListener('DOMContentLoaded', () => {
-        if (!window.dataManagement) {
-            window.dataManagement = new DataManagement();
-        }
-    });
 }
 
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = DataManagement;
+// Create instance for export and global use
+const dataManagementInstance = new DataManagement();
+
+// Make available globally for testing
+if (typeof window !== 'undefined') {
+    window.DataManagement = DataManagement;
+    window.dataManagement = dataManagementInstance;
 }
+
+// ES6 Module Export for router
+export default dataManagementInstance;
