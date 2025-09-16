@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست خطاها - DataSave</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+            direction: rtl;
+        }
+        .error-box {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success-box {
+            background: #44ff44;
+            color: black;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .log-box {
+            background: #333;
+            color: #0f0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>تست خطاهای DataSave</h1>
+    <div id="output"></div>
+    <div class="log-box" id="logs"></div>
+
+    <script>
+        const output = document.getElementById('output');
+        const logs = document.getElementById('logs');
+        
+        // Override console methods
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addLog(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString('fa-IR');
+            const message = args.join(' ');
+            const logElement = document.createElement('div');
+            logElement.innerHTML = `[${timestamp}] ${type}: ${message}`;
+            logs.appendChild(logElement);
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog('LOG', ...args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('ERROR', ...args);
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog('WARN', ...args);
+        };
+        
+        function showError(message) {
+            const div = document.createElement('div');
+            div.className = 'error-box';
+            div.textContent = message;
+            output.appendChild(div);
+        }
+        
+        function showSuccess(message) {
+            const div = document.createElement('div');
+            div.className = 'success-box';
+            div.textContent = message;
+            output.appendChild(div);
+        }
+        
+        // Test 1: Check if CSS files exist
+        fetch('./assets/css/admin/variables.css')
+            .then(response => {
+                if (response.ok) {
+                    showSuccess('✅ فایل variables.css پیدا شد');
+                } else {
+                    showError('❌ فایل variables.css پیدا نشد');
+                }
+            })
+            .catch(() => showError('❌ خطا در لود variables.css'));
+        
+        // Test 2: Check AdminMain
+        fetch('./assets/js/admin/admin-main.js')
+            .then(response => {
+                if (response.ok) {
+                    showSuccess('✅ فایل admin-main.js پیدا شد');
+                    return response.text();
+                } else {
+                    showError('❌ فایل admin-main.js پیدا نشد');
+                }
+            })
+            .then(text => {
+                if (text && text.includes('AdminMain')) {
+                    showSuccess('✅ کلاس AdminMain در فایل وجود دارد');
+                } else {
+                    showError('❌ کلاس AdminMain در فایل یافت نشد');
+                }
+            })
+            .catch(() => showError('❌ خطا در لود admin-main.js'));
+        
+        // Test 3: Try to import AdminMain
+        import('./assets/js/admin/admin-main.js')
+            .then(module => {
+                showSuccess('✅ ماژول AdminMain با موفقیت import شد');
+                console.log('AdminMain module:', module);
+                
+                if (module.default) {
+                    showSuccess('✅ AdminMain.default موجود است');
+                    
+                    // Test initialization
+                    try {
+                        if (typeof module.default.init === 'function') {
+                            showSuccess('✅ تابع AdminMain.init موجود است');
+                        } else {
+                            showError('❌ تابع AdminMain.init موجود نیست');
+                        }
+                    } catch (e) {
+                        showError('❌ خطا در بررسی AdminMain.init: ' + e.message);
+                    }
+                } else {
+                    showError('❌ AdminMain.default موجود نیست');
+                }
+            })
+            .catch(error => {
+                showError('❌ خطا در import AdminMain: ' + error.message);
+                console.error('Import error:', error);
+            });
+        
+        // Test 4: Check other dependencies
+        setTimeout(() => {
+            fetch('./assets/js/admin/content.js')
+                .then(response => {
+                    if (response.ok) {
+                        showSuccess('✅ فایل content.js پیدا شد');
+                    } else {
+                        showError('❌ فایل content.js پیدا نشد');
+                    }
+                })
+                .catch(() => showError('❌ خطا در لود content.js'));
+                
+            fetch('./assets/js/admin/router.js')
+                .then(response => {
+                    if (response.ok) {
+                        showSuccess('✅ فایل router.js پیدا شد');
+                    } else {
+                        showError('❌ فایل router.js پیدا نشد');
+                    }
+                })
+                .catch(() => showError('❌ خطا در لود router.js'));
+        }, 1000);
+    </script>
+</body>
+</html>

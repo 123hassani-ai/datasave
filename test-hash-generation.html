@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست Hash Generation</title>
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            margin: 20px;
+            direction: rtl;
+        }
+        .test-result {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #007cba;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+        code { background: #e9ecef; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>تست Hash Generation برای فایل‌های فارسی</h1>
+    
+    <div id="results"></div>
+    
+    <script>
+        // شبیه‌سازی کلاس DataManagementController
+        class TestController {
+            constructor() {
+                this.currentFile = null;
+            }
+            
+            sanitizeFileName(fileName) {
+                // حذف پسوند
+                const nameWithoutExt = fileName.replace(/\.(xlsx|xls|csv)$/i, '');
+                
+                // dictionary کوچک برای کلمات رایج
+                const persianToEnglish = {
+                    'فروش': 'sales',
+                    'خرید': 'purchase', 
+                    'مشتری': 'customer',
+                    'محصول': 'product',
+                    'گزارش': 'report',
+                    'داده': 'data',
+                    'فایل': 'file',
+                    'جدول': 'table'
+                };
+                
+                let result = nameWithoutExt;
+                
+                // جایگزینی کلمات فارسی
+                Object.keys(persianToEnglish).forEach(persian => {
+                    result = result.replace(new RegExp(persian, 'g'), persianToEnglish[persian]);
+                });
+                
+                // حذف کاراکترهای غیر ASCII و جایگزینی با underscore
+                result = result.replace(/[^\x00-\x7F]/g, '_');
+                
+                // پاکسازی نهایی
+                return result
+                    .replace(/[^\w]/g, '_')
+                    .replace(/_{2,}/g, '_')
+                    .replace(/^_|_$/g, '')
+                    .toLowerCase() || 'file';
+            }
+            
+            generateFileHash() {
+                try {
+                    const fileName = this.currentFile?.name || 'unknown';
+                    const fileSize = this.currentFile?.size || 0;
+                    const timestamp = Date.now();
+                    
+                    // تبدیل نام فایل فارسی به انگلیسی
+                    const sanitizedFileName = this.sanitizeFileName(fileName);
+                    
+                    // Simple hash generation using a safer approach
+                    const hashString = `${sanitizedFileName}_${fileSize}_${timestamp}`;
+                    
+                    // استفاده از simple hash algorithm بجای btoa
+                    let hash = 0;
+                    for (let i = 0; i < hashString.length; i++) {
+                        const char = hashString.charCodeAt(i);
+                        hash = ((hash << 5) - hash) + char;
+                        hash = hash & hash; // تبدیل به 32-bit integer
+                    }
+                    
+                    // تبدیل به string مثبت و محدود کردن طول
+                    const hashHex = Math.abs(hash).toString(16);
+                    return hashHex.padEnd(32, '0').substring(0, 32);
+                    
+                } catch (error) {
+                    console.error('❌ Error generating file hash:', error);
+                    // fallback hash
+                    return Math.random().toString(36).substring(2, 34).padEnd(32, '0');
+                }
+            }
+        }
+        
+        const controller = new TestController();
+        
+        // لیست فایل‌های تست
+        const testFiles = [
+            { name: 'گزارش_فروش.xlsx', size: 1024 },
+            { name: 'داده_مشتریان.csv', size: 2048 },
+            { name: 'محصولات جدید.xlsx', size: 4096 },
+            { name: 'فایل تست.xls', size: 512 },
+            { name: 'جدول خرید.xlsx', size: 8192 }
+        ];
+        
+        const resultsDiv = document.getElementById('results');
+        
+        testFiles.forEach(testFile => {
+            try {
+                controller.currentFile = testFile;
+                const sanitizedName = controller.sanitizeFileName(testFile.name);
+                const hash = controller.generateFileHash();
+                
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `
+                    <strong>✅ ${testFile.name}</strong><br>
+                    Sanitized: <code>${sanitizedName}</code><br>
+                    Hash: <code>${hash}</code>
+                `;
+                resultsDiv.appendChild(resultDiv);
+            } catch (error) {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ ${testFile.name}</strong><br>
+                    Error: ${error.message}
+                `;
+                resultsDiv.appendChild(resultDiv);
+            }
+        });
+    </script>
+</body>
+</html>

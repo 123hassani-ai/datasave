@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست اصلاح AdminMain</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+            direction: rtl;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .console-log {
+            background: #333;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 تست مشکل AdminMain</h1>
+    <div id="status"></div>
+    <div class="console-log" id="logs"></div>
+
+    <script>
+        const status = document.getElementById('status');
+        const logs = document.getElementById('logs');
+        
+        function addStatus(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            status.appendChild(div);
+        }
+        
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            logs.appendChild(div);
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        // Override console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addLog('LOG: ' + args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addLog('ERROR: ' + args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addLog('WARN: ' + args.join(' '));
+        };
+        
+        addStatus('شروع تست...', 'info');
+        
+        // تست 1: بررسی وجود فایل admin-main.js
+        fetch('./assets/js/admin/admin-main.js')
+            .then(response => {
+                if (response.ok) {
+                    addStatus('✅ فایل admin-main.js وجود دارد', 'success');
+                    return response.text();
+                } else {
+                    addStatus('❌ فایل admin-main.js وجود ندارد - Status: ' + response.status, 'error');
+                    throw new Error('File not found');
+                }
+            })
+            .then(content => {
+                if (content.includes('AdminMain')) {
+                    addStatus('✅ کلاس AdminMain در فایل موجود است', 'success');
+                } else {
+                    addStatus('❌ کلاس AdminMain در فایل وجود ندارد', 'error');
+                }
+                
+                if (content.includes('export default AdminMain')) {
+                    addStatus('✅ Export statement موجود است', 'success');
+                } else {
+                    addStatus('❌ Export statement موجود نیست', 'error');
+                }
+                
+                if (content.includes('AdminMain.init()')) {
+                    addStatus('✅ Auto-initialization موجود است', 'success');
+                } else {
+                    addStatus('❌ Auto-initialization موجود نیست', 'error');
+                }
+            })
+            .catch(error => {
+                addStatus('❌ خطا در بررسی فایل: ' + error.message, 'error');
+            });
+        
+        // تست 2: تلاش import
+        setTimeout(() => {
+            addStatus('تلاش برای import AdminMain...', 'info');
+            
+            import('./assets/js/admin/admin-main.js')
+                .then(module => {
+                    addStatus('✅ AdminMain با موفقیت import شد', 'success');
+                    console.log('AdminMain module:', module);
+                    
+                    if (module.default) {
+                        addStatus('✅ Default export موجود است', 'success');
+                        
+                        if (typeof module.default.init === 'function') {
+                            addStatus('✅ تابع init موجود است', 'success');
+                        } else {
+                            addStatus('❌ تابع init موجود نیست', 'error');
+                        }
+                    } else {
+                        addStatus('❌ Default export موجود نیست', 'error');
+                    }
+                })
+                .catch(error => {
+                    addStatus('❌ خطا در import AdminMain: ' + error.message, 'error');
+                    console.error('Import error details:', error);
+                });
+        }, 1000);
+        
+        // تست 3: بررسی سایر فایل‌ها
+        setTimeout(() => {
+            const filesToCheck = [
+                'assets/js/admin/content.js',
+                'assets/js/admin/router.js',
+                'assets/css/admin/variables.css'
+            ];
+            
+            filesToCheck.forEach(file => {
+                fetch('./' + file)
+                    .then(response => {
+                        if (response.ok) {
+                            addStatus(`✅ فایل ${file} موجود است`, 'success');
+                        } else {
+                            addStatus(`❌ فایل ${file} موجود نیست`, 'error');
+                        }
+                    })
+                    .catch(() => {
+                        addStatus(`❌ خطا در لود ${file}`, 'error');
+                    });
+            });
+        }, 2000);
+    </script>
+</body>
+</html>

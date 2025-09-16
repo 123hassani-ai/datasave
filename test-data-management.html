@@ -3,494 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تست مدیریت داده‌ها - DataSave</title>
-    
-    <!-- Bootstrap RTL -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Vazirmatn Font -->
-    <link href="assets/fonts/vazirmatn.css" rel="stylesheet">
-    
+    <title>تست ماژول مدیریت داده‌ها</title>
+    <link href="../assets/fonts/vazirmatn.css" rel="stylesheet">
+    <link href="../assets/fonts/minimal-icons.css" rel="stylesheet">
+    <link href="../assets/css/admin/variables.css" rel="stylesheet">
+    <link href="../assets/css/admin/modules/data-management.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 0;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem 0;
         }
         
         .test-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
+            max-width: 1200px;
             margin: 0 auto;
-            max-width: 800px;
         }
         
         .test-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 1.5rem;
-        }
-        
-        .test-section {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            background: #f8f9fa;
-        }
-        
-        .test-result {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            white-space: pre-wrap;
-        }
-        
-        .test-success {
-            background: #d1edff;
-            border: 1px solid #0dcaf0;
-            color: #055160;
-        }
-        
-        .test-error {
-            background: #f8d7da;
-            border: 1px solid #dc3545;
-            color: #721c24;
-        }
-        
-        .test-info {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-        }
-        
-        .btn-test {
-            border-radius: 10px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            margin: 0.25rem;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-left: 0.5rem;
-        }
-        
-        .status-pending { background: #6c757d; }
-        .status-processing { background: #ffc107; animation: pulse 1.5s infinite; }
-        .status-success { background: #198754; }
-        .status-error { background: #dc3545; }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .progress-custom {
-            height: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        .log-container {
-            max-height: 300px;
-            overflow-y: auto;
-            background: #1a1a1a;
-            color: #00ff00;
-            padding: 1rem;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            line-height: 1.4;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="test-container">
-            <!-- Header -->
-            <div class="test-header">
-                <h1 class="text-primary mb-3">
-                    <i class="fas fa-database me-2"></i>
-                    تست سیستم مدیریت داده‌ها
-                </h1>
-                <p class="text-muted">
-                    تست عملکرد سیستم تبدیل Excel به MySQL با هوش مصنوعی
-                </p>
-                <div class="d-flex justify-content-center gap-3 mt-3">
-                    <span class="badge bg-primary px-3 py-2">نسخه 1.0.0</span>
-                    <span class="badge bg-success px-3 py-2">DataSave Framework</span>
-                    <span class="badge bg-info px-3 py-2" id="currentDateTime"></span>
-                </div>
-            </div>
-            
-            <!-- Connection Test -->
-            <div class="test-section">
-                <h3>
-                    <span class="status-indicator status-pending" id="dbStatus"></span>
-                    تست اتصال پایگاه داده
-                </h3>
-                <p class="text-muted mb-3">بررسی اتصال به MySQL و وجود جداول مورد نیاز</p>
-                <button class="btn btn-primary btn-test" onclick="testDatabaseConnection()">
-                    <i class="fas fa-database me-2"></i>
-                    شروع تست
-                </button>
-                <div id="dbResult" class="test-result d-none"></div>
-            </div>
-            
-            <!-- Schema Test -->
-            <div class="test-section">
-                <h3>
-                    <span class="status-indicator status-pending" id="schemaStatus"></span>
-                    تست ایجاد Schema
-                </h3>
-                <p class="text-muted mb-3">بررسی ایجاد جداول مدیریت داده‌ها</p>
-                <button class="btn btn-warning btn-test" onclick="testSchemaCreation()">
-                    <i class="fas fa-table me-2"></i>
-                    اجرای Schema
-                </button>
-                <div id="schemaResult" class="test-result d-none"></div>
-            </div>
-            
-            <!-- API Test -->
-            <div class="test-section">
-                <h3>
-                    <span class="status-indicator status-pending" id="apiStatus"></span>
-                    تست API Endpoints
-                </h3>
-                <p class="text-muted mb-3">بررسی عملکرد APIهای مدیریت داده‌ها</p>
-                <div class="btn-group mb-3">
-                    <button class="btn btn-info btn-test" onclick="testStatsAPI()">
-                        <i class="fas fa-chart-bar me-2"></i>
-                        تست آمار
-                    </button>
-                    <button class="btn btn-success btn-test" onclick="testProjectsAPI()">
-                        <i class="fas fa-list me-2"></i>
-                        تست پروژه‌ها
-                    </button>
-                </div>
-                <div id="apiResult" class="test-result d-none"></div>
-            </div>
-            
-            <!-- File Upload Test -->
-            <div class="test-section">
-                <h3>
-                    <span class="status-indicator status-pending" id="uploadStatus"></span>
-                    تست آپلود فایل
-                </h3>
-                <p class="text-muted mb-3">شبیه‌سازی آپلود فایل Excel</p>
-                <div class="mb-3">
-                    <input type="file" class="form-control" id="testFile" accept=".xlsx,.xls">
-                </div>
-                <button class="btn btn-success btn-test" onclick="testFileUpload()" disabled id="uploadBtn">
-                    <i class="fas fa-upload me-2"></i>
-                    تست آپلود
-                </button>
-                <div id="uploadResult" class="test-result d-none"></div>
-                <div class="progress progress-custom mt-3 d-none" id="uploadProgress">
-                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
-                         style="width: 0%"></div>
-                </div>
-            </div>
-            
-            <!-- System Log -->
-            <div class="test-section">
-                <h3>
-                    <i class="fas fa-terminal me-2"></i>
-                    لاگ سیستم
-                </h3>
-                <div id="systemLog" class="log-container">
-                    <div>🚀 سیستم آماده تست...</div>
-                </div>
-                <button class="btn btn-secondary btn-sm mt-2" onclick="clearLog()">
-                    <i class="fas fa-trash me-2"></i>
-                    پاک کردن لاگ
-                </button>
-            </div>
-            
-            <!-- Test Summary -->
-            <div class="test-section">
-                <h3>
-                    <i class="fas fa-clipboard-check me-2"></i>
-                    خلاصه تست‌ها
-                </h3>
-                <div id="testSummary" class="row">
-                    <div class="col-md-3 text-center">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h4 class="text-primary" id="passedTests">0</h4>
-                                <small>موفق</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h4 class="text-danger" id="failedTests">0</h4>
-                                <small>ناموفق</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h4 class="text-warning" id="pendingTests">4</h4>
-                                <small>در انتظار</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 text-center">
-                        <div class="card border-0 bg-light">
-                            <div class="card-body">
-                                <h4 class="text-info" id="totalTests">4</h4>
-                                <small>کل تست‌ها</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 تست ماژول مدیریت داده‌ها</h1>
+            <p>این صفحه برای تست عملکرد ماژول مدیریت داده‌ها طراحی شده است</p>
+        </div>
+        
+        <div id="content">
+            <!-- محتوای ماژول اینجا بارگذاری می‌شود -->
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Global variables
-        let testResults = {
-            passed: 0,
-            failed: 0,
-            pending: 4,
-            total: 4
-        };
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDateTime();
-            setInterval(updateDateTime, 1000);
-            
-            // File input handler
-            document.getElementById('testFile').addEventListener('change', function(e) {
-                const uploadBtn = document.getElementById('uploadBtn');
-                uploadBtn.disabled = !e.target.files.length;
-            });
-        });
-
-        // Update date time
-        function updateDateTime() {
-            const now = new Date();
-            document.getElementById('currentDateTime').textContent = 
-                now.toLocaleDateString('fa-IR') + ' ' + now.toLocaleTimeString('fa-IR');
-        }
-
-        // Log function
-        function logMessage(message, type = 'info') {
-            const log = document.getElementById('systemLog');
-            const timestamp = new Date().toLocaleTimeString('fa-IR');
-            const icon = type === 'error' ? '❌' : type === 'success' ? '✅' : '📝';
-            
-            const logEntry = document.createElement('div');
-            logEntry.innerHTML = `[${timestamp}] ${icon} ${message}`;
-            log.appendChild(logEntry);
-            log.scrollTop = log.scrollHeight;
-        }
-
-        // Clear log
-        function clearLog() {
-            document.getElementById('systemLog').innerHTML = '<div>🚀 سیستم آماده تست...</div>';
-        }
-
-        // Update test status
-        function updateTestStatus(testId, status, result, message) {
-            const indicator = document.getElementById(testId + 'Status');
-            const resultDiv = document.getElementById(testId + 'Result');
-            
-            indicator.className = `status-indicator status-${status}`;
-            
-            if (result) {
-                resultDiv.className = `test-result test-${status}`;
-                resultDiv.textContent = message || result;
-                resultDiv.classList.remove('d-none');
-            }
-            
-            // Update counters
-            if (status === 'success') {
-                testResults.passed++;
-                testResults.pending--;
-                logMessage(`✅ تست ${testId} با موفقیت انجام شد`, 'success');
-            } else if (status === 'error') {
-                testResults.failed++;
-                testResults.pending--;
-                logMessage(`❌ تست ${testId} ناموفق بود: ${message}`, 'error');
-            } else if (status === 'processing') {
-                logMessage(`⏳ تست ${testId} در حال اجرا...`, 'info');
-            }
-            
-            updateTestSummary();
-        }
-
-        // Update test summary
-        function updateTestSummary() {
-            document.getElementById('passedTests').textContent = testResults.passed;
-            document.getElementById('failedTests').textContent = testResults.failed;
-            document.getElementById('pendingTests').textContent = testResults.pending;
-            document.getElementById('totalTests').textContent = testResults.total;
-        }
-
-        // Test Database Connection
-        async function testDatabaseConnection() {
-            updateTestStatus('db', 'processing');
-            
+    <script type="module">
+        // Test the data management module
+        import DataManagementModule from '../assets/js/admin/modules/data-management.js';
+        
+        async function testModule() {
             try {
-                const response = await fetch('backend/api/v1/data-management.php/stats');
-                const data = await response.json();
+                console.log('🚀 Loading Data Management Module...');
                 
-                if (data.success) {
-                    updateTestStatus('db', 'success', JSON.stringify(data.data, null, 2));
-                } else {
-                    updateTestStatus('db', 'error', data.error || 'خطای نامشخص');
-                }
-            } catch (error) {
-                updateTestStatus('db', 'error', `خطا در اتصال: ${error.message}`);
-            }
-        }
-
-        // Test Schema Creation
-        async function testSchemaCreation() {
-            updateTestStatus('schema', 'processing');
-            
-            try {
-                // شبیه‌سازی اجرای schema
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Load content
+                const content = await DataManagementModule.loadContent();
+                document.getElementById('content').innerHTML = content;
                 
-                const mockResult = {
-                    tables_created: [
-                        'ai_data_projects',
-                        'ai_processing_steps', 
-                        'ai_chat_conversations',
-                        'ai_operation_logs',
-                        'ai_settings',
-                        'ai_statistics'
-                    ],
-                    views_created: [
-                        'v_projects_summary',
-                        'v_dashboard_stats',
-                        'v_project_chats'
-                    ],
-                    procedures_created: ['sp_create_new_project'],
-                    status: 'Schema created successfully!'
-                };
+                console.log('✅ Content loaded successfully');
                 
-                updateTestStatus('schema', 'success', JSON.stringify(mockResult, null, 2));
+                // Initialize module
+                await DataManagementModule.init();
+                
+                console.log('✅ Module initialized successfully');
                 
             } catch (error) {
-                updateTestStatus('schema', 'error', `خطا در ایجاد Schema: ${error.message}`);
+                console.error('❌ Error testing module:', error);
+                document.getElementById('content').innerHTML = `
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; color: white; text-align: center;">
+                        <h2>❌ خطا در بارگذاری ماژول</h2>
+                        <p>${error.message}</p>
+                    </div>
+                `;
             }
         }
-
-        // Test Stats API
-        async function testStatsAPI() {
-            updateTestStatus('api', 'processing');
-            logMessage('📊 درحال تست API آمار...');
-            
-            try {
-                // شبیه‌سازی API Call
-                const mockStats = {
-                    total_projects: 0,
-                    completed_projects: 0,
-                    failed_projects: 0,
-                    processing_projects: 0,
-                    total_records: 0,
-                    avg_processing_time: 0,
-                    total_file_size: 0
-                };
-                
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                updateTestStatus('api', 'success', JSON.stringify(mockStats, null, 2));
-                
-            } catch (error) {
-                updateTestStatus('api', 'error', `خطا در API: ${error.message}`);
-            }
-        }
-
-        // Test Projects API
-        async function testProjectsAPI() {
-            logMessage('📋 درحال تست API پروژه‌ها...');
-            
-            try {
-                const mockProjects = {
-                    projects: [],
-                    pagination: {
-                        page: 1,
-                        limit: 10,
-                        total: 0,
-                        pages: 0
-                    }
-                };
-                
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                logMessage('✅ API پروژه‌ها با موفقیت تست شد');
-                
-            } catch (error) {
-                logMessage(`❌ خطا در تست API پروژه‌ها: ${error.message}`);
-            }
-        }
-
-        // Test File Upload
-        async function testFileUpload() {
-            const file = document.getElementById('testFile').files[0];
-            if (!file) {
-                updateTestStatus('upload', 'error', 'لطفاً یک فایل انتخاب کنید');
-                return;
-            }
-            
-            updateTestStatus('upload', 'processing');
-            
-            const progressContainer = document.getElementById('uploadProgress');
-            const progressBar = progressContainer.querySelector('.progress-bar');
-            progressContainer.classList.remove('d-none');
-            
-            try {
-                // شبیه‌سازی آپلود
-                for (let i = 0; i <= 100; i += 10) {
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                    progressBar.style.width = i + '%';
-                    progressBar.textContent = i + '%';
-                }
-                
-                const mockResult = {
-                    project_id: Math.floor(Math.random() * 1000),
-                    file_name: file.name,
-                    file_size: file.size,
-                    status: 'uploaded'
-                };
-                
-                updateTestStatus('upload', 'success', JSON.stringify(mockResult, null, 2));
-                progressContainer.classList.add('d-none');
-                
-            } catch (error) {
-                updateTestStatus('upload', 'error', `خطا در آپلود: ${error.message}`);
-                progressContainer.classList.add('d-none');
-            }
-        }
-
-        // Auto run basic tests
-        setTimeout(() => {
-            logMessage('🎯 شروع تست‌های خودکار...');
-            // testDatabaseConnection();
-        }, 2000);
+        
+        // Run test when page loads
+        document.addEventListener('DOMContentLoaded', testModule);
     </script>
 </body>
 </html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست ایجاد جدول و انتقال داده‌ها</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #007bff;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+        
+        .test-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            border-left: 4px solid #28a745;
+            background: #d4edda;
+        }
+        
+        .error {
+            border-left: 4px solid #dc3545;
+            background: #f8d7da;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #007bff;
+        }
+        
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 تست ایجاد جدول و انتقال داده‌ها</h1>
+        
+        <div class="test-section">
+            <h3>📋 تست 1: ایجاد جدول ساده</h3>
+            <p>این تست یک جدول ساده با سه فیلد ایجاد می‌کند</p>
+            <button class="test-button" onclick="testCreateSimpleTable()">ایجاد جدول تست</button>
+            <div id="result1" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 تست 2: انتقال داده‌های نمونه</h3>
+            <p>انتقال داده‌های نمونه به جدول ایجاد شده</p>
+            <button class="test-button" onclick="testImportData()" id="importBtn" disabled>انتقال داده‌ها</button>
+            <div id="result2" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔍 تست 3: بررسی جدول در دیتابیس</h3>
+            <p>بررسی اینکه آیا جدول و داده‌ها درست ایجاد شده‌اند</p>
+            <button class="test-button" onclick="testVerifyTable()">بررسی جدول</button>
+            <div id="result3" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let testTableName = '';
+
+        // تست 1: ایجاد جدول
+        async function testCreateSimpleTable() {
+            const resultDiv = document.getElementById('result1');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'در حال ایجاد جدول...';
+
+            try {
+                // تولید نام جدول یکتا
+                testTableName = 'test_table_' + Date.now();
+                
+                const tableStructure = {
+                    table_name: testTableName,
+                    fields: [
+                        {
+                            name: 'name',
+                            persian_name: 'نام',
+                            original_name: 'نام',
+                            type: 'VARCHAR',
+                            length: 100,
+                            nullable: false,
+                            primary_key: false
+                        },
+                        {
+                            name: 'age',
+                            persian_name: 'سن',
+                            original_name: 'سن',
+                            type: 'INT',
+                            length: null,
+                            nullable: true,
+                            primary_key: false
+                        },
+                        {
+                            name: 'city',
+                            persian_name: 'شهر',
+                            original_name: 'شهر',
+                            type: 'VARCHAR',
+                            length: 50,
+                            nullable: true,
+                            primary_key: false
+                        }
+                    ]
+                };
+
+                // تولید SQL
+                const sql = `CREATE TABLE \`${testTableName}\` (
+    \`id\` INT AUTO_INCREMENT PRIMARY KEY,
+    \`name\` VARCHAR(100) NOT NULL COMMENT 'نام',
+    \`age\` INT NULL COMMENT 'سن',
+    \`city\` VARCHAR(50) NULL COMMENT 'شهر',
+    \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    \`updated_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='جدول تست - ${testTableName}';`;
+
+                const response = await fetch('/datasave/backend/api/create-table.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sql: sql,
+                        table_info: {
+                            table_name: testTableName,
+                            file_name: 'test-data.csv',
+                            file_hash: 'test-' + Date.now(),
+                            columns_number: 3,
+                            columns_data: JSON.stringify(tableStructure.fields),
+                            total_records: 3,
+                            field_mappings: tableStructure.fields
+                        }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ جدول با موفقیت ایجاد شد!
+
+نام جدول: ${testTableName}
+شناسه ردیابی: ${result.tracking_id}
+
+پاسخ سرور:
+${JSON.stringify(result, null, 2)}`;
+
+                    // فعال کردن دکمه انتقال داده‌ها
+                    document.getElementById('importBtn').disabled = false;
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطا در ایجاد جدول:
+${error.message}`;
+            }
+        }
+
+        // تست 2: انتقال داده‌ها
+        async function testImportData() {
+            const resultDiv = document.getElementById('result2');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'در حال انتقال داده‌ها...';
+
+            try {
+                if (!testTableName) {
+                    throw new Error('ابتدا جدول را ایجاد کنید');
+                }
+
+                const testData = [
+                    ['نام', 'سن', 'شهر'], // header
+                    ['علی احمدی', '25', 'تهران'],
+                    ['فاطمه محمدی', '30', 'اصفهان'],
+                    ['محمد کریمی', '28', 'شیراز']
+                ];
+
+                const fieldMappings = [
+                    { persian_name: 'نام', english_name: 'name', field_type: 'VARCHAR' },
+                    { persian_name: 'سن', english_name: 'age', field_type: 'INT' },
+                    { persian_name: 'شهر', english_name: 'city', field_type: 'VARCHAR' }
+                ];
+
+                const response = await fetch('/datasave/backend/api/import-data.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        table_name: testTableName,
+                        excel_data: testData,
+                        field_mappings: fieldMappings,
+                        tracking_id: null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ داده‌ها با موفقیت منتقل شدند!
+
+تعداد کل رکوردها: ${result.total_rows}
+رکوردهای موفق: ${result.success_count}
+رکوردهای خطا: ${result.error_count}
+زمان پردازش: ${result.processing_time}
+
+پاسخ سرور:
+${JSON.stringify(result, null, 2)}`;
+                } else {
+                    throw new Error(result.error);
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطا در انتقال داده‌ها:
+${error.message}`;
+            }
+        }
+
+        // تست 3: بررسی جدول
+        async function testVerifyTable() {
+            const resultDiv = document.getElementById('result3');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'در حال بررسی جدول...';
+
+            try {
+                if (!testTableName) {
+                    throw new Error('ابتدا جدول را ایجاد کنید');
+                }
+
+                // ایجاد API ساده برای بررسی
+                const checkResult = await fetch(`/datasave/backend/api/verify-table.php?table=${testTableName}`);
+                
+                if (checkResult.ok) {
+                    const result = await checkResult.json();
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ جدول بررسی شد!
+
+${JSON.stringify(result, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `⚠️ نتوانستیم جدول را بررسی کنیم، اما اگر خطایی در مراحل قبل نداشتید، احتمالاً جدول درست ایجاد شده.
+
+برای بررسی دستی:
+1. وارد phpMyAdmin شوید
+2. دیتابیس ai_excell2form را انتخاب کنید  
+3. جدول ${testTableName} را پیدا کنید
+4. داده‌های داخل آن را بررسی کنید`;
+                }
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ خطا در بررسی:
+${error.message}
+
+برای بررسی دستی از phpMyAdmin استفاده کنید:
+http://localhost/phpmyadmin`;
+            }
+        }
+    </script>
+</body>
+</html>

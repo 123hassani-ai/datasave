@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست API ردیابی فایل</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 10px 0; border: none; border-radius: 5px; cursor: pointer; }
+        .success { background: #10b981; color: white; }
+        .error { background: #ef4444; color: white; }
+        .result { margin: 10px 0; padding: 10px; background: #f9fafb; border-radius: 5px; }
+        pre { background: #1f2937; color: #f3f4f6; padding: 10px; border-radius: 5px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 تست API ردیابی فایل</h1>
+        
+        <button class="success" onclick="testAPI()">تست API</button>
+        <button class="error" onclick="clearResults()">پاک کردن نتایج</button>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const resultsDiv = document.getElementById('results');
+            
+            // تست 1: بررسی فایل جدید
+            addResult('🔍 تست 1: بررسی فایل جدید...', 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'check_file_exists');
+                formData.append('file_hash', 'test_hash_' + Date.now());
+                formData.append('columns_data', 'نام,سن,شهر');
+                
+                const response = await fetch('/datasave/backend/api/v1/xls-tracking.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                addResult('✅ تست 1 موفق:', 'success');
+                addResult(JSON.stringify(result, null, 2), 'code');
+                
+            } catch (error) {
+                addResult('❌ تست 1 خطا: ' + error.message, 'error');
+            }
+            
+            // تست 2: ثبت فایل جدید
+            addResult('📝 تست 2: ثبت فایل جدید...', 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', 'register_file');
+                formData.append('table_name', 'xlstbl_test_' + Date.now());
+                formData.append('file_name', 'test.xlsx');
+                formData.append('file_hash', 'test_hash_register_' + Date.now());
+                formData.append('data_type', 'create_table');
+                formData.append('columns_number', '3');
+                formData.append('columns_data', 'نام,سن,شهر');
+                formData.append('total_records', '100');
+                
+                const response = await fetch('/datasave/backend/api/v1/xls-tracking.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                addResult('✅ تست 2 موفق:', 'success');
+                addResult(JSON.stringify(result, null, 2), 'code');
+                
+            } catch (error) {
+                addResult('❌ تست 2 خطا: ' + error.message, 'error');
+            }
+        }
+        
+        function addResult(text, type) {
+            const resultsDiv = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = 'result';
+            
+            if (type === 'code') {
+                div.innerHTML = '<pre>' + text + '</pre>';
+            } else {
+                div.textContent = text;
+                if (type === 'success') div.style.color = '#10b981';
+                if (type === 'error') div.style.color = '#ef4444';
+                if (type === 'info') div.style.color = '#3b82f6';
+            }
+            
+            resultsDiv.appendChild(div);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

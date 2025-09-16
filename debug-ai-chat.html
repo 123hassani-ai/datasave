@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست دیباگ AI Settings</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; direction: rtl; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>تست دیباگ AI Settings</h1>
+    <button onclick="testAPIResponse()">تست ساختار پاسخ API</button>
+    <button onclick="testDirectChat()">تست چت مستقیم</button>
+    <div id="results"></div>
+
+    <script>
+        async function testAPIResponse() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += '<div class="result">در حال تست API...</div>';
+
+            try {
+                const response = await fetch('/datasave/backend/api/v1/ai-settings.php?action=get');
+                const data = await response.json();
+                
+                resultsDiv.innerHTML += `<div class="result success">
+                    <h3>✅ پاسخ API:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>`;
+
+                // تست دسترسی به مقادیر
+                const apiKey = data.data?.openai_api_key?.value;
+                const model = data.data?.ai_model?.value;
+                
+                resultsDiv.innerHTML += `<div class="result success">
+                    <h3>✅ مقادیر استخراج شده:</h3>
+                    <p>API Key: ${apiKey ? apiKey.substring(0, 20) + '...' : 'ندارد'}</p>
+                    <p>Model: ${model || 'ندارد'}</p>
+                </div>`;
+
+            } catch (error) {
+                resultsDiv.innerHTML += `<div class="result error">
+                    <h3>❌ خطا در تست API:</h3>
+                    <p>${error.message}</p>
+                </div>`;
+            }
+        }
+
+        async function testDirectChat() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML += '<div class="result">در حال تست چت مستقیم...</div>';
+
+            try {
+                // دریافت تنظیمات
+                const settingsResponse = await fetch('/datasave/backend/api/v1/ai-settings.php?action=get');
+                const settingsData = await settingsResponse.json();
+                
+                if (!settingsData.success) {
+                    throw new Error('خطا در دریافت تنظیمات');
+                }
+
+                const settings = settingsData.data;
+                const apiKey = settings.openai_api_key?.value?.trim().replace(/\s/g, '');
+                const model = settings.ai_model?.value || 'gpt-4o';
+
+                if (!apiKey || apiKey.length < 20) {
+                    throw new Error('کلید OpenAI معتبر نیست');
+                }
+
+                resultsDiv.innerHTML += `<div class="result success">
+                    <h3>✅ تنظیمات دریافت شد:</h3>
+                    <p>Model: ${model}</p>
+                    <p>API Key: ${apiKey.substring(0, 15)}...</p>
+                </div>`;
+
+                // تست چت
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [{role: "user", content: "سلام! این یک تست است"}],
+                        temperature: 0.7,
+                        max_tokens: 100
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`خطای OpenAI: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const aiResponse = data.choices[0]?.message?.content || "پاسخی دریافت نشد.";
+
+                resultsDiv.innerHTML += `<div class="result success">
+                    <h3>✅ پاسخ AI:</h3>
+                    <p>${aiResponse}</p>
+                </div>`;
+
+            } catch (error) {
+                resultsDiv.innerHTML += `<div class="result error">
+                    <h3>❌ خطا در چت:</h3>
+                    <p>${error.message}</p>
+                </div>`;
+            }
+        }
+    </script>
+</body>
+</html>

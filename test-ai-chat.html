@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست چت AI - DataSave</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; direction: rtl; }
+        .chat-container { max-width: 600px; margin: 0 auto; }
+        .chat-message { margin: 10px 0; padding: 10px; border-radius: 8px; }
+        .user { background: #007bff; color: white; text-align: right; }
+        .ai { background: #f8f9fa; border: 1px solid #ddd; }
+        .error { background: #dc3545; color: white; }
+        input[type="text"] { width: 70%; padding: 10px; margin: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>تست چت AI مستقیم</h1>
+        <div id="messages"></div>
+        <div>
+            <input type="text" id="messageInput" placeholder="پیام خود را وارد کنید..." />
+            <button onclick="sendMessage()">ارسال</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesDiv = document.getElementById('messages');
+            
+            // نمایش پیام کاربر
+            messagesDiv.innerHTML += `<div class="chat-message user">شما: ${message}</div>`;
+            input.value = '';
+
+            // نمایش نشانگر تایپ
+            messagesDiv.innerHTML += `<div class="chat-message ai" id="typing">AI: در حال تایپ...</div>`;
+
+            try {
+                // دریافت تنظیمات
+                const settingsResponse = await fetch('/datasave/backend/api/v1/ai-settings.php?action=get');
+                const settingsData = await settingsResponse.json();
+                
+                if (!settingsData.success) {
+                    throw new Error('خطا در دریافت تنظیمات');
+                }
+
+                const apiKey = settingsData.data.openai_api_key.value;
+                const model = settingsData.data.ai_model.value;
+
+                // فراخوانی OpenAI
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [{role: "user", content: message}],
+                        temperature: 0.7,
+                        max_tokens: 200
+                    })
+                });
+
+                const data = await response.json();
+                const aiResponse = data.choices[0]?.message?.content || "پاسخی دریافت نشد.";
+
+                // حذف نشانگر تایپ و نمایش پاسخ
+                document.getElementById('typing').remove();
+                messagesDiv.innerHTML += `<div class="chat-message ai">AI: ${aiResponse}</div>`;
+
+            } catch (error) {
+                document.getElementById('typing').remove();
+                messagesDiv.innerHTML += `<div class="chat-message error">خطا: ${error.message}</div>`;
+            }
+
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // ارسال با Enter
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

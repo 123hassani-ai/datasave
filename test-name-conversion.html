@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست تبدیل نام‌ها</title>
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            margin: 20px;
+            direction: rtl;
+        }
+        .test-result {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #007cba;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>تست تبدیل نام‌های فارسی به انگلیسی</h1>
+    
+    <div id="results"></div>
+    
+    <script type="module">
+        // ایمپورت کلاس DatabaseStructureGenerator
+        import DatabaseStructureGenerator from '/datasave/assets/js/admin/modules/data-management/DatabaseStructureGenerator.js';
+        
+        const generator = new DatabaseStructureGenerator();
+        
+        // لیست نام‌های تست
+        const testNames = [
+            'شناسه',
+            'سال و ماه',
+            'انتخاب سال',
+            'انتخاب ماه',
+            'انتخاب بخش کاری',
+            'فروشنده',
+            'جمع فروش',
+            'جمع سود',
+            'محاسبه درصد سود',
+            'تعداد',
+            'عنوان گزارش',
+            'موجودی کالا تا پایان ماه',
+            'خرید کالا تا پایان ماه',
+            'توضیحات'
+        ];
+        
+        const resultsDiv = document.getElementById('results');
+        
+        testNames.forEach(persianName => {
+            try {
+                const englishName = generator.sanitizeName(persianName);
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `
+                    <strong>✅ ${persianName}</strong> → <code>${englishName}</code>
+                `;
+                resultsDiv.appendChild(resultDiv);
+            } catch (error) {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `
+                    <strong>❌ ${persianName}</strong> → Error: ${error.message}
+                `;
+                resultsDiv.appendChild(resultDiv);
+            }
+        });
+    </script>
+</body>
+</html>
