@@ -128,10 +128,19 @@ export default {
      */
     async init() {
         try {
+            // جلوگیری از مقداردهی مکرر
+            if (this.initialized) {
+                return;
+            }
+            this.initialized = true;
+            
             console.log('Dashboard module initialized');
             // در اینجا می‌توان کدهای اضافی مثل نمودارها را مقداردهی کرد
         } catch (error) {
             console.error('Failed to initialize dashboard:', error);
         }
-    }
+    },
+    
+    // علامت مقداردهی
+    initialized: false
 };

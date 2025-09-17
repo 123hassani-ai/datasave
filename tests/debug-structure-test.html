@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست ساختار جدول</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>تست ساختار جدول</h1>
+    
+    <button onclick="testStructure()">تست ساختار</button>
+    <button onclick="testCreateTable()">تست ایجاد جدول</button>
+    
+    <div id="output"></div>
+
+    <script type="module">
+        import DatabaseStructureGenerator from './assets/js/admin/modules/data-management/DatabaseStructureGenerator.js';
+        import DataManagementController from './assets/js/admin/modules/data-management/DataManagementController.js';
+
+        window.testStructure = function() {
+            const generator = new DatabaseStructureGenerator();
+            
+            // Sample data like Excel would give
+            const sampleData = [
+                ['نام', 'تلفن', 'آدرس'],
+                ['علی احمدی', '09123456789', 'تهران'],
+                ['فاطمه رضایی', '09876543210', 'اصفهان']
+            ];
+            
+            const fileName = 'test.xlsx';
+            
+            const structure = generator.generateFromAnalysis(null, sampleData, fileName);
+            
+            document.getElementById('output').innerHTML = 
+                '<div class="debug"><h3>ساختار تولید شده:</h3><pre>' + 
+                JSON.stringify(structure, null, 2) + 
+                '</pre></div>';
+        };
+
+        window.testCreateTable = async function() {
+            const generator = new DatabaseStructureGenerator();
+            const controller = new DataManagementController();
+            
+            // Sample data
+            const sampleData = [
+                ['نام', 'تلفن', 'آدرس'],
+                ['علی احمدی', '09123456789', 'تهران'],
+                ['فاطمه رضایی', '09876543210', 'اصفهان']
+            ];
+            
+            const fileName = 'test.xlsx';
+            const structure = generator.generateFromAnalysis(null, sampleData, fileName);
+            
+            try {
+                const result = await controller.createTable(structure);
+                document.getElementById('output').innerHTML += 
+                    '<div class="debug"><h3>نتیجه ایجاد جدول:</h3><pre>' + 
+                    JSON.stringify(result, null, 2) + 
+                    '</pre></div>';
+            } catch (error) {
+                document.getElementById('output').innerHTML += 
+                    '<div class="debug" style="background: #ffcccc;"><h3>خطا:</h3>' + 
+                    error.message + 
+                    '<br>Stack: <pre>' + error.stack + '</pre></div>';
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست سریع مدیریت داده‌ها - DataSave</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .status.error {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+        
+        .logs {
+            background: #1e1e1e;
+            color: #f8f8f8;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 تست سریع مدیریت داده‌ها</h1>
+        
+        <div class="status" id="status">
+            ✅ جداول دیتابیس موجود است - آماده تست
+        </div>
+        
+        <div>
+            <button class="button" onclick="testTableCreation()">🔥 تست ایجاد جدول</button>
+            <button class="button" onclick="testDataImport()">📊 تست انتقال داده‌ها</button>
+            <button class="button" onclick="clearLogs()">🗑️ پاک کردن لاگ‌ها</button>
+        </div>
+        
+        <div class="logs" id="logs">
+در حال آماده‌سازی تست...
+        </div>
+    </div>
+
+    <script>
+        const logs = document.getElementById('logs');
+        const status = document.getElementById('status');
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString('fa-IR');
+            logs.textContent += `[${timestamp}] ${message}\n`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        function clearLogs() {
+            logs.textContent = '';
+        }
+        
+        async function testTableCreation() {
+            try {
+                log('🚀 شروع تست ایجاد جدول...');
+                
+                // Sample structure for testing
+                const testStructure = {
+                    database: 'ai_excell2form',
+                    tableName: 'test_table_' + Date.now(),
+                    fields: [
+                        {
+                            persian_name: 'شناسه',
+                            english_name: 'id',
+                            field_type: 'INT',
+                            is_primary_key: true,
+                            is_nullable: false
+                        },
+                        {
+                            persian_name: 'نام',
+                            english_name: 'name',
+                            field_type: 'VARCHAR',
+                            field_length: 255,
+                            is_nullable: false
+                        },
+                        {
+                            persian_name: 'تاریخ ثبت',
+                            english_name: 'created_at',
+                            field_type: 'TIMESTAMP',
+                            is_nullable: false
+                        }
+                    ]
+                };
+                
+                const sql = `CREATE TABLE IF NOT EXISTS \`${testStructure.tableName}\` (
+    \`id\` INT AUTO_INCREMENT PRIMARY KEY,
+    \`name\` VARCHAR(255) NOT NULL,
+    \`created_at\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`;
+
+                const tableInfo = {
+                    table_name: testStructure.tableName,
+                    file_name: 'test_file.xlsx',
+                    file_hash: 'test_hash_' + Date.now(),
+                    columns_number: testStructure.fields.length,
+                    columns_data: JSON.stringify(testStructure.fields),
+                    total_records: 0,
+                    field_mappings: testStructure.fields
+                };
+                
+                log('📤 ارسال درخواست ایجاد جدول...');
+                
+                const response = await fetch('/datasave/backend/api/create-table.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sql: sql,
+                        table_info: tableInfo
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('✅ جدول با موفقیت ایجاد شد!');
+                    log(`📝 Tracking ID: ${result.tracking_id}`);
+                    status.className = 'status';
+                    status.textContent = '✅ تست ایجاد جدول موفق بود';
+                } else {
+                    throw new Error(result.error || 'خطای نامشخص');
+                }
+                
+            } catch (error) {
+                log('❌ خطا در ایجاد جدول: ' + error.message);
+                status.className = 'status error';
+                status.textContent = '❌ تست ایجاد جدول ناموفق';
+                console.error('Error:', error);
+            }
+        }
+        
+        async function testDataImport() {
+            try {
+                log('🚀 شروع تست انتقال داده‌ها...');
+                
+                // Sample data for testing
+                const testData = {
+                    table_name: 'test_table_' + (Date.now() - 1000), // Use previous table
+                    excel_data: [
+                        ['شناسه', 'نام', 'تاریخ ثبت'], // header
+                        [1, 'علی احمدی', '2023-01-01'],
+                        [2, 'فاطمه رضایی', '2023-01-02'],
+                        [3, 'محمد حسینی', '2023-01-03']
+                    ],
+                    field_mappings: [
+                        {
+                            persian_name: 'شناسه',
+                            english_name: 'id',
+                            field_type: 'INT'
+                        },
+                        {
+                            persian_name: 'نام',
+                            english_name: 'name',
+                            field_type: 'VARCHAR'
+                        },
+                        {
+                            persian_name: 'تاریخ ثبت',
+                            english_name: 'created_at',
+                            field_type: 'TIMESTAMP'
+                        }
+                    ]
+                };
+                
+                log('📤 ارسال درخواست انتقال داده‌ها...');
+                
+                const response = await fetch('/datasave/backend/api/import-data.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    log('✅ داده‌ها با موفقیت منتقل شدند!');
+                    log(`📊 رکوردهای موفق: ${result.success_count}`);
+                    log(`⚠️ رکوردهای ناموفق: ${result.error_count}`);
+                    status.className = 'status';
+                    status.textContent = '✅ تست انتقال داده‌ها موفق بود';
+                } else {
+                    throw new Error(result.error || 'خطای نامشخص');
+                }
+                
+            } catch (error) {
+                log('❌ خطا در انتقال داده‌ها: ' + error.message);
+                status.className = 'status error';
+                status.textContent = '❌ تست انتقال داده‌ها ناموفق';
+                console.error('Error:', error);
+            }
+        }
+        
+        // Initialize
+        log('🔥 تست سریع مدیریت داده‌ها آماده است');
+        log('👆 روی دکمه‌های بالا کلیک کنید تا تست شروع شود');
+    </script>
+</body>
+</html>

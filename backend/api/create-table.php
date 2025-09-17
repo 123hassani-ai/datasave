@@ -119,8 +119,8 @@ try {
                 $field['english_name'] ?? '',
                 $field['field_type'] ?? 'VARCHAR',
                 $field['field_length'] ?? null,
-                $field['is_primary_key'] ?? false,
-                $field['is_nullable'] ?? true,
+                ($field['is_primary_key'] ?? false) ? 1 : 0,
+                ($field['is_nullable'] ?? true) ? 1 : 0,
                 $field['field_comment'] ?? ''
             ]);
         }

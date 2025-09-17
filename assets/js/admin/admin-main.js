@@ -45,6 +45,15 @@ const AdminMain = {
      * Initialize main application
      */
     async init() {
+        // جلوگیری از اجرای مکرر
+        if (this.state.isInitialized) {
+            console.log('ℹ️ AdminMain قبلاً مقداردهی شده است');
+            return;
+        }
+        
+        // فلگ را بلافاصله set می‌کنیم
+        this.state.isInitialized = true;
+        
         // Initialize safe logger
         if (window.SafeLogger) {
             this.log = window.SafeLogger.create('ADMIN-MAIN');
@@ -63,9 +72,8 @@ const AdminMain = {
         this.state.initStartTime = performance.now();
         
         try {
-            this.log.info('شروع مقداردهی اپلیکیشن ادمین DataSave', {
-                version: this.config.version,
-                timestamp: new Date().toISOString()
+            this.log.info('🚀 شروع AdminMain', {
+                version: this.config.version
             });
 
             // نمایش loading
@@ -87,8 +95,8 @@ const AdminMain = {
             // Complete initialization
             this.completeInitialization();
 
-            this.log.info('اپلیکیشن ادمین با موفقیت مقداردهی شد', {
-                duration: performance.now() - this.state.initStartTime,
+            this.log.info('✅ AdminMain آماده شد', {
+                duration: Math.round(performance.now() - this.state.initStartTime),
                 modules: this.state.modules.length
             });
 
@@ -324,7 +332,8 @@ const AdminMain = {
      * Complete initialization
      */
     completeInitialization() {
-        this.state.isInitialized = true;
+        // flag قبلاً در init set شده است
+        // this.state.isInitialized = true;
         
         // ارسال رویداد initialized
         // Dispatch initialized event

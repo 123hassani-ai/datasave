@@ -33,6 +33,8 @@
 .fa-dollar-sign::before { content: "💰" !important; }
 .fa-arrow-up::before { content: "⬆️" !important; }
 .fa-chart-area::before { content: "📉" !important; }
+.fa-brain::before { content: "🧠" !important; }
+.fa-plus::before { content: "➕" !important; }
 
 /* انیمیشن کلیک */
 .fas:active, .far:active, .fab:active {

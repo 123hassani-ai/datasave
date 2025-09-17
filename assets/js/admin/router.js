@@ -21,6 +21,7 @@ const RouterModule = (function() {
     let routes = {};
     let currentRoute = null;
     let moduleCache = {}; // کش برای ماژول‌ها
+    let isInitialized = false; // جلوگیری از مقداردهی مکرر
     
     /**
      * تنظیمات routeها
@@ -87,6 +88,13 @@ const RouterModule = (function() {
      * مقداردهی اولیه router
      */
     function init() {
+        // جلوگیری از مقداردهی مکرر
+        if (isInitialized) {
+            console.log('ℹ️ Router قبلاً مقداردهی شده است');
+            return;
+        }
+        isInitialized = true;
+        
         // تنظیم routeهای پیش‌فرض
         routes = routeConfig;
         
@@ -132,9 +140,11 @@ const RouterModule = (function() {
                 routeId = 'dashboard';  // بازگشت به داشبورد در صورت خطا
             }
             
-            // اگر ناوبری اولیه نیست و به همان صفحه ناوبری می‌کنیم
-            if (!isInitial && routeId === currentRoute) {
-                console.log(`Already at ${routeId}`);
+            // اگر به همان صفحه ناوبری می‌کنیم (حتی در اولین بار)
+            if (routeId === currentRoute) {
+                if (!isInitial) {
+                    console.log(`Already at ${routeId}`);
+                }
                 return;
             }
             

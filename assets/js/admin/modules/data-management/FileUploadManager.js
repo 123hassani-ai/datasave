@@ -295,37 +295,87 @@ class FileUploadManager {
      * نتیجه تحلیل آزمایشی (Mock)
      */
     getMockAnalysisResult(file) {
-        return {
-            fileName: file.name,
-            fileSize: file.size,
-            totalRows: Math.floor(Math.random() * 1000) + 100,
-            totalColumns: Math.floor(Math.random() * 10) + 5,
-            hasHeader: true,
-            columns: [
-                { name: 'شناسه', type: 'number', samples: ['1', '2', '3'] },
-                { name: 'نام', type: 'text', samples: ['احمد رضایی', 'فاطمه احمدی', 'علی محمدی'] },
-                { name: 'تاریخ', type: 'date', samples: ['1402/01/01', '1402/01/02', '1402/01/03'] },
-                { name: 'مبلغ', type: 'currency', samples: ['1,500,000', '2,300,000', '950,000'] },
-                { name: 'وضعیت', type: 'status', samples: ['فعال', 'غیرفعال', 'در انتظار'] }
-            ],
-            preview: [
-                ['شناسه', 'نام', 'تاریخ', 'مبلغ', 'وضعیت'],
-                ['1', 'احمد رضایی', '1402/01/01', '1,500,000', 'فعال'],
-                ['2', 'فاطمه احمدی', '1402/01/02', '2,300,000', 'فعال'],
-                ['3', 'علی محمدی', '1402/01/03', '950,000', 'غیرفعال'],
-                ['4', 'زهرا حسینی', '1402/01/04', '1,800,000', 'در انتظار'],
-                ['5', 'محسن کریمی', '1402/01/05', '2,100,000', 'فعال']
-            ],
-            analysis: {
-                summary: 'این فایل حاوی اطلاعات مالی است شامل 5 ستون و تعداد زیادی رکورد. داده‌ها منظم هستند و هیچ خطای آشکاری ندارند.',
-                dataQuality: 'عالی',
-                suggestions: [
-                    'ستون تاریخ به فرمت استاندارد تبدیل شود',
-                    'مبالغ می‌توانند به عنوان عدد ذخیره شوند',
-                    'ستون وضعیت می‌تواند به boolean تبدیل شود'
-                ]
+        try {
+            // تولید داده‌های کامل برای تست
+            const totalRows = Math.floor(Math.random() * 50) + 20; // 20-70 رکورد
+            
+            // تولید هدر ساده برای تست
+            const headers = ['شناسه', 'نام_محصول', 'تاریخ_ثبت', 'مبلغ', 'وضعیت'];
+            
+            // تولید داده‌های کامل
+            const fullData = [];
+            for (let i = 1; i <= totalRows; i++) {
+                fullData.push([
+                    i,
+                    `محصول ${i}`,
+                    `1403/0${Math.floor(Math.random() * 9) + 1}/0${Math.floor(Math.random() * 9) + 1}`,
+                    `${(Math.random() * 5000000 + 1000000).toFixed(0)}`,
+                    ['فعال', 'غیرفعال', 'در انتظار'][Math.floor(Math.random() * 3)]
+                ]);
             }
-        };
+            
+            // پیش‌نمایش فقط 5 رکورد اول
+            const preview = [headers, ...fullData.slice(0, 5)];
+            
+            console.log('🎯 Mock data generated:', {
+                totalRows: totalRows,
+                fullDataLength: fullData.length,
+                previewLength: preview.length,
+                headers: headers
+            });
+            
+            return {
+                fileName: file.name,
+                fileSize: file.size,
+                totalRows: totalRows,
+                totalColumns: headers.length,
+                hasHeader: true,
+                columns: headers.map((header, index) => ({
+                    name: header,
+                    type: index === 0 ? 'number' : 'text',
+                    samples: fullData.slice(0, 3).map(row => row[index])
+                })),
+                preview: preview,
+                fullData: fullData, // اضافه کردن داده‌های کامل
+                data: fullData, // برای سازگاری
+                analysis: {
+                    summary: `این فایل حاوی ${totalRows} رکورد اطلاعاتی است شامل ${headers.length} ستون. داده‌ها منظم هستند و هیچ خطای آشکاری ندارند.`,
+                    dataQuality: 'عالی',
+                    suggestions: [
+                        'ستون تاریخ به فرمت استاندارد تبدیل شود',
+                        'مبالغ می‌توانند به عنوان عدد ذخیره شوند',
+                        'ستون وضعیت می‌تواند به boolean تبدیل شود'
+                    ]
+                }
+            };
+            
+        } catch (error) {
+            console.error('❌ Error in getMockAnalysisResult:', error);
+            // Fallback simple data
+            return {
+                fileName: file.name,
+                fileSize: file.size,
+                totalRows: 25,
+                totalColumns: 3,
+                hasHeader: true,
+                preview: [
+                    ['شناسه', 'نام', 'وضعیت'],
+                    ['1', 'آیتم 1', 'فعال'],
+                    ['2', 'آیتم 2', 'فعال'],
+                    ['3', 'آیتم 3', 'غیرفعال'],
+                    ['4', 'آیتم 4', 'فعال'],
+                    ['5', 'آیتم 5', 'در انتظار']
+                ],
+                fullData: Array.from({length: 25}, (_, i) => [
+                    i + 1,
+                    `آیتم ${i + 1}`,
+                    ['فعال', 'غیرفعال', 'در انتظار'][i % 3]
+                ]),
+                analysis: {
+                    summary: 'فایل تست شامل 25 رکورد'
+                }
+            };
+        }
     }
     
     /**

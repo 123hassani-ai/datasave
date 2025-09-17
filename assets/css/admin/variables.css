@@ -256,6 +256,21 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
+    transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* === تم تاریک / Dark Theme === */
+body.dark-theme {
+    --bg-primary: var(--bg-dark);
+    --bg-secondary: var(--bg-dark-secondary);
+    --bg-tertiary: var(--bg-dark-tertiary);
+    --text-primary: var(--text-dark-primary);
+    --text-secondary: var(--text-dark-secondary);
+    --text-tertiary: var(--text-dark-tertiary);
+    --glass-bg: var(--glass-bg-dark);
+    --glass-bg-hover: var(--glass-bg-dark-hover);
+    --glass-border: var(--glass-border-dark);
+    --shadow-glass: var(--shadow-glass-dark);
 }
 
 /* === پشتیبانی از افکت backdrop-filter در مرورگرهای قدیمی === */
@@ -264,7 +279,7 @@ body {
         background: rgba(255, 255, 255, 0.9);
     }
     
-    [data-theme="dark"] .glass-effect {
+    body.dark-theme .glass-effect {
         background: rgba(15, 23, 42, 0.9);
     }
 }

@@ -96,12 +96,11 @@ class DatabaseStructureGenerator {
                 // تشخیص نوع داده بر اساس نمونه داده‌ها
                 let dataType = this.detectDataType(previewData, index);
                 
-                console.log(`🔧 Field mapping: "${fieldName}" → "${sqlName}"`);
-                
                 return {
                     persianName: fieldName, // نام اصلی فارسی
                     name: fieldName,
-                    sqlName: sqlName, // نام انگلیسی
+                    englishName: sqlName, // نام انگلیسی برای نمایش
+                    sqlName: sqlName, // نام انگلیسی SQL
                     type: dataType.type,
                     length: dataType.length,
                     nullable: true,
@@ -113,6 +112,8 @@ class DatabaseStructureGenerator {
             const structure = {
                 database: this.config.fixedDbName, // همیشه ai_excell2form
                 table: tableName,
+                tableName: tableName, // Add both for compatibility
+                table_name: tableName, // Add both for compatibility
                 fields: fields,
                 totalColumns: analysisResult.totalColumns || fields.length,
                 totalRows: analysisResult.totalRows || 0,
@@ -329,12 +330,6 @@ class DatabaseStructureGenerator {
                 throw new Error('هیچ فیلدی انتخاب نشده است');
             }
             
-            console.log('📋 Selected fields before processing:', selectedFields.map(f => ({
-                persian: f.persianName,
-                english: f.sqlName,
-                original: f.name
-            })));
-            
             // بررسی و حل مشکل نام‌های تکراری
             const usedNames = new Set(['id', 'created_at', 'updated_at']);
             selectedFields.forEach((field, index) => {
@@ -362,8 +357,6 @@ class DatabaseStructureGenerator {
                 
                 field.sqlName = finalName;
                 usedNames.add(finalName);
-                
-                console.log(`✅ Final field mapping: "${field.persianName || field.name}" → "${field.sqlName}"`);
             });
             
             // استفاده از نام جدول درست

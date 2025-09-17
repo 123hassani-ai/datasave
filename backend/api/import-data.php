@@ -68,6 +68,11 @@ try {
     $fieldMappings = $data['field_mappings'];
     $trackingId = $data['tracking_id'] ?? null;
     
+    // Debug logging
+    error_log("Import Debug - Table: " . $tableName);
+    error_log("Import Debug - Excel Data Count: " . count($excelData));
+    error_log("Import Debug - Field Mappings: " . json_encode($fieldMappings, JSON_UNESCAPED_UNICODE));
+    
     // Prepare field mapping
     $englishFields = [];
     foreach ($fieldMappings as $mapping) {
@@ -92,14 +97,33 @@ try {
     
     // Skip header row (first row)
     $dataRows = array_slice($excelData, 1);
+    $headerRow = $excelData[0] ?? [];
+    
+    error_log("Header Row: " . json_encode($headerRow, JSON_UNESCAPED_UNICODE));
     
     foreach ($dataRows as $rowIndex => $row) {
         try {
             // Map Persian data to English fields
             $values = [];
             
-            foreach ($fieldMappings as $fieldIndex => $mapping) {
-                $value = isset($row[$fieldIndex]) ? $row[$fieldIndex] : null;
+            foreach ($fieldMappings as $mapping) {
+                $persianName = $mapping['persian_name'];
+                $value = null;
+                
+                // Find the column index for this Persian field name
+                $columnIndex = array_search($persianName, $headerRow);
+                
+                if ($columnIndex !== false && isset($row[$columnIndex])) {
+                    $value = $row[$columnIndex];
+                } else {
+                    // Fallback: try to find by approximate match
+                    foreach ($headerRow as $index => $headerField) {
+                        if (trim($headerField) === trim($persianName)) {
+                            $value = $row[$index] ?? null;
+                            break;
+                        }
+                    }
+                }
                 
                 // Clean and validate data
                 if ($value !== null) {
@@ -140,6 +164,8 @@ try {
                 }
                 
                 $values[] = $value;
+                
+                error_log("Field Mapping - Persian: {$persianName}, Column Index: {$columnIndex}, Value: " . var_export($value, true));
             }
             
             // Execute insert
@@ -180,7 +206,7 @@ try {
         $logStmt = $pdo->prepare($logSql);
         $logStmt->execute([
             $trackingId,
-            'import',
+            'insert',
             count($dataRows),
             $successCount,
             $errorCount,

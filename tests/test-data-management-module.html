@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست ماژول Data Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tahoma', sans-serif;
+            direction: rtl;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        #contentContainer {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            min-height: 200px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1><i class="fas fa-vial"></i> تست ماژول Data Management</h1>
+        
+        <div class="test-result info">
+            <strong>وضعیت:</strong> آماده برای تست
+        </div>
+
+        <div>
+            <button onclick="testModuleLoad()">تست بارگذاری ماژول</button>
+            <button onclick="testLoadContent()">تست loadContent</button>
+            <button onclick="testAPI()">تست API</button>
+            <button onclick="clearResults()">پاک کردن</button>
+        </div>
+
+        <div id="testResults"></div>
+        
+        <h3>محتوای تست:</h3>
+        <div id="contentContainer">
+            <p style="text-align: center; color: #666;">محتوا اینجا نمایش داده می‌شود...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        let dataManagementModule = null;
+
+        window.testModuleLoad = async function() {
+            addResult('info', 'در حال بارگذاری ماژول...');
+            
+            try {
+                // Import the module
+                const module = await import('/datasave/assets/js/admin/modules/data-management.js');
+                dataManagementModule = module.default;
+                
+                addResult('success', '✅ ماژول با موفقیت بارگذاری شد');
+                console.log('Module loaded:', dataManagementModule);
+                
+                // Test if methods exist
+                if (typeof dataManagementModule.loadContent === 'function') {
+                    addResult('success', '✅ متد loadContent موجود است');
+                } else {
+                    addResult('error', '❌ متد loadContent موجود نیست');
+                }
+                
+                if (typeof dataManagementModule.init === 'function') {
+                    addResult('success', '✅ متد init موجود است');
+                } else {
+                    addResult('error', '❌ متد init موجود نیست');
+                }
+                
+            } catch (error) {
+                addResult('error', '❌ خطا در بارگذاری ماژول: ' + error.message);
+                console.error('Module load error:', error);
+            }
+        };
+
+        window.testLoadContent = async function() {
+            if (!dataManagementModule) {
+                addResult('error', '❌ ابتدا ماژول را بارگذاری کنید');
+                return;
+            }
+
+            addResult('info', 'در حال تست loadContent...');
+            
+            try {
+                const container = document.getElementById('contentContainer');
+                const content = await dataManagementModule.loadContent();
+                
+                if (content && typeof content === 'string') {
+                    container.innerHTML = content;
+                    addResult('success', '✅ محتوا با موفقیت بارگذاری شد');
+                    
+                    // Test if rendered content has expected elements
+                    const header = container.querySelector('.dm-header');
+                    const tabs = container.querySelector('.dm-tab-navigation');
+                    
+                    if (header) {
+                        addResult('success', '✅ Header بارگذاری شد');
+                    }
+                    
+                    if (tabs) {
+                        addResult('success', '✅ Tab navigation بارگذاری شد');
+                    }
+                    
+                } else {
+                    addResult('error', '❌ محتوای بازگشتی نامعتبر است');
+                }
+                
+            } catch (error) {
+                addResult('error', '❌ خطا در loadContent: ' + error.message);
+                console.error('LoadContent error:', error);
+            }
+        };
+
+        window.testAPI = async function() {
+            addResult('info', 'در حال تست API...');
+            
+            try {
+                // Test stats API
+                const statsResponse = await fetch('/datasave/backend/api/v1/data-management.php?action=stats');
+                
+                if (statsResponse.ok) {
+                    const statsData = await statsResponse.json();
+                    addResult('success', '✅ API آمار کار می‌کند');
+                    console.log('Stats data:', statsData);
+                } else {
+                    addResult('error', '❌ API آمار پاسخ نمی‌دهد');
+                }
+
+                // Test projects API
+                const projectsResponse = await fetch('/datasave/backend/api/v1/data-management.php?action=projects');
+                
+                if (projectsResponse.ok) {
+                    const projectsData = await projectsResponse.json();
+                    addResult('success', '✅ API پروژه‌ها کار می‌کند');
+                    console.log('Projects data:', projectsData);
+                } else {
+                    addResult('error', '❌ API پروژه‌ها پاسخ نمی‌دهد');
+                }
+                
+            } catch (error) {
+                addResult('error', '❌ خطا در تست API: ' + error.message);
+                console.error('API test error:', error);
+            }
+        };
+
+        window.clearResults = function() {
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('contentContainer').innerHTML = '<p style="text-align: center; color: #666;">محتوا اینجا نمایش داده می‌شود...</p>';
+        };
+
+        function addResult(type, message) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = `<strong>${new Date().toLocaleTimeString('fa-IR')}:</strong> ${message}`;
+            resultsDiv.appendChild(resultDiv);
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        // Auto-test on load
+        window.addEventListener('load', () => {
+            addResult('info', 'صفحه تست بارگذاری شد - آماده برای تست');
+        });
+    </script>
+</body>
+</html>

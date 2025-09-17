@@ -157,3 +157,6 @@ if (typeof ScrollingJalaliPicker === 'undefined') {
     
     console.log('✅ PersianCalendar adapter loaded successfully');
 }
+
+// Export کلاس برای استفاده در ماژول‌ها
+export { PersianCalendar };

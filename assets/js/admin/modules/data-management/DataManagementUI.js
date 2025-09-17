@@ -594,37 +594,25 @@ class DataManagementUI {
      * نمایش پیش‌نمایش ساختار دیتابیس
      */
     showDatabasePreview() {
-        console.log('🔄 Attempting to show database preview...');
-        
         // First try cached element
         let databasePreview = this.elements.databasePreview;
         
         // If not found, try to find it again
         if (!databasePreview) {
-            console.log('🔍 Database preview element not cached, searching...');
             databasePreview = document.getElementById('databasePreview');
             
             // Update cache
             if (databasePreview) {
                 this.elements.databasePreview = databasePreview;
-                console.log('✅ Database preview element found and cached');
             }
         }
         
-        console.log('📋 Database preview element:', databasePreview);
-        
         if (databasePreview) {
-            console.log('✅ Database preview element found, showing...');
-            console.log('📊 Database preview innerHTML:', databasePreview.innerHTML.substring(0, 200) + '...');
-            console.log('📊 Database preview style:', window.getComputedStyle(databasePreview).display);
             
             databasePreview.style.display = 'block';
             setTimeout(() => {
                 databasePreview.classList.add('show');
-                databasePreview.classList.add('dm-fade-in'); // اضافه شده
-                console.log('✅ Database preview shown with animation');
-                console.log('📊 Final classes:', databasePreview.className);
-                console.log('📊 Final computed opacity:', window.getComputedStyle(databasePreview).opacity);
+                databasePreview.classList.add('dm-fade-in');
             }, 300);
         } else {
             console.error('❌ Database preview element not found in DOM');
@@ -757,8 +745,6 @@ class DataManagementUI {
             
             // Auto-switch to SQL tab
             this.switchCodeTab('sql');
-            
-            console.log('✅ SQL code displayed successfully');
         } else {
             console.warn('⚠️ SQL code element not found');
         }
@@ -779,8 +765,6 @@ class DataManagementUI {
             setTimeout(() => {
                 this.switchCodeTab('sql');
             }, 300);
-            
-            console.log('✅ SQL code displayed and tab switched');
             
         } catch (error) {
             console.error('❌ Error showing SQL code:', error);
@@ -1014,10 +998,25 @@ class DataManagementUI {
             totalFields = fieldCheckboxes.length;
             selectedFieldsCount = Array.from(fieldCheckboxes).filter(cb => cb.checked).length;
             
-            // Get record count from file stats or elsewhere
+            // Get record count from file stats - منهای 1 برای header
             const statsElement = document.querySelector('[data-stat="totalRows"]');
             if (statsElement) {
-                totalRecords = parseInt(statsElement.textContent) || 0;
+                const rawCount = parseInt(statsElement.textContent.replace(/[^\d]/g, '')) || 0;
+                totalRecords = Math.max(0, rawCount - 1); // منهای 1 برای header
+                console.log('📊 Record count calculation:', {
+                    rawStats: statsElement.textContent,
+                    parsedCount: rawCount,
+                    finalRecords: totalRecords,
+                    elementFound: !!statsElement
+                });
+            } else {
+                console.warn('⚠️ [data-stat="totalRows"] element not found!');
+                // Fallback: try to get from analysis data stored somewhere
+                const analysisResult = window.currentAnalysisResult || {};
+                if (analysisResult.totalRows) {
+                    totalRecords = Math.max(0, (analysisResult.totalRows - 1));
+                    console.log('📊 Using fallback totalRows:', totalRecords);
+                }
             }
             
         } catch (error) {
@@ -1783,7 +1782,19 @@ class DataManagementUI {
             const configTableDesc = document.getElementById('configTableDesc');
             
             if (configTableName) {
-                structure.tableName = configTableName.value;
+                let tableName = configTableName.value.trim();
+                
+                // اجباری کردن پیشوند xls2tbl_
+                if (!tableName.startsWith('xls2tbl_')) {
+                    // حذف پیشوند قبلی اگر وجود دارد
+                    tableName = tableName.replace(/^(tbl_|table_|data_)/, '');
+                    // اضافه کردن پیشوند اجباری
+                    tableName = 'xls2tbl_' + tableName;
+                    // آپدیت کردن input
+                    configTableName.value = tableName;
+                }
+                
+                structure.tableName = tableName;
                 console.log('🔄 Table name updated:', structure.tableName);
             }
             if (configTableDesc) {
@@ -1906,7 +1917,10 @@ class DataManagementUI {
             selectedFields.forEach((field, index) => {
                 const aiField = aiData.fields[index];
                 if (aiField) {
-                    field.englishName = aiField.englishName;
+                    // مهم: نام‌های فیلد (sqlName و englishName) نباید تغییر کنند
+                    // تا consistency بین CREATE TABLE و INSERT حفظ شود
+                    
+                    // فقط پروپرتی‌های غیر حیاتی را آپدیت می‌کنیم
                     field.suggestedType = aiField.suggestedType || field.type;
                     field.description = aiField.description;
                     field.aiSuggested = aiField.aiSuggested;

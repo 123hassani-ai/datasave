@@ -10,12 +10,23 @@
 (function() {
     'use strict';
     
+    // جلوگیری از اجرای مکرر
+    if (window.VazirmatnFontManager && window.VazirmatnFontManager.initialized) {
+        console.log('ℹ️ فونت وزیرمتن قبلاً مقداردهی شده است');
+        return;
+    }
+    
     /**
      * اعمال فونت وزیرمتن به تمام عناصر
      * Apply Vazirmatn font to all elements
      */
     function applyVazirmatnFont() {
         try {
+            // بررسی اینکه آیا قبلاً اجرا شده یا نه
+            if (document.getElementById('vazirmatn-font-styles')) {
+                return;
+            }
+            
             // ایجاد لینک CSS فونت در صورت عدم وجود
             if (!document.querySelector('link[href*="vazirmatn.css"]')) {
                 const fontLink = document.createElement('link');
@@ -79,16 +90,16 @@
             }
         `;
         
-        // حذف استایل قبلی در صورت وجود
-        const existingStyle = document.getElementById('vazirmatn-font-styles');
-        if (existingStyle) {
-            existingStyle.remove();
-        }
+        // حذف استایل قبلی در صورت وجود (غیرضروری چون بالا چک می‌کنیم)
+        // const existingStyle = document.getElementById('vazirmatn-font-styles');
+        // if (existingStyle) {
+        //     existingStyle.remove();
+        // }
         
         // اضافه کردن استایل جدید
         document.head.appendChild(styleElement);
         
-        console.log('✅ فونت وزیرمتن به طور خودکار اعمال شد');
+        console.log('✅ فونت وزیرمتن اعمال شد');
         
         } catch (error) {
             console.error('خطا در اعمال فونت وزیرمتن:', error);
@@ -187,17 +198,28 @@
      * Test font loading
      */
     function testFontLoading() {
+        // جلوگیری از تست مکرر
+        if (window.VazirmatnFontManager && window.VazirmatnFontManager.fontTested) {
+            return;
+        }
+        
         if (document.fonts && document.fonts.check) {
             const fontLoaded = document.fonts.check("1em Vazirmatn");
             if (fontLoaded) {
-                console.log('✅ فونت وزیرمتن با موفقیت بارگذاری شد');
+                console.log('✅ فونت وزیرمتن بارگذاری تأیید شد');
+                if (window.VazirmatnFontManager) {
+                    window.VazirmatnFontManager.fontTested = true;
+                }
             } else {
-                console.warn('⚠️ فونت وزیرمتن هنوز بارگذاری نشده - از فال‌بک استفاده می‌شود');
+                console.warn('⚠️ فونت وزیرمتن هنوز بارگذاری نشده');
                 
-                // تلاش مجدد بعد از 2 ثانیه
+                // تلاش مجدد بعد از 2 ثانیه (فقط یکبار)
                 setTimeout(() => {
                     if (document.fonts.check("1em Vazirmatn")) {
                         console.log('✅ فونت وزیرمتن دیرهنگام بارگذاری شد');
+                        if (window.VazirmatnFontManager) {
+                            window.VazirmatnFontManager.fontTested = true;
+                        }
                     }
                 }, 2000);
             }
@@ -213,7 +235,7 @@
             // اعمال فونت
             applyVazirmatnFont();
             
-            // تست بارگذاری فونت
+            // تست بارگذاری فونت (فقط یکبار)
             setTimeout(testFontLoading, 100);
             
             // شروع نظارت بر عناصر جدید
@@ -224,7 +246,8 @@
                 apply: applyVazirmatnFont,
                 test: testFontLoading,
                 applyToElement: applyFontToElement,
-                version: '1.1.0'
+                version: '1.1.0',
+                initialized: true  // علامت گذاری اینکه مقداردهی شده
             };
             
             console.log('✅ مدیر فونت وزیرمتن آماده شد');

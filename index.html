@@ -19,6 +19,7 @@
     <link href="assets/css/admin/sidebar.css" rel="stylesheet">
     <link href="assets/css/admin/content.css" rel="stylesheet">
     <link href="assets/css/admin/modules/data-management.css" rel="stylesheet">
+
     
     <!-- استایل‌های اضافی -->
     <style>
@@ -170,6 +171,12 @@
         
         // شروع برنامه پس از بارگذاری صفحه
         window.addEventListener('DOMContentLoaded', () => {
+            // جلوگیری از اجرای مکرر
+            if (window.adminMainInitialized) {
+                return;
+            }
+            window.adminMainInitialized = true;
+            
             // ماژول‌های سنتی را بارگذاری می‌کنیم
             const headerScript = document.createElement('script');
             headerScript.src = 'assets/js/admin/header.js';

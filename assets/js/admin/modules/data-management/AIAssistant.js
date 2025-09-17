@@ -21,10 +21,7 @@ class AIAssistant {
      */
     async analyzeFields(fields, fileName = '') {
         try {
-            console.log('🤖 Starting AI analysis for fields:', fields);
-
             // موقتاً از fallback استفاده می‌کنیم تا برنامه قفل نکند
-            console.log('⚠️ Using fallback suggestions temporarily');
             return this.generateFallbackSuggestions(fields, fileName);
 
             // کد اصلی که بعداً فعال می‌شود:
@@ -198,8 +195,6 @@ class AIAssistant {
      * تولید پیشنهادات جایگزین در صورت عدم دسترسی به AI
      */
     generateFallbackSuggestions(fields, fileName) {
-        console.log('🔄 Generating enhanced fallback suggestions');
-
         const analysis = this.analyzeFieldsIntelligently(fields);
         const tableName = this.generateIntelligentTableName(fileName, analysis);
         
@@ -265,7 +260,7 @@ class AIAssistant {
             'روز': 'day',
             'کاربر': 'user',
             'مشتری': 'customer',
-            'فروش': 'sale',
+            'فروش': 'sales',
             'خرید': 'purchase',
             'سود': 'profit',
             'درصد': 'percentage',
@@ -281,7 +276,7 @@ class AIAssistant {
             'ایمیل': 'email',
             'محل': 'location',
             'موقعیت': 'position',
-            'انتخاب': 'selection',
+            'انتخاب': 'select',
             'بخش': 'section',
             'واحد': 'unit',
             'اپراتور': 'operator',
@@ -295,10 +290,10 @@ class AIAssistant {
             'کاری': 'work',
             'فروشنده': 'seller',
             'جمع': 'total',
-            'محاسبه': 'calculation',
+            'محاسبه': 'calculate',
             'عنوان': 'title',
             'موجودی': 'inventory',
-            'کالا': 'product',
+            'کالا': 'goods',
             'پایان': 'end'
         };
 

@@ -1,8 +1,6 @@
 # راهنمای کامل AI Settings - DataSave
 
-![AI Settings](https://img.shields.io/badge/AI-Settings-orange?style=for-the-badge)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4-green?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
+
 
 ## 📋 فهرست مطالب
 - [🎯 معرفی و اهداف](#-معرفی-و-اهداف)
